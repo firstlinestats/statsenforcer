@@ -151,7 +151,7 @@ class PlayerInPlay(models.Model):
     game = models.ForeignKey(Game)
     player = models.ForeignKey("player.Player")
     player_type = models.IntegerField(null=True, blank=True,
-        choices=constants.playerTypes)
+                                      choices=constants.playerTypes)
 
     class Meta:
         verbose_name = "Player On Ice"

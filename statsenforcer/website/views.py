@@ -1,9 +1,9 @@
 from django.shortcuts import render
 
 from django.http import HttpResponse
-from team.models import Team
+from playbyplay.models import Game
 
 def index(request):
-    teams = Team.objects.all()
-    print teams
+    games = Game.objects.all()
+    print games
     return HttpResponse("Hello, world. You're at the main page.")
