@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'statsenforcer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': cred.DB_NAME,
         'USER': cred.USER,
         'PASSWORD': cred.PASSWORD,

@@ -7,8 +7,7 @@ Enforcing the fancystats.
 1. This site was built using Vagrant and the "ubuntu/trusy64" VM Box
 2. Once the vagrant box is up and running, install:
   * python-dev
-  * postgresql 9.6
-  * libpq-dev
+  * libmysqlclient-dev
   * python-pip
   * python-virtualenv (if using virtualenv)
 3. If using virtualenv, enable first, and the install the requirements.txt file using pip
