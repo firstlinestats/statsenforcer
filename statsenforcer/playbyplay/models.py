@@ -42,10 +42,10 @@ class Game(models.Model):
     secondStar = models.ForeignKey("player.Player", null=True, blank=True, related_name="secondStar")
     thirdStar = models.ForeignKey("player.Player", null=True, blank=True, related_name="thirdStar")
 
-    def __unicode__(self):
-        if self.homeScore is not None:
-            return self.homeTeam.name + " " + str(self.homeScore) + "-" + \
-                str(self.awayScore) + " " + self.awayTeam.name + " " + str(self.dateTime)
+    # def __unicode__(self):
+    #     if self.homeScore is not None:
+    #         return self.homeTeam.name + " " + str(self.homeScore) + "-" + \
+    #             str(self.awayScore) + " " + self.awayTeam.name + " " + str(self.dateTime)
 
 
 class GamePeriod(models.Model):
