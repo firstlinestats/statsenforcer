@@ -1,2 +1,4 @@
 django
 mysql-python
+pytz
+beautifulsoup4
