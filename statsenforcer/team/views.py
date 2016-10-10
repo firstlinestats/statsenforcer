@@ -3,13 +3,16 @@ from django.http import Http404
 from team.models import Team
 from player.models import Player
 from datetime import date
+import constants
 
-# Create your views here.
+def teams(request):
+    return render(request, 'team/teams.html')
+
 def team_page(request, team_name):
     try:
         team_name = team_name.replace("-", " ")
         team = Team.objects.get(teamName=team_name, active=1)
-        players = Player.objects.filter(currentTeam__exact=team).order_by('lastName')
+        players = Player.objects.filter(currentTeam__exact=team, ).order_by('lastName')
 
         # get player's current age
         for player in players:
