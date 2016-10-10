@@ -142,21 +142,36 @@ def ingest_player(jinfo, team=None, player=None):
     try:
         if player is None:
             player = pmodels.Player()
-        player.id = jinfo["id"]
-        player.fullName = jinfo["fullName"]
-        player.link = jinfo["link"]
-        player.firstName = jinfo["firstName"]
-        player.lastName = jinfo["lastName"]
+        if "id" in jinfo:
+            player.id = jinfo["id"]
+        else:
+            raise Exception
+        if "fullName" in jinfo:
+            player.fullName = jinfo["fullName"]
+        if "link" in jinfo:
+            player.link = jinfo["link"]
+        if "firstName" in jinfo:
+            player.firstName = jinfo["firstName"]
+        if "lastName" in jinfo:
+            player.lastName = jinfo["lastName"]
         if "primaryNumber" in jinfo:
             player.primaryNumber = jinfo["primaryNumber"]
-        player.primaryPositionCode = jinfo["primaryPosition"]["code"]
-        player.birthDate = jinfo["birthDate"]
-        player.birthCity = jinfo["birthCity"]
-        player.birthCountry = jinfo["birthCountry"]
-        player.height = jinfo["height"]
-        player.weight = jinfo["weight"]
-        player.active = jinfo["active"]
-        player.rookie = jinfo["rookie"]
+        if "primaryPosition" in jinfo and "code" in jinfo["primaryPosition"]:
+            player.primaryPositionCode = jinfo["primaryPosition"]["code"]
+        if "birthDate" in jinfo:
+            player.birthDate = jinfo["birthDate"]
+        if "birthCity" in jinfo:
+            player.birthCity = jinfo["birthCity"]
+        if "birthCountry" in jinfo:
+            player.birthCountry = jinfo["birthCountry"]
+        if "height" in jinfo:
+            player.height = jinfo["height"]
+        if "weight" in jinfo:
+            player.weight = jinfo["weight"]
+        if "active" in jinfo:
+            player.active = jinfo["active"]
+        if "rookie" in jinfo:
+            player.rookie = jinfo["rookie"]
         if "shootsCatches" in jinfo:
             player.shootsCatches = jinfo["shootsCatches"]
         if team is not None:
@@ -296,6 +311,7 @@ def findStandings(season):
 
 @transaction.atomic()
 def update_game(game, players):
+    missing_players = set()
     allpgss = []
     allperiods = []
     allplaybyplay = []
@@ -447,9 +463,26 @@ def update_game(game, players):
         allplaybyplay.append(p)
         assist_found = False
         for pp in pplayers:
+            skip_play = False  # For all those preseason players that don't exist!
             poi = pbpmodels.PlayerInPlay()
             poi.play_id = playid
             poi.game = game
+            try:
+                playerfound = pmodels.Player.objects.get(id=pp["player"]["id"])
+            except:
+                try:
+                    if pp["player"]["id"] not in missing_players:
+                        playerdata = json.loads(api_calls.get_player(pp["player"]["id"]))
+                        if len(playerdata.keys()) > 0:
+                            playerfound = ingest_player(playerdata)
+                        else:
+                            skip_play = True
+                            missing_players.add(pp["player"]["id"])
+                    else:
+                        skip_play = True
+                except:
+                    skip_play = True
+                    missing_players.add(pp["player"]["id"])
             poi.player_id = pp["player"]["id"]
             if assist_found is True and fancystats.player.get_player_type(pp["playerType"]) == 6:
                 poi.player_type = 16
@@ -459,7 +492,8 @@ def update_game(game, players):
                 poi.player_type = fancystats.player.get_player_type(pp["playerType"])
                 if poi.player_type == 6:
                     assist_found = True
-            allplayers.append(poi)
+            if skip_play is False:
+                allplayers.append(poi)
         playid += 1
     game.homeMissed = homeMissed
     game.awayMissed = awayMissed
@@ -556,14 +590,17 @@ def update_game(game, players):
                             pbpdict["play_id"] = play_id
                             pbpdict["game_id"] = game.gamePk
                             anum = int(anum)
-                            player = getPlayer(ap, awayNames, anum, backup_names, True) #ap[awayNames[str(anum)]]
-                            if player not in players:
-                                players.add(player)
-                                pbpdict["player_id"] = player
-                                acount += 1
-                                pbpp = pbpmodels.PlayerOnIce(**pbpdict)
-                                #pbpp.save()
-                                saved.append(pbpp)
+                            try:
+                                player = getPlayer(ap, awayNames, anum, backup_names, True) #ap[awayNames[str(anum)]]
+                                if player not in players:
+                                    players.add(player)
+                                    pbpdict["player_id"] = player
+                                    acount += 1
+                                    pbpp = pbpmodels.PlayerOnIce(**pbpdict)
+                                    #pbpp.save()
+                                    saved.append(pbpp)
+                            except:
+                                pass
                 hcount = 1
                 for hnum in home:
                     if len(hnum) > 0:
@@ -573,14 +610,17 @@ def update_game(game, players):
                             pbpdict["game_id"] = game.gamePk
                             # fix yo formatting nhl dot com
                             hnum = int(str(hnum).replace("=\"center\">", "").replace("C", ""))
-                            player = getPlayer(hp, homeNames, hnum, backup_names, False)
-                            if player not in players:
-                                players.add(player)
-                                pbpdict["player_id"] = player
-                                hcount += 1
-                                pbpp = pbpmodels.PlayerOnIce(**pbpdict)
-                                #pbpp.save()
-                                saved.append(pbpp)
+                            try:
+                                player = getPlayer(hp, homeNames, hnum, backup_names, False)
+                                if player not in players:
+                                    players.add(player)
+                                    pbpdict["player_id"] = player
+                                    hcount += 1
+                                    pbpp = pbpmodels.PlayerOnIce(**pbpdict)
+                                    #pbpp.save()
+                                    saved.append(pbpp)
+                            except:
+                                pass
                 # Remove so there are no duplicates, first entry will have the most data
                 eventIdxs[eventIdx][time].pop(playType, None)
     pbpmodels.PlayerOnIce.objects.bulk_create(saved)
@@ -640,7 +680,7 @@ def fix_missing():
     for t in tplayers:
         players[t.id] = t
     existing = set(pbpmodels.PlayByPlay.objects.values_list("gamePk_id", flat=True).all())
-    missing = pbpmodels.Game.objects.exclude(gamePk__in=existing).filter(gamePk__gte=2015020000)
+    missing = pbpmodels.Game.objects.exclude(gamePk__in=existing).filter(gamePk__gte=2015020001)
     for game in missing:
         print game.gamePk
         finished = update_game(game, players)
@@ -648,5 +688,5 @@ def fix_missing():
 
 
 if __name__ == "__main__":
-    main()
-    #fix_missing()
+    #main()
+    fix_missing()
