@@ -10,4 +10,4 @@ def game(request, game_pk):
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
     except:
         context["period"] = None
-    return render(request, 'game/game.html', context)
+    return render(request, 'games/game.html', context)
