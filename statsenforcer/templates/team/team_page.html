@@ -1,0 +1,33 @@
+{% extends "wrappers/wrapper.html" %}
+{% load website_extras %}
+{% load staticfiles %}
+{% block page_css %}
+<link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>{{ team.name }}</h2>
+                        <h4>{{ team.venue }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block page_js %}
+<script src="{% static "js/datatables.min.js" %}"></script>
+<script>
+        $(document).ready(function() {
+
+
+        });
+</script>
+{% endblock %}
