@@ -2,3 +2,7 @@
     background-color: #000;
     border-radius: 0px;
 }
+
+.card .header-primary {
+    background: linear-gradient(60deg, #0A0A0A, #000000);
+}
