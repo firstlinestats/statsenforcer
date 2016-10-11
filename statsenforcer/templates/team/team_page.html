@@ -1,0 +1,136 @@
+{% extends "wrappers/wrapper.html" %}
+{% load website_extras %}
+{% load staticfiles %}
+{% block page_css %}
+<link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="row">
+                                     <div class="col-md-12">
+                                        <h2>{{ team.name }}</h2>
+                                        <h4>{{ team.venue }}</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h5>{{ team.conference }} Conference | {{ team.division }} Division</h5>
+                                    </div>
+                                    <div class="col-md-4">
+                                         <h5><a href="{{ team.officialSiteUrl }}" style="float: right;">{{ team.officialSiteUrl|cut:'http://' }}</a></h5>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+                        <h3>Team Stats</h3>
+                        <div class="row">
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Active Roster</h3>
+                                <table class="table table-striped table-hover ">
+                                  <thead>
+                                    <tr>
+                                      <th>Name</th>
+                                      <th>Number</th>
+                                      <th>Position</th>
+                                      <th>Age</th>
+                                      <th>Height</th>
+                                      <th>Weight</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for player in players %}
+                                        {% if player.rosterStatus == 'Y' %}
+                                          <tr>
+                                            <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                            <td>{{ player.primaryNumber }}</td>
+                                            <td>{{ player.primaryPositionCode }}</td>
+                                            <td>{{ player.age }}</td>
+                                            <td>{{ player.height }}</td>
+                                            <td>{{ player.weight }}</td>
+                                          </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Injured Reserve Roster</h3>
+                                <table class="table table-striped table-hover ">
+                                  <thead>
+                                    <tr>
+                                      <th>Name</th>
+                                      <th>Number</th>
+                                      <th>Position</th>
+                                      <th>Age</th>
+                                      <th>Height</th>
+                                      <th>Weight</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for player in players %}
+                                        {% if player.rosterStatus == 'I' %}
+                                          <tr>
+                                            <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                            <td>{{ player.primaryNumber }}</td>
+                                            <td>{{ player.primaryPositionCode }}</td>
+                                            <td>{{ player.age }}</td>
+                                            <td>{{ player.height }}</td>
+                                            <td>{{ player.weight }}</td>
+                                          </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+{% endblock %}
+{% block page_js %}
+<script src="{% static "js/datatables.min.js" %}"></script>
+<script>
+        $(document).ready(function() {
+
+
+        });
+</script>
+{% endblock %}

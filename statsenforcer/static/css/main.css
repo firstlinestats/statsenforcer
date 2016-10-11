@@ -6,3 +6,7 @@
 .card .header-primary {
     background: linear-gradient(60deg, #0A0A0A, #000000);
 }
+
+a {
+    color: #1D9EB5;
+}
