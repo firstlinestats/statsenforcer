@@ -74,37 +74,37 @@
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>
-                                                <th title="Team">Team</th>
-                                                <th title="On-Ice Goals For Total">GF</th>
-                                                <th title="On-Ice Shots-On-Goal For Total">SF</th>
-                                                <th title="Missed Shots For">MSF</th>
-                                                <th title="Blocked Shots">BSF</th>
-                                                <th title="Corsi For Total">CF</th>
-                                                <th title="On-Ice Scoring Chances For Total">SCF</th>
-                                                <th title="On-Ice High-Danger Scoring Chances For Total">HSCF</th>
-                                                <th title="Offensive Zone Starts">ZSO</th>
-                                                <th title="Hits">HIT</th>
-                                                <th title="Penalties">PN</th>
-                                                <th title="Faceoffs Won">FO_W</th>
-                                                <th title="Time On Ice">TOI</th>
+                                                <th class="text-center" title="Team">Team</th>
+                                                <th class="text-center" title="On-Ice Goals For Total">GF</th>
+                                                <th class="text-center" title="On-Ice Shots-On-Goal For Total">SF</th>
+                                                <th class="text-center" title="Missed Shots For">MSF</th>
+                                                <th class="text-center" title="Blocked Shots">BSF</th>
+                                                <th class="text-center" title="Corsi For Total">CF</th>
+                                                <th class="text-center" title="On-Ice Scoring Chances For Total">SCF</th>
+                                                <th class="text-center" title="On-Ice High-Danger Scoring Chances For Total">HSCF</th>
+                                                <th class="text-center" title="Offensive Zone Starts">ZSO</th>
+                                                <th class="text-center" title="Hits">HIT</th>
+                                                <th class="text-center" title="Penalties">PN</th>
+                                                <th class="text-center" title="Faceoffs Won">FO_W</th>
+                                                <th class="text-center" title="Time On Ice">TOI</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for team in teamstats %}
                                             <tr>
                                                 <td title="Team"><img height="17" width="17" alt="{{ team.team }} logo" src='{% with 'img/team/'|add:team.team|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ team.team }}</td>
-                                                <td title="On-Ice Goals For Total">GF</td>
-                                                <td title="On-Ice Shots-On-Goal For Total">SF</td>
-                                                <td title="Missed Shots For">MSF</td>
-                                                <td title="Blocked Shots">BSF</td>
-                                                <td title="Corsi For Total">CF</td>
-                                                <td title="On-Ice Scoring Chances For Total">SCF</td>
-                                                <td title="On-Ice High-Danger Scoring Chances For Total">HSCF</td>
-                                                <td title="Offensive Zone Starts">ZSO</td>
-                                                <td title="Hits">HIT</td>
-                                                <td title="Penalties">PN</td>
-                                                <td title="Faceoffs Won">FO_W</td>
-                                                <td title="Time On Ice">TOI</td>
+                                                <td title="On-Ice Goals For Total">{{ team.gf }}</td>
+                                                <td title="On-Ice Shots-On-Goal For Total">{{ team.sf }}</td>
+                                                <td title="Missed Shots For">{{ team.msf }}</td>
+                                                <td title="Blocked Shots">{{ team.bsf }}</td>
+                                                <td title="Corsi For Total">{{ team.cf }}</td>
+                                                <td title="On-Ice Scoring Chances For Total">{{ team.scf }}</td>
+                                                <td title="On-Ice High-Danger Scoring Chances For Total">{{ team.hscf }}</td>
+                                                <td title="Offensive Zone Starts">{{ team.zso }}</td>
+                                                <td title="Hits">{{ team.hit }}</td>
+                                                <td title="Penalties">{{ team.pn }}</td>
+                                                <td title="Faceoffs Won">{{ team.fo_w }}</td>
+                                                <td title="Time On Ice">{{ team.toi }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
