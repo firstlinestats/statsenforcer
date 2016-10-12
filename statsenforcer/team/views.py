@@ -6,7 +6,11 @@ from datetime import date
 import constants
 
 def teams(request):
-    return render(request, 'team/teams.html')
+    teams = Team.objects.filter(active=1)
+    context = {
+        "teams" : teams
+    }
+    return render(request, 'team/teams.html', context)
 
 def team_page(request, team_name):
     try:

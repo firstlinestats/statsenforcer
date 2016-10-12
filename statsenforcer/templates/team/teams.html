@@ -15,6 +15,84 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-nav-tabs">
+                    <div class="header header-primary">
+                        <div class="nav-tabs-navigation">
+                            <div class="nav-tabs-wrapper">
+                                <ul class="nav nav-tabs" data-tabs="tabs">
+                                    <li class="active">
+                                        <a href="#tableview" data-toggle="tab" aria-expanded="true">
+                                            Table View
+                                        <div class="ripple-container"></div></a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#graphview" data-toggle="tab" aria-expanded="false">
+                                            Graph View
+                                        <div class="ripple-container"></div></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="content">
+                            <div class="tab-content text-center">
+                                <div class="tab-pane active" id="tableview">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center" title="Team">Team</th>
+                                                        <th class="text-center" title="On-Ice Goals For Total">GF</th>
+                                                        <th class="text-center" title="On-Ice Shots-On-Goal For Total">SF</th>
+                                                        <th class="text-center" title="Missed Shots For">MSF</th>
+                                                        <th class="text-center" title="Blocked Shots">BSF</th>
+                                                        <th class="text-center" title="Corsi For Total">CF</th>
+                                                        <th class="text-center" title="On-Ice Scoring Chances For Total">SCF</th>
+                                                        <th class="text-center" title="On-Ice High-Danger Scoring Chances For Total">HSCF</th>
+                                                        <th class="text-center" title="Offensive Zone Starts">ZSO</th>
+                                                        <th class="text-center" title="Hits">HIT</th>
+                                                        <th class="text-center" title="Penalties">PN</th>
+                                                        <th class="text-center" title="Faceoffs Won">FO_W</th>
+                                                        <th class="text-center" title="Time On Ice">TOI</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for team in teams %}
+                                                    <tr>
+                                                        <td title="Team"><img height="17" width="17" alt="{{ team.team }} logo" src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a href="/teams/{{ team.teamName.split|join:'-' }}">{{ team.name }}</a></td>
+                                                        <td title="On-Ice Goals For Total"></td>
+                                                        <td title="On-Ice Shots-On-Goal For Total"></td>
+                                                        <td title="Missed Shots For"></td>
+                                                        <td title="Blocked Shots"></td>
+                                                        <td title="Corsi For Total"></td>
+                                                        <td title="On-Ice Scoring Chances For Total"></td>
+                                                        <td title="On-Ice High-Danger Scoring Chances For Total"></td>
+                                                        <td title="Offensive Zone Starts"></td>
+                                                        <td title="Hits"></td>
+                                                        <td title="Penalties"></td>
+                                                        <td title="Faceoffs Won"></td>
+                                                        <td title="Time On Ice"></td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane" id="graphview">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block page_js %}

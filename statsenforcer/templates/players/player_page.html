@@ -1,0 +1,28 @@
+{% extends "wrappers/wrapper.html" %}
+{% load website_extras %}
+{% load staticfiles %}
+{% block page_css %}
+<link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block page_js %}
+<script src="{% static "js/datatables.min.js" %}"></script>
+<script>
+        $(document).ready(function() {
+
+
+        });
+</script>
+{% endblock %}
