@@ -10,3 +10,16 @@
 a {
     color: #1D9EB5;
 }
+
+.img-center {
+    display: block;
+    margin: 0 auto;
+}
+
+.fls-logo {
+      height: 60px;
+      margin-top: -15px;
+}
+.navbar-brand>img {
+      display: -webkit-inline-box;
+}

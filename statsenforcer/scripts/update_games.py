@@ -268,7 +268,7 @@ def set_player_stats(pd, team, game, players, period):
 
 def find_current_games():
     today = datetime.datetime.now(tz=pytz.UTC)
-    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8]).filter(dateTime__lte=today)
+    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8]).filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(1))
     return current_games
 
 
@@ -688,5 +688,5 @@ def fix_missing():
 
 
 if __name__ == "__main__":
-    #main()
-    fix_missing()
+    main()
+    #fix_missing()
