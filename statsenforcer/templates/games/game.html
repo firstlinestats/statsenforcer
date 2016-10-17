@@ -58,20 +58,32 @@
                     <div class="row">
                         <div class="col-md-12">
                             <form id="gameFilter" class="collapse" action="" method="GET">
-                                <div class="form-group">
-                                    {{ form.teamstrengths.label }}
-                                    {{ form.teamstrengths }}
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.teamstrengths.label }}
+                                            {{ form.teamstrengths }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.scoresituation.label }}
+                                            {{ form.scoresituation }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.period.label }}
+                                            {{ form.period }}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    {{ form.scoresituation.label }}
-                                    {{ form.scoresituation }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.period.label }}
-                                    {{ form.period }}
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -170,14 +182,29 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3>Player Statistics</h3>
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3>Player Statistics</h3>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% with team=game.homeTeam %}
+                                            {% include "games/playertable.html" %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% with team=game.awayTeam %}
+                                            {% include "games/playertable.html" %}
+                                        {% endwith %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
