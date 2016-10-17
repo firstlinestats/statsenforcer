@@ -30,51 +30,51 @@ def create_play_text(play):
         loser = ""
         for player in play["players"]:
             if player["player_type"] == 1:
-                winner = player["player__fullName"]
+                winner = "<b>" + player["player__fullNameTeam"] + "</b>"
             else:
-                loser = player["player__fullName"]
+                loser = "<b>" + player["player__fullNameTeam"] + "</b>"
         return winner + " won faceoff against " + loser
     elif play["playType"] == "HIT":
         hitter = ""
         hittee = ""
         for player in play["players"]:
             if player["player_type"] == 3:
-                hitter = player["player__fullName"]
+                hitter = "<b>" + player["player__fullNameTeam"] + "</b>"
             else:
-                hittee = player["player__fullName"]
+                hittee = "<b>" + player["player__fullNameTeam"] + "</b>"
         return hitter + " hit " + hittee
     elif play["playType"] == "SHOT":
         shooter = ""
         goalie = ""
         for player in play["players"]:
             if player["player_type"] == 7:
-                shooter = player["player__fullName"]
+                shooter = "<b>" + player["player__fullNameTeam"] + "</b>"
             else:
-                goalie = player["player__fullName"]
+                goalie = "<b>" + player["player__fullNameTeam"] + "</b>"
         return shooter + " shot, saved by " + goalie
     elif play["playType"] == "BLOCKED_SHOT":
         shooter = ""
         blocker = ""
         for player in play["players"]:
             if player["player_type"] == 7:
-                shooter = player["player__fullName"]
+                shooter = "<b>" + player["player__fullNameTeam"] + "</b>"
             else:
-                blocker = player["player__fullName"]
+                blocker = "<b>" + player["player__fullNameTeam"] + "</b>"
         return shooter + " shot, blocked by " + blocker
     elif play["playType"] == "MISSED_SHOT":
         shooter = ""
         for player in play["players"]:
-            shooter = player["player__fullName"]
+            shooter = "<b>" + player["player__fullNameTeam"] + "</b>"
         return shooter + " shot, missed"
     elif play["playType"] == "GIVEAWAY":
         playername = ""
         for player in play["players"]:
-            playername = player["player__fullName"]
+            playername = "<b>" + player["player__fullNameTeam"] + "</b>"
         return playername + " giveaway"
     elif play["playType"] == "TAKEAWAY":
         playername = ""
         for player in play["players"]:
-            playername = player["player__fullName"]
+            playername = "<b>" + player["player__fullNameTeam"] + "</b>"
         return playername + " takeaway"
     elif play["playType"] == "STOP":
         return "Play stopped"
@@ -83,23 +83,26 @@ def create_play_text(play):
     elif play["playType"] == "PERIOD_OFFICIAL":
         return "Period has been marked as official"
     elif play["playType"] == "GOAL":
-        print play
         shooter = ""
         assist1 = ""
         assist2 = ""
         for player in play["players"]:
             if player["player_type"] == 5:
-                shooter = player["player__fullName"]
+                shooter = player["player__fullNameTeam"]
             elif player["player_type"] == 6:
-                assist1 = player["player__fullName"]
+                assist1 = player["player__fullNameTeam"]
             elif player["player_type"] == 16:
-                assist2 = player["player__fullName"]
-        info = shooter + " scored (" + play["shotType"] + ")"
+                assist2 = player["player__fullNameTeam"]
+        info = "<b>" + shooter + "</b> scored (" + play["shotType"] + ")"
         if assist1 != "":
-            info += ", assisted by " + assist1
+            info += ", assisted by <b>" + assist1 + "</b>"
         if assist2 != "":
-            info += ", and " + assist2
-        return "<b>" + info + "</b>"
+            info += " and <b>" + assist2 + "</b>"
+        return info
+    elif play["playType"] == "PENALTY":
+        return play["penaltySeverity"] + ": " + play["playDescription"] + " (" + str(play["penaltyMinutes"]) + " minutes)"
+    elif play["playType"] == "CHALLENGE":
+        return play["playDescription"]
     else:
         print play["playType"]
 

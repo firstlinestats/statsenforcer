@@ -649,7 +649,6 @@ def main():
     while keep_running:
         # Loop through current_games
         for game in current_games:
-            print game.gamePk
             try:
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
@@ -665,6 +664,7 @@ def main():
                         findStandings(game.season)
             except:
                 pass
+        return
         # Find active games and loop back up, repeating
         current_games = find_current_games()
         if len(current_games) == 0:

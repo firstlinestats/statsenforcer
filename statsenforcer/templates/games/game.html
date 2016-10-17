@@ -26,14 +26,21 @@
                         <h3><span id="away-score">{{ game.awayScore }}</span> - <span id="home-score">{{ game.homeScore }}</span></h3>
                     </div>
                 </div>
-                {% if period is not None %}
+                {% if game.gameState != "7" %}
+                    {% if period is not None %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4><span id="periodTime">{{ periodTime }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
+                            <p><span id="liveUpdate"></span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
                 <div class="row">
                     <div class="col-md-12">
-                        <h4><span id="periodTime">{{ periodTime }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
-                        <p><span id="liveUpdate"></span></p>
+                        <h4>{{ game.gameState|gameStatus }}{{ game|checkOT }}</h4>
                     </div>
                 </div>
-                {% endif %}
             </div>
             <div class="col-md-4 text-center">
                 <img class="img-responsive img-center" alt="{{ game.homeTeam.abbreviation }} logo" id="home-team-logo" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
@@ -163,7 +170,7 @@
                                             <td>{{ play.period }}</td>
                                             <td>{{ play.periodTimeString }}</td>
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
-                                            <td>{{ play|create_play_text }}</td>
+                                            <td>{{ play|create_play_text|safe }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
