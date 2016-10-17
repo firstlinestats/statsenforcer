@@ -268,7 +268,7 @@ def set_player_stats(pd, team, game, players, period):
 
 def find_current_games():
     today = datetime.datetime.now(tz=pytz.UTC)
-    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8]).filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(1))
+    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8]).filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(7))
     return current_games
 
 
@@ -420,6 +420,8 @@ def update_game(game, players):
     lineScore = ld["linescore"]
     # Plays
     playid = pbpmodels.PlayByPlay.objects.values('id').latest('id')['id'] + 1
+    homeScore = 0
+    awayScore = 0
     for play in ld["plays"]["allPlays"]:
         about = play["about"]
         if "players" in play:
@@ -458,8 +460,13 @@ def update_game(game, players):
         if "x" in coordinates and "y" in coordinates:
             p.xcoord = coordinates["x"]
             p.ycoord = coordinates["y"]
-        p.homeScore = game.homeScore
-        p.awayScore = game.awayScore
+        if result["eventTypeId"] == "GOAL":
+            if play["team"]["id"] == game.homeTeam_id:
+                homeScore += 1
+            else:
+                awayScore += 1
+        p.homeScore = homeScore
+        p.awayScore = awayScore
         allplaybyplay.append(p)
         assist_found = False
         for pp in pplayers:
@@ -642,6 +649,7 @@ def main():
     while keep_running:
         # Loop through current_games
         for game in current_games:
+            print game.gamePk
             try:
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
@@ -657,7 +665,6 @@ def main():
                         findStandings(game.season)
             except:
                 pass
-        
         # Find active games and loop back up, repeating
         current_games = find_current_games()
         if len(current_games) == 0:
@@ -680,7 +687,7 @@ def fix_missing():
     for t in tplayers:
         players[t.id] = t
     existing = set(pbpmodels.PlayByPlay.objects.values_list("gamePk_id", flat=True).all())
-    missing = pbpmodels.Game.objects.exclude(gamePk__in=existing).filter(gamePk__gte=2015020001)
+    missing = pbpmodels.Game.objects.exclude(gamePk__in=existing).filter(gamePk__gte=2016020001)
     for game in missing:
         print game.gamePk
         finished = update_game(game, players)
