@@ -3,12 +3,14 @@ from django.shortcuts import render, get_object_or_404
 import fancystats
 
 from . import models
+from . import forms
 from team import models as tmodels
 
 # Create your views here.
 def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
+    context["form"] = forms.GameForm()
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
     except:
