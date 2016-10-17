@@ -26,17 +26,57 @@
                         <h3><span id="away-score">{{ game.awayScore }}</span> - <span id="home-score">{{ game.homeScore }}</span></h3>
                     </div>
                 </div>
-                {% if period is not None %}
+                {% if game.gameState != "7" %}
+                    {% if period is not None %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4><span id="periodTime">{{ periodTime }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
+                            <p><span id="liveUpdate"></span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
                 <div class="row">
                     <div class="col-md-12">
-                        <h4><span id="periodTime">{{ periodTime }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
-                        <p><span id="liveUpdate"></span></p>
+                        <h4>{{ game.gameState|gameStatus }}{{ game|checkOT }}</h4>
                     </div>
                 </div>
-                {% endif %}
             </div>
             <div class="col-md-4 text-center">
                 <img class="img-responsive img-center" alt="{{ game.homeTeam.abbreviation }} logo" id="home-team-logo" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well bs-component">
+                    <h4 class="filter-options" data-toggle="collapse" data-target="#gameFilter">
+                    Filter Options
+                    <img class="filter-collapsed" height="20" width="20" style="float: right"src="{% with 'img/arrow.svg' as image_static %}{% static image_static %} {% endwith %}">
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="gameFilter" class="collapse" action="" method="GET">
+                                <div class="form-group">
+                                    {{ form.teamstrengths.label }}
+                                    {{ form.teamstrengths }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.scoresituation.label }}
+                                    {{ form.scoresituation }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.period.label }}
+                                    {{ form.period }}
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -163,7 +203,7 @@
                                             <td>{{ play.period }}</td>
                                             <td>{{ play.periodTimeString }}</td>
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
-                                            <td>{{ play|create_play_text }}</td>
+                                            <td>{{ play|create_play_text|safe }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -181,12 +221,24 @@
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script>
-        $(document).ready(function() {
-            $('#pbp').DataTable({
-                "iDisplayLength": 25,
-                "bSort": false
-            });
-
+    $(document).ready(function() {
+        $('#pbp').DataTable({
+            "iDisplayLength": 25,
+            "bSort": false
         });
+
+    });
+
+    $('.filter-options').click(function(e) {
+        var icon = $('.filter-options img');
+        console.log(icon);
+        if (icon.hasClass('filter-collapsed')) {
+            icon.removeClass('filter-collapsed');
+            icon.addClass('filter-expanded');
+        } else {
+            icon.removeClass('filter-expanded');
+            icon.addClass('filter-collapsed');
+        }
+    });
 </script>
 {% endblock %}

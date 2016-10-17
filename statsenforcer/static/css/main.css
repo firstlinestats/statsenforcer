@@ -23,3 +23,21 @@ a {
 .navbar-brand>img {
       display: -webkit-inline-box;
 }
+
+.bs-component {
+    border-radius:0px;
+    background-color: inherit;
+    border: 0px;
+    margin-bottom: 0px;
+}
+
+.filter-collapsed {
+  transform:rotate(0deg);
+  -ms-transform:rotate(0deg); /* IE 9 */
+  -webkit-transform:rotate(0deg); /* Safari and Chrome */
+}
+.filter-expanded {
+  transform:rotate(90deg);
+  -ms-transform:rotate(90deg); /* IE 9 */
+  -webkit-transform:rotate(90deg); /* Safari and Chrome */
+}

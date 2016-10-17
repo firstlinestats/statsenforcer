@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 import fancystats
 
 from . import models
+from . import forms
 from team import models as tmodels
 from playbyplay.models import Game
 
@@ -10,6 +11,7 @@ from playbyplay.models import Game
 def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
+    context["form"] = forms.GameForm()
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
     except:
@@ -20,13 +22,13 @@ def game(request, game_pk):
 
         poi_data = models.PlayerOnIce.objects.values("player_id", "play_id", "play__homeScore", "play__awayScore").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
 
-        playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "player_id").filter(game_id=game_pk)
+        playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id").filter(game_id=game_pk)
         p2t = {}
         for p in playerteams:
-            p2t[p["player_id"]] = p["team__abbreviation"]
-        goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "player_id").filter(game_id=game_pk)
+            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 0]
+        goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id").filter(game_id=game_pk)
         for p in goalieteams:
-            p2t[p["player_id"]] = p["team__abbreviation"]
+            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1]
 
         pip_data = models.PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player_id").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
         pipdict = {}
@@ -34,7 +36,7 @@ def game(request, game_pk):
             if poi["play_id"] not in pipdict:
                 pipdict[poi["play_id"]] = []
             if poi["player_id"] in p2t:
-                poi["player__fullName"] += " (" + p2t[poi["player_id"]] + ")"
+                poi["player__fullNameTeam"] = poi["player__fullName"] + " (" + p2t[poi["player_id"]][0] + ")"
             pipdict[poi["play_id"]].append(poi)
 
         context["periodTimeString"] = str(context["playbyplay"][-1]["periodTime"])[:-3]
@@ -45,7 +47,7 @@ def game(request, game_pk):
             else:
                 play["players"] = []
         
-        context["teamstats"] = fancystats.team.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id)
+        context["teamstats"] = fancystats.team.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation

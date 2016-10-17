@@ -7,9 +7,7 @@ from urllib2 import Request, urlopen, URLError
 import api_urls
 
 headers = {
-    "User-Agent" : "Mozilla/5.0 (X11; U; Linux i686; " + \
-        "en-US; rv:1.9.2.24) Gecko/20111107 " + \
-        "Linux Mint/9 (Isadora) Firefox/3.6.24",
+    "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
 }
 
 
@@ -88,6 +86,7 @@ def get_url(url):
         else:
             html = response.read()
     except URLError, e:
+        print url
         print e
         return "{}"
     return html
