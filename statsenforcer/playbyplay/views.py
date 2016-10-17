@@ -4,6 +4,7 @@ import fancystats
 
 from . import models
 from team import models as tmodels
+from playbyplay.models import Game
 
 # Create your views here.
 def game(request, game_pk):
@@ -51,3 +52,13 @@ def game(request, game_pk):
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)
+
+
+def games(request):
+    games = Game.objects.filter(season=20162017).order_by('-dateTime', '-gamePk')[:30]
+
+    context = {
+        'active_page': 'index',
+        'games': games
+    }
+    return render(request, 'games/game_list.html', context)

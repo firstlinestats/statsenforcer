@@ -5,7 +5,7 @@ import pytz
 from django import template
 
 from playbyplay import models
-from playbyplay.constants import gameStates, gameTypes
+from fancystats.constants import gameStates, gameTypes
 
 from player.constants import playerPositions
 
