@@ -664,7 +664,7 @@ def main():
                         findStandings(game.season)
             except:
                 pass
-        return
+        #return
         # Find active games and loop back up, repeating
         current_games = find_current_games()
         if len(current_games) == 0:
