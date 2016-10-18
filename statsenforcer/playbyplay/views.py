@@ -19,8 +19,6 @@ def game(request, game_pk):
         context["playbyplay"] = models.PlayByPlay.objects.filter(gamePk_id=game_pk).order_by("eventIdx")
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
 
-        poi_data = models.PlayerOnIce.objects.values("player_id", "play_id", "play__homeScore", "play__awayScore", "player__fullName").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
-
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id").filter(game_id=game_pk)
         p2t = {}
         for p in playerteams:
@@ -32,13 +30,27 @@ def game(request, game_pk):
         pip_data = models.PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player__primaryPositionCode", "player_id").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
         pipdict = {}
         for poi in pip_data:
-            p2t[poi["player_id"]].append(poi["player__fullName"])
-            p2t[poi["player_id"]].append(poi["player__primaryPositionCode"])
+            if len(p2t[poi["player_id"]]) == 3:
+                p2t[poi["player_id"]].append(poi["player__fullName"])
+                p2t[poi["player_id"]].append(poi["player__primaryPositionCode"])
             if poi["play_id"] not in pipdict:
                 pipdict[poi["play_id"]] = []
             if poi["player_id"] in p2t:
                 poi["player__fullNameTeam"] = poi["player__fullName"] + " (" + p2t[poi["player_id"]][0] + ")"
             pipdict[poi["play_id"]].append(poi)
+
+        poi_data = models.PlayerOnIce.objects.values("player_id", "play_id", "player__lastName", "player__primaryPositionCode").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
+        poidict = {}
+        for poi in poi_data:
+            poi["team_id"] = p2t[poi["player_id"]][1]
+            if poi["play_id"] not in poidict:
+                poidict[poi["play_id"]] = []
+            poidict[poi["play_id"]].append(poi)
+        order = ["L", "C", "R", "D", "G"]
+        for play in poidict:
+            onice = poidict[play]
+            print onice
+            sorted(onice, key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         context["periodTimeString"] = str(context["playbyplay"][-1]["periodTime"])[:-3]
         for play in context["playbyplay"]:
@@ -47,6 +59,10 @@ def game(request, game_pk):
                 play["players"] = pipdict[play["id"]]
             else:
                 play["players"] = []
+            if play["id"] in poidict:
+                play["onice"] = poidict[play["id"]]
+            else:
+                play["onice"] = []
         
         context["teamstats"] = fancystats.team.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
         for ts in context["teamstats"]:

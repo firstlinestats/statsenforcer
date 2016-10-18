@@ -224,15 +224,38 @@
                                             <th class="text-center">Time</th>
                                             <th class="text-center">Score</th>
                                             <th class="text-center">Description</th>
+                                            <th>On-Ice</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="table table-condensed">
                                         {% for play in playbyplay %}
                                         <tr>
                                             <td>{{ play.period }}</td>
                                             <td>{{ play.periodTimeString }}</td>
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
                                             <td>{{ play|create_play_text|safe }}</td>
+                                            <td>
+                                                <table class="table table-bordered table-striped table-condensed">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>{{ game.awayTeam }}</th>
+                                                            {% for player in play.onice %}
+                                                                {% if player.team_id == game.awayTeam_id %}
+                                                                <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tr>
+                                                        <tr>
+                                                            <th>{{ game.homeTeam }}</th>
+                                                            {% for player in play.onice %}
+                                                                {% if player.team_id == game.homeTeam_id %}
+                                                                <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
