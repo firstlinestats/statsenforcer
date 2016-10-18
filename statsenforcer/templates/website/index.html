@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+<link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -53,12 +54,12 @@
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script>
-        $(document).ready(function() {
-            $('#games').DataTable({
-                "iDisplayLength": 15,
-                "bSort": false
-            });
-
+    $(document).ready(function() {
+        $('#games').DataTable({
+            "iDisplayLength": 15,
+            "bSort": false
         });
+
+    });
 </script>
 {% endblock %}

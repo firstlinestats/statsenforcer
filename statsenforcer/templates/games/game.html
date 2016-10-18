@@ -2,8 +2,10 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
+{% block title %}{{ game.awayTeam.abbreviation }} vs {{ game.homeTeam.abbreviation }} {{ game.dateTime }}{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+<link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -129,7 +131,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-hover">
+                                        <table id="teamstats" class="table table-striped table-hover">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center" title="Team">Team</th>
@@ -233,12 +235,14 @@
                                             <td>{{ play.period }}</td>
                                             <td>{{ play.periodTimeString }}</td>
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
-                                            <td>{{ play|create_play_text|safe }}</td>
+                                            <td>
+                                                {{ play|create_play_text|safe }}
+                                            </td>
                                             <td>
                                                 <table class="table table-bordered table-striped table-condensed">
                                                     <tbody>
                                                         <tr>
-                                                            <th>{{ game.awayTeam }}</th>
+                                                            <th><img height="17" width="17" alt="{{ game.awayTeam.abbreviation }} logo" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ game.awayTeam.abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.awayTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
@@ -246,7 +250,7 @@
                                                             {% endfor %}
                                                         </tr>
                                                         <tr>
-                                                            <th>{{ game.homeTeam }}</th>
+                                                            <th><img height="17" width="17" alt="{{ game.homeTeam.abbreviation }} logo" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ game.homeTeam.abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.homeTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
@@ -275,10 +279,17 @@
 <script>
     $(document).ready(function() {
         $('#pbp').DataTable({
-            "iDisplayLength": 25,
+            "iDisplayLength": 10,
             "bSort": false
         });
 
+        $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
+            "iDisplayLength": 25,
+        });
+
+        $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
+            "iDisplayLength": 25,
+        });
     });
 
     $('.filter-options').click(function(e) {

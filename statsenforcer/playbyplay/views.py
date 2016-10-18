@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
+import pytz
+
 import fancystats
 
 from . import models
@@ -11,6 +13,7 @@ def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
     context["form"] = forms.GameForm()
+    context["game"].dateTime = context["game"].dateTime.astimezone(pytz.timezone('US/Eastern'))
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
     except:
@@ -49,7 +52,6 @@ def game(request, game_pk):
         order = ["L", "C", "R", "D", "G"]
         for play in poidict:
             onice = poidict[play]
-            print onice
             sorted(onice, key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         context["periodTimeString"] = str(context["playbyplay"][-1]["periodTime"])[:-3]
