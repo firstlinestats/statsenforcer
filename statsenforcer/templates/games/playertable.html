@@ -1,0 +1,62 @@
+{% load website_extras %}
+{% load pbp_extras %}
+{% load staticfiles %}
+
+<h4>
+    <img height="22px" width="22px" alt="{{ team.abbreviation }} logo" src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
+    {{ team }}
+</h4>
+<div class="table-responsive">
+    <table id="{{ team.abbreviation }}-players" class="table table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                <th class="text-center" title="Player">Player</th>
+                <th class="text-center" title="Position">Position</th>
+                <th class="text-center" title="Goals">G</th>
+                <th class="text-center" title="Primary Assists">A1</th>
+                <th class="text-center" title="Secondary Assists">A2</th>
+                <th class="text-center" title="Points">P</th>
+                <th class="text-center" title="Corsi For Total">CF</th>
+                <th class="text-center" title="Corsi Against Total">CA</th>
+                <th class="text-center" title="Fenwick For Total">FF</th>
+                <th class="text-center" title="Fenwick Against Total">FA</th>
+                <th class="text-center" title="On-Ice Goals For">GF</th>
+                <th class="text-center" title="On-Ice Goals Against">GA</th>
+                <th class="text-center" title="Faceoffs Won">FO_W</th>
+                <th class="text-center" title="Faceoffs Lost">FO_L</th>
+                <th class="text-center" title="Hits">HIT</th>
+                <th class="text-center" title="Hits Taken">HIT-</th>
+                <th class="text-center" title="Penalties">PN</th>
+                <th class="text-center" title="Penalties Taken">PN-</th>
+                <th class="text-center" title="Time On Ice">TOI</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pid in playerstats|get_item:team.id %}
+            {% with player=playerstats|get_item:team.id|get_item:pid %}
+            <tr>
+                <td class="text-center" title="Player">{{ player.name }}</td>
+                <td class="text-center" title="Position">{{ player.position|player_position }}</td>
+                <td class="text-center" title="Goals">{{ player.g }}</td>
+                <td class="text-center" title="Primary Assists">{{ player.a1 }}</td>
+                <td class="text-center" title="Secondary Assists">{{ player.a2 }}</td>
+                <td class="text-center" title="Points">{{ player.p }}</td>
+                <td class="text-center" title="Corsi For Total">{{ player.cf }}</td>
+                <td class="text-center" title="Corsi Against Total">{{ player.ca }}</td>
+                <td class="text-center" title="Fenwick For Total">{{ player.ff }}</td>
+                <td class="text-center" title="Fenwick Against Total">{{ player.fa }}</td>
+                <td class="text-center" title="On-Ice Goals For">{{ player.gf }}</td>
+                <td class="text-center" title="On-Ice Goals Against">{{ player.ga }}</td>
+                <td class="text-center" title="Faceoffs Won">{{ player.fo_w }}</td>
+                <td class="text-center" title="Faceoffs Lost">{{ player.fo_l }}</td>
+                <td class="text-center" title="Hits">{{ player.hitplus }}</td>
+                <td class="text-center" title="Hits Taken">{{ player.hitminus }}</td>
+                <td class="text-center" title="Penalties">{{ player.pnplus }}</td>
+                <td class="text-center" title="Penalties Taken">{{ player.pnminus }}</td>
+                <td class="text-center" title="Time On Ice">{{ player.toi }}</td>
+            </tr>
+            {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
