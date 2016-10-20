@@ -57,7 +57,7 @@ def game(request, game_pk):
 
 
 def games(request):
-    games = Game.objects.filter(season=20162017).order_by('-dateTime', '-gamePk')[:30]
+    games = Game.objects.filter(season=20162017, gameState=6).order_by('-dateTime', '-gamePk')[:30]
 
     context = {
         'active_page': 'index',
