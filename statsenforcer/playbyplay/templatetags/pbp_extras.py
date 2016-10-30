@@ -12,7 +12,9 @@ def player_position(position):
 
 @register.filter
 def get_item(dictionary, key):
-    return dictionary.get(key)
+    if dictionary is not None and key in dictionary:
+        return dictionary.get(key)
+    return ""
 
 
 @register.filter
