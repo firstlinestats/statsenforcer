@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+{% load tz %}
+
+{% localtime on %}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -28,3 +31,4 @@
     {% block page_js %}{% endblock %}
   </body>
 </html>
+{% endlocaltime %}

@@ -18,12 +18,14 @@ def game(request, game_pk):
     scoreSituation = None
     hsc = None
     asc = None
+    period = None
     if request.method == "GET":
         context["form"] = forms.GameForm(request.GET)
         if context["form"].is_valid():
             cd = context["form"].cleaned_data
             teamStrengths = cd["teamstrengths"]
             scoreSituation = cd["scoresituation"]
+            period = cd["period"]
     context["game"].dateTime = context["game"].dateTime.astimezone(pytz.timezone('US/Eastern'))
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
@@ -79,13 +81,28 @@ def game(request, game_pk):
             p2t,
             teamStrengths=teamStrengths,
             scoreSituation=scoreSituation,
-            hsc=hsc,
-            asc=asc)
+            period=period)
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation
 
-        context["playerstats"] = fancystats.player.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
+        context["playerstats"] = fancystats.player.get_stats(
+            context["playbyplay"],
+            context["game"].homeTeam.id,
+            context["game"].awayTeam.id,
+            p2t,
+            teamStrengths=teamStrengths,
+            scoreSituation=scoreSituation,
+            period=period)
+
+        context["goaliestats"] = fancystats.player.get_goalie_stats(
+            context["playbyplay"],
+            context["game"].homeTeam.id,
+            context["game"].awayTeam.id,
+            p2t,
+            teamStrengths=teamStrengths,
+            scoreSituation=scoreSituation,
+            period=period)
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)
