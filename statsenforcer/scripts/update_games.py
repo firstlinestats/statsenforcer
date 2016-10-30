@@ -30,6 +30,7 @@ from compile_stats import compile_game
 import api_calls
 
 import fancystats
+import sendemail
 
 headers = {
     "User-Agent" : "Mozilla/5.0 (X11; U; Linux i686; " + \
@@ -662,8 +663,8 @@ def main():
                         pmodels.CompiledGoalieGameStats.objects.filter(game=game).delete()
                         compile_game(fgame)
                         findStandings(game.season)
-            except:
-                pass
+            except Exception as e:
+                sendemail.send_error_email(e)
         #return
         # Find active games and loop back up, repeating
         current_games = find_current_games()

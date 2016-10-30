@@ -14,6 +14,16 @@ def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
     context["form"] = forms.GameForm()
+    teamStrengths = None
+    scoreSituation = None
+    hsc = None
+    asc = None
+    if request.method == "GET":
+        context["form"] = forms.GameForm(request.GET)
+        if context["form"].is_valid():
+            cd = context["form"].cleaned_data
+            teamStrengths = cd["teamstrengths"]
+            scoreSituation = cd["scoresituation"]
     context["game"].dateTime = context["game"].dateTime.astimezone(pytz.timezone('US/Eastern'))
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
@@ -66,8 +76,15 @@ def game(request, game_pk):
                 play["onice"] = poidict[play["id"]]
             else:
                 play["onice"] = []
-        
-        context["teamstats"] = fancystats.team.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
+        context["teamstats"] = fancystats.team.get_stats(
+            context["playbyplay"],
+            context["game"].homeTeam.id,
+            context["game"].awayTeam.id,
+            p2t,
+            teamStrengths=teamStrengths,
+            scoreSituation=scoreSituation,
+            hsc=hsc,
+            asc=asc)
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation
