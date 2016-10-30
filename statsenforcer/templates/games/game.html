@@ -32,7 +32,7 @@
                     {% if period is not None %}
                     <div class="row">
                         <div class="col-md-12">
-                            <h4><span id="periodTime">{{ periodTime }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
+                            <h4><span id="periodTime">{{ periodTimeString }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
                             <p><span id="liveUpdate"></span></p>
                         </div>
                     </div>
@@ -41,6 +41,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h4>{{ game.gameState|gameStatus }}{{ game|checkOT }}</h4>
+                        {% if game.gameState == "3" or game.gameState == "4" %}
+                        <p>*Live games auto-update every minute</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -305,5 +308,10 @@
             icon.addClass('filter-collapsed');
         }
     });
+
+    {% if game.gameState == "3" or game.gameState == "4" %}
+        var interval = 1000 * 60 * 1; // where X is your every X minutes
+        setTimeout(function() { location.reload(); }, interval);
+    {% endif %}
 </script>
 {% endblock %}

@@ -63,7 +63,22 @@ def game(request, game_pk):
         for play in poidict:
             poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
-        context["periodTimeString"] = str(context["playbyplay"][-1]["periodTime"])[:-3]
+        pt = str(context["playbyplay"][-1]["periodTime"])[:-3].split(":")
+        minutes = 20 - int(pt[0])
+        seconds = 60 - int(pt[1])
+        if seconds == 60:
+            seconds = 0
+        else:
+            minutes -= 1
+        minutes = str(minutes)
+        seconds = str(seconds)
+        if len(minutes) == 1:
+            minutes = "0{}".format(minutes)
+        if len(seconds) == 1:
+            seconds = "0{}".format(seconds)
+        periodTimeString = "{}:{}".format(minutes, seconds)
+
+        context["periodTimeString"] = periodTimeString
         for play in context["playbyplay"]:
             play["periodTimeString"] = str(play["periodTime"])[:-3]
             if play["id"] in pipdict:
