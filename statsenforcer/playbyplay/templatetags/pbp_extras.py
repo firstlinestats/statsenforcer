@@ -104,7 +104,9 @@ def create_play_text(play):
                 assist1 = player["player__fullNameTeam"]
             elif player["player_type"] == 16:
                 assist2 = player["player__fullNameTeam"]
-        info = "<b>" + shooter + "</b> scored (" + play["shotType"] + ")"
+        info = "<b>{}</b> scored".format(shooter)
+        if play["shotType"]:
+            info += "({})".format(play["shotType"])
         if assist1 != "":
             info += ", assisted by <b>" + assist1 + "</b>"
         if assist2 != "":
@@ -114,7 +116,7 @@ def create_play_text(play):
         return play["penaltySeverity"] + ": " + play["playDescription"] + " (" + str(play["penaltyMinutes"]) + " minutes)"
     elif play["playType"] == "CHALLENGE":
         return play["playDescription"]
-    else:
-        print play["playType"]
+    elif play["playType"] == "GAME_END":
+        return "Game over."
 
     return ""
