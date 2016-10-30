@@ -18,6 +18,7 @@ def game(request, game_pk):
     scoreSituation = None
     hsc = None
     asc = None
+    period = None
     if request.method == "GET":
         context["form"] = forms.GameForm(request.GET)
         if context["form"].is_valid():
