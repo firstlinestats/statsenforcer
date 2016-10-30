@@ -285,10 +285,12 @@
 
         $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
             "iDisplayLength": 25,
+            "bPaginate": false,
         });
 
         $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
             "iDisplayLength": 25,
+            "bPaginate": false,
         });
     });
 

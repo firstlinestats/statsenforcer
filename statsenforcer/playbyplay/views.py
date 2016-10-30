@@ -14,6 +14,16 @@ def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
     context["form"] = forms.GameForm()
+    teamStrengths = None
+    scoreSituation = None
+    hsc = None
+    asc = None
+    if request.method == "GET":
+        context["form"] = forms.GameForm(request.GET)
+        if context["form"].is_valid():
+            cd = context["form"].cleaned_data
+            teamStrengths = cd["teamstrengths"]
+            scoreSituation = cd["scoresituation"]
     context["game"].dateTime = context["game"].dateTime.astimezone(pytz.timezone('US/Eastern'))
     try:
         context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
@@ -23,20 +33,17 @@ def game(request, game_pk):
         context["playbyplay"] = models.PlayByPlay.objects.filter(gamePk_id=game_pk).order_by("eventIdx")
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
 
-        playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id").filter(game_id=game_pk)
+        playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         p2t = {}
         for p in playerteams:
-            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 0]
-        goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id").filter(game_id=game_pk)
+            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 0, p["player__fullName"], p["player__primaryPositionCode"]]
+        goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         for p in goalieteams:
-            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1]
+            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1, p["player__fullName"], p["player__primaryPositionCode"]]
 
         pip_data = models.PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player__primaryPositionCode", "player_id").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
         pipdict = {}
         for poi in pip_data:
-            if len(p2t[poi["player_id"]]) == 3:
-                p2t[poi["player_id"]].append(poi["player__fullName"])
-                p2t[poi["player_id"]].append(poi["player__primaryPositionCode"])
             if poi["play_id"] not in pipdict:
                 pipdict[poi["play_id"]] = []
             if poi["player_id"] in p2t:
@@ -52,8 +59,7 @@ def game(request, game_pk):
             poidict[poi["play_id"]].append(poi)
         order = ["L", "C", "R", "D", "G"]
         for play in poidict:
-            onice = poidict[play]
-            sorted(onice, key=lambda x: order.index(x["player__primaryPositionCode"]))
+            poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         context["periodTimeString"] = str(context["playbyplay"][-1]["periodTime"])[:-3]
         for play in context["playbyplay"]:
@@ -66,8 +72,15 @@ def game(request, game_pk):
                 play["onice"] = poidict[play["id"]]
             else:
                 play["onice"] = []
-        
-        context["teamstats"] = fancystats.team.get_stats(context["playbyplay"], context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
+        context["teamstats"] = fancystats.team.get_stats(
+            context["playbyplay"],
+            context["game"].homeTeam.id,
+            context["game"].awayTeam.id,
+            p2t,
+            teamStrengths=teamStrengths,
+            scoreSituation=scoreSituation,
+            hsc=hsc,
+            asc=asc)
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation

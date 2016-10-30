@@ -7,10 +7,8 @@ import json
 # Create your views here.
 
 def index(request):
-    print datetime.date.today()
     games = Game.objects.filter(season=20162017, dateTime__lte=datetime.date.today() + datetime.timedelta(1)).order_by('-dateTime', '-gamePk')[:30]
 
-    #teams = Team.objects.all()
     teamdata = {}
     currentSeason = games[0].season
     max_date = SeasonStats.objects.latest("date")
