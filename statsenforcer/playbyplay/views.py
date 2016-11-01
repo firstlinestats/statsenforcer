@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
 import pytz
+import json
 
 import fancystats
 
@@ -110,6 +111,8 @@ def game(request, game_pk):
             scoreSituation=scoreSituation,
             period=period)
 
+        context["playersjson"] = json.dumps(context["playerstats"])
+
         context["goaliestats"] = fancystats.player.get_goalie_stats(
             context["playbyplay"],
             context["game"].homeTeam.id,
@@ -118,6 +121,20 @@ def game(request, game_pk):
             teamStrengths=teamStrengths,
             scoreSituation=scoreSituation,
             period=period)
+
+        # context["shotData"] = {
+        #     "home" : [],
+        #     "away" : []
+        # }
+
+        # for play in context["playbyplay"]:
+        #     if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
+        #         scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
+        #         previous_shot = play
+        #         previous_danger = scoringChance[0]
+
+        #         print play["team_id"], play["playType"]
+
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)

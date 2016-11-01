@@ -121,7 +121,7 @@
                 </div>
             </div>
         </div>
-        <div class="content">
+        <div id="gameTabContent" class="content">
             <div class="content">
                 <div class="tab-content text-center">
                     <div class="tab-pane active" id="tableview">
@@ -217,7 +217,24 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="graphview">
-                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="text-center">Shots Attempts&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="shotChartButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
+                                <div id="shotChart"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h3 class="text-center">Player Corsi Events</h3>
+                            <p class="text-center">*Click points to toggle information</p>
+                            <div class="col-md-6 col-sm-12">
+                                <h4 class="text-center">Away Corsi&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="away-corsiButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
+                                <div id="away-corsi"></div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <h4 class="text-center">Home Corsi&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="home-corsiButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
+                                <div id="home-corsi"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane" id="pbpview">
                         <div class="row">
@@ -279,8 +296,14 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
+<script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/teamColors.js" %}"></script>
+<script src="{% static "js/graphs/shotChart.js" %}"></script>
+<script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
 <script>
     $(document).ready(function() {
+        var playerStats = JSON.parse("{{ playersjson | escapejs }}");
+
         $('#pbp').DataTable({
             "iDisplayLength": 10,
             "bSort": false
@@ -295,6 +318,11 @@
             "iDisplayLength": 25,
             "bPaginate": false,
         });
+
+        var homeSkaters = playerStats["{{ game.homeTeam.id }}"];
+        var awaySkaters = playerStats["{{ game.awayTeam.id }}"];
+        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}");
+        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}");
     });
 
     $('.filter-options').click(function(e) {
