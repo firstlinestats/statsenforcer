@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.serializers.json import DjangoJSONEncoder
 
 import pytz
 import json
@@ -122,19 +123,39 @@ def game(request, game_pk):
             scoreSituation=scoreSituation,
             period=period)
 
-        # context["shotData"] = {
-        #     "home" : [],
-        #     "away" : []
-        # }
+        context["shotData"] = {
+            "home" : [],
+            "away" : []
+        }
 
-        # for play in context["playbyplay"]:
-        #     if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
-        #         scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
-        #         previous_shot = play
-        #         previous_danger = scoringChance[0]
-
-        #         print play["team_id"], play["playType"]
-
+        for play in context["playbyplay"]:
+            if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
+                scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
+                danger = scoringChance[0]
+                sc = scoringChance[1]                
+                team = play["team_id"]
+                play_type = play["playType"]
+                homeinclude, awayinclude = fancystats.team.check_play(play, teamStrengths, scoreSituation, period, hsc, asc, context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
+                if team == context["game"].homeTeam.id and homeinclude:
+                    xcoord = play["xcoord"]
+                    ycoord = play["ycoord"]
+                    if xcoord < 0 and xcoord is not None:
+                        xcoord = abs(xcoord)
+                        ycoord = ycoord
+                    context["shotData"]["home"].append({"x": xcoord,
+                        "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
+                        "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
+                elif team == context["game"].awayTeam.id and awayinclude:
+                    xcoord = play["xcoord"]
+                    ycoord = play["ycoord"]
+                    if xcoord > 0:
+                        xcoord = -xcoord
+                        ycoord = -ycoord
+                    context["shotData"]["away"].append({"x": xcoord,
+                        "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
+                        "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
+        context["shotdatajson"] = json.dumps(context["shotData"], cls=DjangoJSONEncoder)
+       
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)

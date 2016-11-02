@@ -302,14 +302,14 @@
 <script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
 <script>
     $(document).ready(function() {
-        var playerStats = JSON.parse("{{ playersjson | escapejs }}");
+        
 
         $('#pbp').DataTable({
             "iDisplayLength": 10,
             "bSort": false
         });
 
-        $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
+        var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
             "iDisplayLength": 25,
             "bPaginate": false,
         });
@@ -319,10 +319,17 @@
             "bPaginate": false,
         });
 
+
+        //Creates the corsi graphs
+        var playerStats = JSON.parse("{{ playersjson | escapejs }}");
         var homeSkaters = playerStats["{{ game.homeTeam.id }}"];
         var awaySkaters = playerStats["{{ game.awayTeam.id }}"];
         create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}");
         create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}");
+
+        //shot graph
+        var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
+        shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}");
     });
 
     $('.filter-options').click(function(e) {
