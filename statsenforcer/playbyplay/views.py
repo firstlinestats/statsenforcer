@@ -18,8 +18,8 @@ def game(request, game_pk):
     context["form"] = forms.GameForm()
     teamStrengths = None
     scoreSituation = None
-    hsc = None
-    asc = None
+    hsc = 0
+    asc = 0
     period = None
     if request.method == "GET":
         context["form"] = forms.GameForm(request.GET)
@@ -123,11 +123,10 @@ def game(request, game_pk):
             scoreSituation=scoreSituation,
             period=period)
 
-        context["shotData"] = {
+        shotData = {
             "home" : [],
             "away" : []
         }
-
         for play in context["playbyplay"]:
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
@@ -142,7 +141,7 @@ def game(request, game_pk):
                     if xcoord < 0 and xcoord is not None:
                         xcoord = abs(xcoord)
                         ycoord = ycoord
-                    context["shotData"]["home"].append({"x": xcoord,
+                    shotData["home"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
                 elif team == context["game"].awayTeam.id and awayinclude:
@@ -151,10 +150,10 @@ def game(request, game_pk):
                     if xcoord > 0:
                         xcoord = -xcoord
                         ycoord = -ycoord
-                    context["shotData"]["away"].append({"x": xcoord,
+                    shotData["away"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
-        context["shotdatajson"] = json.dumps(context["shotData"], cls=DjangoJSONEncoder)
+        context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
        
 
         context["teamstats"] = context["teamstats"].values()
