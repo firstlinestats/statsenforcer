@@ -16,11 +16,11 @@ def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
     context["form"] = forms.GameForm()
-    teamStrengths = None
-    scoreSituation = None
+    teamStrengths = "all"
+    scoreSituation = "all"
     hsc = 0
     asc = 0
-    period = None
+    period = "all"
     if request.method == "GET":
         context["form"] = forms.GameForm(request.GET)
         if context["form"].is_valid():

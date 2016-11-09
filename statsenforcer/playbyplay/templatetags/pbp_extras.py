@@ -3,7 +3,30 @@ from django import template
 from fancystats import constants
 from fancystats import player
 
+from playbyplay.forms import TEAMSTRENGTHS_CHOICES, SCORESITUATION_CHOICES, PERIOD_CHOICES
+
 register = template.Library()
+
+def find_value(default, key, cd, CHOICES):
+    if key in cd:
+        for choice in CHOICES:
+            if choice[0] == cd[key]:
+                default = choice[1]
+                break
+    return default
+
+@register.filter
+def format_form_state(form):
+    cd = form.cleaned_data
+    teamstrengths = find_value("All Strengths", "teamstrengths", cd, TEAMSTRENGTHS_CHOICES)
+    scoringsituations = find_value("All Scoring Situations", "scoringsituation", cd, SCORESITUATION_CHOICES)
+    period = find_value("All Periods", "period", cd, PERIOD_CHOICES)
+    if teamstrengths == "All":
+        teamstrengths = "All Team Strengths"
+    scoring = "{} Scoring Situations".format(scoringsituations)
+    periods = get_period(period)
+    default = "{}, {}, {}".format(teamstrengths, scoring, periods)
+    return default
 
 @register.filter
 def player_position(position):
@@ -19,6 +42,10 @@ def get_item(dictionary, key):
 
 @register.filter
 def get_period(period):
+    try:
+        period = int(period)
+    except:
+        pass
     if period == 1:
         periodTime = "1st Period"
     elif period == 2:
