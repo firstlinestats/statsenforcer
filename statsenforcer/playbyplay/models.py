@@ -89,14 +89,15 @@ class PlayByPlay(models.Model):
 
 
 class PlayMedia(models.Model):
-    play = models.ForeignKey(PlayByPlay)
+    game = models.ForeignKey(Game)
+    play = models.ForeignKey(PlayByPlay, null=True, blank=True)
     external_id = models.IntegerField()
     mediatype = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     blurb = models.CharField(max_length=200)
     description = models.TextField()
     duration = models.CharField(max_length=200)
-    image = models.ImageField(upload_to="preview")
+    image = models.ImageField(upload_to="preview", null=True, blank=True)
 
 
 class PlayerGameStats(models.Model):
