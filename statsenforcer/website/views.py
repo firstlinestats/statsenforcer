@@ -5,6 +5,14 @@ from team.models import Team, SeasonStats
 import datetime
 import json
 from playbyplay.templatetags.pbp_extras import get_period
+import pytz
+
+local_tz = pytz.timezone('US/Eastern')
+
+
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt) # .normalize might be unnecessary
 # Create your views here.
 
 def index(request):
@@ -38,7 +46,7 @@ def games(request, gamedate):
     except Exception as e:
         print e
         return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format'}, status=400)
-    games = Game.objects.filter(gameState__in=["3", "4"])
+    games = Game.objects.filter(dateTime__gte=gamedate - datetime.timedelta(hours=12), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
     content["date"] = datetime.datetime.strftime(gamedate, dateformat)
     content["yesterday"] = datetime.datetime.strftime(gamedate - datetime.timedelta(hours=24), dateurlformat)
     content["tomorrow"] = datetime.datetime.strftime(gamedate + datetime.timedelta(hours=24), dateurlformat)
@@ -51,23 +59,31 @@ def games(request, gamedate):
         gd["awayScore"] = game.awayScore
         gd["homeTeamAbbreviation"] = game.homeTeam.abbreviation
         gd["awayTeamAbbreviation"] = game.awayTeam.abbreviation
-        lastPlay = PlayByPlay.objects.filter(gamePk=game).latest("eventIdx")
-        pt = str(lastPlay.periodTime)[:-3].split(":")
-        minutes = 20 - int(pt[0])
-        seconds = 60 - int(pt[1])
-        if seconds == 60:
-            seconds = 0
+        if game.gameState in ["3", "4"]:
+            lastPlay = PlayByPlay.objects.filter(gamePk=game).latest("eventIdx")
+            pt = str(lastPlay.periodTime)[:-3].split(":")
+            minutes = 20 - int(pt[0])
+            seconds = 60 - int(pt[1])
+            if seconds == 60:
+                seconds = 0
+            else:
+                minutes -= 1
+            minutes = str(minutes)
+            seconds = str(seconds)
+            if len(minutes) == 1:
+                minutes = "0{}".format(minutes)
+            if len(seconds) == 1:
+                seconds = "0{}".format(seconds)
+            periodTimeString = "{}:{}".format(minutes, seconds)
+            periodVal = get_period(lastPlay.period)
+            if periodTimeString != "00:00":
+                gd["dateTime"] = "{} {}".format(periodVal, periodTimeString)
+            else:
+                gd["dateTime"] = "End of {}".format(periodVal)
+        elif game.gameState in ["5", "6", "7"]:
+            gd["dateTime"] = "Final"
         else:
-            minutes -= 1
-        minutes = str(minutes)
-        seconds = str(seconds)
-        if len(minutes) == 1:
-            minutes = "0{}".format(minutes)
-        if len(seconds) == 1:
-            seconds = "0{}".format(seconds)
-        periodTimeString = "{}:{}".format(minutes, seconds)
-        periodVal = get_period(lastPlay.period)
-        gd["dateTime"] = "{} {}".format(periodVal, periodTimeString)
+            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game.dateTime), "%b %d, %I:%M %p %Z")
 
         content["games"].append(gd)
     return JsonResponse(content)
