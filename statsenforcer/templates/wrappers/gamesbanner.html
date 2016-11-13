@@ -28,6 +28,12 @@
                         var awayTeam = "<img class=\"pull-left\" height=\"17\" width=\"17\" src='/static/img/team/" + game["awayTeamAbbreviation"] + ".png'>" + game["awayTeamAbbreviation"];
                         var homeTeam = "<img class=\"pull-right\" height=\"17\" width=\"17\" src='/static/img/team/" + game["homeTeamAbbreviation"] + ".png'>" + game["homeTeamAbbreviation"];
                         gameText = game["dateTime"] + "<br /><div style=\"width:80%;margin:auto;\"><div class=\"clearfix\">" + awayTeam + " " + game["awayScore"] + " - " + game["homeScore"] + " " + homeTeam + "</div></div>";
+                        if (game["live"])
+                            gameText += "<span class=\"label label-danger\">Live</span>";
+                        else if (game["finished"])
+                            gameText += "<span class=\"label label-success\">Final</span>";
+                        else
+                            gameText += "<span class=\"label label-primary\">Scheduled</span>";
                         gameData["text"] = gameText
                         divs.push(gameData);
                     }
@@ -35,7 +41,7 @@
                     for (var divid in divs) {
                         var div = divs[divid]["text"];
                         var hasGamePage = divs[divid]["hasGamePage"];
-                        carousel.append("<a class=\"card card-carousel\" href=\"/games/" + divs[divid]["gameId"] + "\"><div><p>" + div + "</p></div></a>");
+                        carousel.append("<a class=\"card card-carousel\" href=\"/games/" + divs[divid]["gameId"] + "\"><div><p style=\"line-height:100%;\">" + div + "</p></div></a>");
                     }
                     $('.autoplay').slick({
                         arrows: true,
