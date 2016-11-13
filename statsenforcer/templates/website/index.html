@@ -4,6 +4,91 @@
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
+<!--[if !IE]><!-->
+<style>
+
+/*
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+@media
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+    /* Force table to not be like tables anymore */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr { border: 1px solid #ccc; }
+
+    tr:nth-of-type(odd) { 
+        background: #eee; 
+    }
+
+    td {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50% !important;
+        min-height: 20px;
+        text-align: left !important;
+    }
+
+    td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    /*
+    Label the data
+    */
+    td:nth-of-type(1):before { content: "Game Date"; }
+    td:nth-of-type(2):before { content: "Session"; }
+    td:nth-of-type(3):before { content: "Home"; }
+    td:nth-of-type(4):before { content: "Score"; }
+    td:nth-of-type(5):before { content: "Away"; }
+    td:nth-of-type(6):before { content: "Corsi"; }
+    td:nth-of-type(7):before { content: "Status"; }
+    td:nth-of-type(8):before { content: "Start Time"; }
+    td:nth-of-type(9):before { content: "End Time"; }
+    td:nth-of-type(10):before { content: "View Game"; }
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+    body {
+        padding: 0;
+        margin: 0;
+        width: 320px; }
+    }
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    body {
+        width: 495px;
+    }
+}
+
+</style>
+<!--<![endif]-->
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -12,37 +97,39 @@
                 <div class="card">
                     <div class="content">
                         <h3>2016 - 2017 Games</h3>
-                        <table id="games" class="table responsive nowrap">
-                            <thead>
-                                <th>Game Date</th>
-                                <th>Session</th>
-                                <th>Home</th>
-                                <th class="text-center">Score</th>
-                                <th>Away</th>
-                                <th>Corsi</th>
-                                <th>Status</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th></th>
-                            </thead>
+                        <div class="table-responsive">
+                            <table id="games" class="table responsive nowrap">
+                                <thead>
+                                    <th>Game Date</th>
+                                    <th>Session</th>
+                                    <th>Home</th>
+                                    <th class="text-center">Score</th>
+                                    <th>Away</th>
+                                    <th>Corsi</th>
+                                    <th>Status</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th></th>
+                                </thead>
 
-                            <tbody>
-                            {% for game in games %}
-                              <tr>
-                                <td>{{ game.dateTime|date }}</td>
-                                <td>{{ game.gameType|gameType }}</td>
-                                <td><img height="17" width="17" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a class ='text-center'href="/teams/{{ game.homeTeam.teamName.split|join:'-' }}">{{ game.homeTeam.teamName }}</a></td>
-                                <td class="text-center">{{ game.homeScore }} - {{ game.awayScore }}</td>
-                                <td><img height="17" width="17" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a href="/teams/{{ game.awayTeam.teamName.split|join:'-' }}">{{ game.awayTeam.teamName }}</a></td>
-                                <td>{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
-                                <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
-                                <td>{{ game.dateTime|time }}</td>
-                                <td>{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
-                                <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
-                              </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                <tbody>
+                                {% for game in games %}
+                                  <tr>
+                                    <td>{{ game.dateTime|date }}</td>
+                                    <td>{{ game.gameType|gameType }}</td>
+                                    <td><img height="17" width="17" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a class ='text-center'href="/teams/{{ game.homeTeam.teamName.split|join:'-' }}">{{ game.homeTeam.teamName }}</a></td>
+                                    <td class="text-center">{{ game.homeScore }} - {{ game.awayScore }}</td>
+                                    <td><img height="17" width="17" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a href="/teams/{{ game.awayTeam.teamName.split|join:'-' }}">{{ game.awayTeam.teamName }}</a></td>
+                                    <td>{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
+                                    <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
+                                    <td>{{ game.dateTime|time }}</td>
+                                    <td>{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
+                                    <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
+                                  </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                 </div>
