@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+
+from playbyplay.templatetags.pbp_extras import get_period
 from playbyplay.models import Game, PlayByPlay
 from team.models import Team, SeasonStats
+
 import datetime
 import json
-from playbyplay.templatetags.pbp_extras import get_period
 import pytz
+
+from fancystats.constants import gameStates
 
 local_tz = pytz.timezone('US/Eastern')
 
@@ -46,21 +50,19 @@ def games(request, gamedate):
     except Exception as e:
         print e
         return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format'}, status=400)
-    games = Game.objects.filter(dateTime__gte=gamedate - datetime.timedelta(hours=12), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
+    games = Game.objects.values("gamePk", "homeTeam__abbreviation", "awayTeam__abbreviation", "homeScore", "awayScore", "dateTime", "gameState").filter(dateTime__gte=gamedate - datetime.timedelta(hours=12), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
     content["date"] = datetime.datetime.strftime(gamedate, dateformat)
     content["yesterday"] = datetime.datetime.strftime(gamedate - datetime.timedelta(hours=24), dateurlformat)
     content["tomorrow"] = datetime.datetime.strftime(gamedate + datetime.timedelta(hours=24), dateurlformat)
     for game in games:
         gd = {}
-        gd["gameId"] = game.gamePk
-        gd["homeTeam"] = game.homeTeam.teamName
-        gd["awayTeam"] = game.awayTeam.teamName
-        gd["homeScore"] = game.homeScore
-        gd["awayScore"] = game.awayScore
-        gd["homeTeamAbbreviation"] = game.homeTeam.abbreviation
-        gd["awayTeamAbbreviation"] = game.awayTeam.abbreviation
-        if game.gameState in ["3", "4"]:
-            lastPlay = PlayByPlay.objects.filter(gamePk=game).latest("eventIdx")
+        gd["gameId"] = game["gamePk"]
+        gd["homeScore"] = game["homeScore"]
+        gd["awayScore"] = game["awayScore"]
+        gd["homeTeamAbbreviation"] = game["homeTeam__abbreviation"]
+        gd["awayTeamAbbreviation"] = game["awayTeam__abbreviation"]
+        if game["gameState"] in ["3", "4"]:
+            lastPlay = PlayByPlay.objects.filter(gamePk_id=game["gamePk"]).latest("eventIdx")
             pt = str(lastPlay.periodTime)[:-3].split(":")
             minutes = 20 - int(pt[0])
             seconds = 60 - int(pt[1])
@@ -80,10 +82,14 @@ def games(request, gamedate):
                 gd["dateTime"] = "{} {}".format(periodVal, periodTimeString)
             else:
                 gd["dateTime"] = "End of {}".format(periodVal)
-        elif game.gameState in ["5", "6", "7"]:
-            gd["dateTime"] = "Final"
+        elif game["gameState"] in ["5", "6", "7"]:
+            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
+            for gs in gameStates:
+                if gs[0] == game["gameState"]:
+                    gd["dateTime"] = gs[1]
+                    break
         else:
-            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game.dateTime), "%b %d, %I:%M %p %Z")
+            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
 
         content["games"].append(gd)
     return JsonResponse(content)
