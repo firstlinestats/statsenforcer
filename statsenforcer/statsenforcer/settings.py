@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'playbyplay',
     'team',
     'player',
@@ -129,3 +130,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
 STATIC_URL = '/static/'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_ACCESS_KEY_ID = cred.AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = cred.AWS_SECRET_ACCESS_KEY
+AWS_STORAGE_BUCKET_NAME = cred.AWS_STORAGE_BUCKET_NAME
+AWS_QUERYSTRING_AUTH = False

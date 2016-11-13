@@ -88,6 +88,17 @@ class PlayByPlay(models.Model):
         return self.gamePk.homeTeam.shortName + " vs. " + self.gamePk.awayTeam.shortName + " on " + str(self.gamePk.dateTime) + " Play: " + str(self.eventId)
 
 
+class PlayMedia(models.Model):
+    play = models.ForeignKey(PlayByPlay)
+    external_id = models.IntegerField()
+    mediatype = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
+    blurb = models.CharField(max_length=200)
+    description = models.TextField()
+    duration = models.CharField(max_length=200)
+    image = models.ImageField(upload_to="preview")
+
+
 class PlayerGameStats(models.Model):
     player = models.ForeignKey("player.Player")
     game = models.ForeignKey(Game)

@@ -696,10 +696,11 @@ def main():
                 else:
                     startday = todaycheck
                 todaysgames = pbpmodels.Game.objects.filter(dateTime__gte=startday, dateTime__lte=datecheck)
-                sendemail.send_update_email(todaysgames)
-                current_games = pbpmodels.Game.objects.filter(dateTime__gte=datecheck-datetime.timedelta(7), dateTime__lte=datecheck)
-                todaycheck = datecheck
-                skip_initial = True
+                if len(todaysgames) > 0:
+                    sendemail.send_update_email(todaysgames)
+                    current_games = pbpmodels.Game.objects.filter(dateTime__gte=datecheck-datetime.timedelta(7), dateTime__lte=datecheck)
+                    todaycheck = datecheck
+                    skip_initial = True
             if seconds > 0 and not skip_initial:
                 time.sleep(seconds)
             else:
