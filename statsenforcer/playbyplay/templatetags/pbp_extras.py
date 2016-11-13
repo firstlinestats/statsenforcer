@@ -18,12 +18,16 @@ def find_value(default, key, cd, CHOICES):
 @register.filter
 def format_form_state(form):
     cd = form.cleaned_data
-    teamstrengths = find_value("All Strengths", "teamstrengths", cd, TEAMSTRENGTHS_CHOICES)
-    scoringsituations = find_value("All Scoring Situations", "scoringsituation", cd, SCORESITUATION_CHOICES)
+    teamstrengths = find_value("All Team Strengths", "teamstrengths", cd, TEAMSTRENGTHS_CHOICES)
+    scoringsituations = find_value("All Scoring Situations", "scoresituation", cd, SCORESITUATION_CHOICES)
     period = find_value("All Periods", "period", cd, PERIOD_CHOICES)
     if teamstrengths == "All":
         teamstrengths = "All Team Strengths"
-    scoring = "{} Scoring Situations".format(scoringsituations)
+    if scoringsituations == "All":
+        scoringsituations = "All Scoring Situations"
+    if period == "All":
+        period = "All Periods"
+    scoring = "{}".format(scoringsituations)
     periods = get_period(period)
     default = "{}, {}, {}".format(teamstrengths, scoring, periods)
     return default
@@ -45,7 +49,7 @@ def get_period(period):
     try:
         period = int(period)
     except:
-        pass
+        return period
     if period == 1:
         periodTime = "1st Period"
     elif period == 2:
