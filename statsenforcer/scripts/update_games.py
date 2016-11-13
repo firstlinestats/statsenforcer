@@ -273,6 +273,12 @@ def find_current_games():
     return current_games
 
 
+def find_past_games():
+    today = datetime.datetime.now(tz=pytz.UTC)
+    week_games = pbpmodels.Game.objects.filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(7))
+    return week_games
+
+
 @transaction.atomic
 def findStandings(season):
 
@@ -640,6 +646,7 @@ def update_game(game, players):
 def main():
     # Find games that are current
     current_games = find_current_games()
+    todaycheck = None
     # set a test for an instance where we don't want to keep running?
     keep_running = True
     players = {}
@@ -674,13 +681,39 @@ def main():
             today = datetime.datetime.now(tz=pytz.UTC)
             diff = gameTime - today
             seconds = diff.total_seconds() - 60
-            if seconds > 0:
+            datecheck = datetime.datetime.today()
+            skip_initial = False
+            if todaycheck is not None:
+                diff = datecheck - todaycheck
+                diff = diff.total_seconds()
+            else:
+                diff = 12 * 60 * 60 + 1  # Force an initial email
+            # If it's been at least 12 hours since last email
+            if diff > 12 * 60 * 60:
+                # Run daily email check and make sure any corrections from past week are looked at
+                if todaycheck is None:
+                    startday = datecheck - datetime.timedelta(hours=12)
+                else:
+                    startday = todaycheck
+                todaysgames = pbpmodels.Game.objects.filter(dateTime__gte=startday, dateTime__lte=datecheck)
+                sendemail.send_update_email(todaysgames)
+                current_games = pbpmodels.Game.objects.filter(dateTime__gte=datecheck-datetime.timedelta(7), dateTime__lte=datecheck)
+                todaycheck = datecheck
+                skip_initial = True
+            if seconds > 0 and not skip_initial:
                 time.sleep(seconds)
             else:
                 time.sleep(60)
         else:
             # sleep for one minute
             time.sleep(60)
+
+
+def test():
+    datecheck = datetime.datetime.today()
+    startday = datecheck - datetime.timedelta(1.5)
+    todaysgames = pbpmodels.Game.objects.filter(dateTime__gte=startday, dateTime__lte=datecheck)
+    sendemail.send_update_email(todaysgames)
 
 
 def fix_missing():

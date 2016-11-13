@@ -7,6 +7,18 @@
     background: linear-gradient(60deg, #0A0A0A, #000000);
 }
 
+.card-carousel {
+    min-height: 100px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    text-align:center;
+    vertical-align: middle;
+}
+
+.card-carousel p {
+    margin-top: 30px;
+}
+
 a {
     color: #1D9EB5;
 }
@@ -17,11 +29,11 @@ a {
 }
 
 .fls-logo {
-      height: 60px;
-      margin-top: -15px;
+    height: 60px;
+    margin-top: -15px;
 }
 .navbar-brand>img {
-      display: -webkit-inline-box;
+    display: -webkit-inline-box;
 }
 
 .bs-component {
@@ -32,12 +44,12 @@ a {
 }
 
 .filter-collapsed {
-  transform:rotate(0deg);
-  -ms-transform:rotate(0deg); /* IE 9 */
-  -webkit-transform:rotate(0deg); /* Safari and Chrome */
+    transform:rotate(0deg);
+    -ms-transform:rotate(0deg); /* IE 9 */
+    -webkit-transform:rotate(0deg); /* Safari and Chrome */
 }
 .filter-expanded {
-  transform:rotate(90deg);
-  -ms-transform:rotate(90deg); /* IE 9 */
-  -webkit-transform:rotate(90deg); /* Safari and Chrome */
+    transform:rotate(90deg);
+    -ms-transform:rotate(90deg); /* IE 9 */
+    -webkit-transform:rotate(90deg); /* Safari and Chrome */
 }
