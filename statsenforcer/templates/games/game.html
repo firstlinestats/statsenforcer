@@ -6,6 +6,7 @@
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
+<link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -299,6 +300,7 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
+<script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/shotChart.js" %}"></script>
@@ -315,11 +317,37 @@
         var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
             "iDisplayLength": 25,
             "bPaginate": false,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            }
         });
 
         $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
             "iDisplayLength": 25,
             "bPaginate": false,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            }
+        });
+
+        $('#teamstats').DataTable({
+            "iDisplayLength": 25,
+            "bPaginate": false,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            }
+        });
+
+        $('#goalietable').DataTable({
+            "iDisplayLength": 25,
+            "bPaginate": false,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            }
         });
 
 
