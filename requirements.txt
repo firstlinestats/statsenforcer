@@ -4,3 +4,4 @@ pytz
 beautifulsoup4
 Pillow
 django-storages
+boto
