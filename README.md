@@ -10,6 +10,9 @@ Enforcing the fancystats.
   * libmysqlclient-dev
   * python-pip
   * python-virtualenv (if using virtualenv)
+  * python-dev
+  * libffi-dev
+  * libssl-dev
   * libjpeg-dev
 3. If using virtualenv, enable first, and the install the requirements.txt file using pip
 4. Obtain or create a cred.py file and including in the fls folder along with settings.py. This file should look something like:

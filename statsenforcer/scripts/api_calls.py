@@ -2,6 +2,7 @@ import gzip
 
 from StringIO import StringIO
 
+import urllib
 from urllib2 import Request, urlopen, URLError
 
 import api_urls
@@ -9,6 +10,11 @@ import api_urls
 headers = {
     "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
 }
+
+
+def get_game_media(id=None):
+    url = api_urls.MEDIA_URL.format(id)
+    return get_url(url)
 
 
 def get_game_timestamps(id=None):
@@ -90,3 +96,7 @@ def get_url(url):
         print e
         return "{}"
     return html
+
+
+def get_image(url, image_name):
+    return urllib.urlretrieve(url, image_name)

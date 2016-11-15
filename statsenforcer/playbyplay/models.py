@@ -91,13 +91,19 @@ class PlayByPlay(models.Model):
 class PlayMedia(models.Model):
     game = models.ForeignKey(Game)
     play = models.ForeignKey(PlayByPlay, null=True, blank=True)
-    external_id = models.IntegerField()
+    external_id = models.IntegerField(primary_key=True)
     mediatype = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     blurb = models.CharField(max_length=200)
     description = models.TextField()
     duration = models.CharField(max_length=200)
     image = models.ImageField(upload_to="preview", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Media Files"
+
+    def __unicode__(self):
+        return "Media for Game: {} and Play: {}".format(self.game.gamePk, self.play.id)
 
 
 class PlayerGameStats(models.Model):
