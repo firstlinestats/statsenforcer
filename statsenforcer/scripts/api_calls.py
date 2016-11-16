@@ -2,6 +2,9 @@ import gzip
 
 from StringIO import StringIO
 
+from PIL import Image
+from io import BytesIO
+import requests
 import urllib
 from urllib2 import Request, urlopen, URLError
 
@@ -98,5 +101,7 @@ def get_url(url):
     return html
 
 
-def get_image(url, image_name):
-    return urllib.urlretrieve(url, image_name)
+def get_image(url):
+    r = requests.get(url)
+    i = BytesIO(r.content)
+    return i

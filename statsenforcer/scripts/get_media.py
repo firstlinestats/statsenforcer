@@ -28,27 +28,34 @@ headers = {
 
 
 def game_media(gameid):
-    #content = api_calls.get_game_media(gameid)
-    game = pbpmodels.Game.objects.get(gamePk=gameid)
-    fp = open("/vagrant/content.html")
-    content = fp.read()
-    fp.close()
-    content = json.loads(content)
-    if "media" not in content:
-        #sendemail.send_error_email("Missing media data in game {}".format(gameid))
-        raise Exception("Missing media!")
-    elif "epg" not in content["media"]:
-        #sendemail.send_error_email("Missing epg from media in game {}".format(gameid))
-        raise Exception("Missing epg!")
-    for element in content["media"]["epg"]:
-        # Save Extended highlights
-        if element["title"] in ["Extended Highlights", "Recap", "Power Play"]:
-            for jmedia in element["items"]:
-                create_highlight(jmedia, game)
-    for milestone in content["media"]["milestones"]["items"]:
-        if milestone["highlight"]:
-            play = pbpmodels.PlayByPlay.objects.get(gamePk=game, eventIdx=milestone["statsEventId"])
-            create_highlight(element, game, play)
+    nogame = False
+    try:
+        content = api_calls.get_game_media(gameid)
+    except:
+        nogame = True
+    if not nogame:
+        game = pbpmodels.Game.objects.get(gamePk=gameid)
+        content = json.loads(content)
+        if "media" not in content:
+            #sendemail.send_error_email("Missing media data in game {}".format(gameid))
+            return
+        elif "epg" not in content["media"]:
+            #sendemail.send_error_email("Missing epg from media in game {}".format(gameid))
+            return
+        for element in content["media"]["epg"]:
+            # Save Extended highlights
+            if element["title"] in ["Extended Highlights", "Recap", "Power Play"]:
+                for jmedia in element["items"]:
+                    create_highlight(jmedia, game)
+        if "milestones" not in content["media"] or "items" not in content["media"]["milestones"]:
+            return
+        for milestone in content["media"]["milestones"]["items"]:
+            if "highlight" in milestone and milestone["highlight"]:
+                try:
+                    play = pbpmodels.PlayByPlay.objects.get(gamePk=game, eventId=milestone["statsEventId"])
+                    create_highlight(milestone["highlight"], game, play)
+                except:
+                    print milestone["statsEventId"]
 
 
 def create_highlight(element, game=None, play=None):
@@ -68,13 +75,21 @@ def create_highlight(element, game=None, play=None):
         for cut in element["image"]["cuts"]:
             url = element["image"]["cuts"][cut]["src"]
             break
-    imgname = "{}.jpeg".format(media.external_id)
-    img_temp = NamedTemporaryFile(delete=True)
-    img_temp.write(api_calls.get_image(url, imgname))
-    img_temp.flush()
-    media.image.save(imgname, File(img_temp))
+    if created:
+        imgname = "{}.jpeg".format(media.external_id)
+        img = api_calls.get_image(url)
+        directory = ""
+        if game is not None:
+            yeardir = str(game.gamePk)[0:4]
+            gamedir = str(game.gamePk)[5:]
+            directory = "{}/{}/".format(yeardir, gamedir)
+        media.image.save("{}{}".format(directory, imgname), img)
     media.save()
 
 
 if __name__ == "__main__":
-    game_media(2016020220)
+    ignoregameids = set(pbpmodels.PlayMedia.objects.values_list("game_id", flat=True).all())
+    for game in pbpmodels.Game.objects.exclude(gamePk__in=ignoregameids).filter(gamePk__gte=2015020501, gameState__in=["5", "6", "7"]):
+        print game.gamePk
+        game_media(game.gamePk)
+        break

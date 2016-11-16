@@ -31,6 +31,7 @@ import api_calls
 
 import fancystats
 import sendemail
+from get_media import game_media
 
 headers = {
     "User-Agent" : "Mozilla/5.0 (X11; U; Linux i686; " + \
@@ -660,6 +661,11 @@ def main():
             try:
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
+                try:
+                    game_media(game.gamePk)
+                except:
+                    # no media, yet...
+                    pass
                 # If the game has finished, compile the final stats
                 if finished:
                     fgame = {"gamePk": game.gamePk, "homeTeam_id": game.homeTeam_id,
