@@ -90,7 +90,7 @@ class PlayByPlay(models.Model):
 
 class PlayMedia(models.Model):
     game = models.ForeignKey(Game)
-    play = models.ForeignKey(PlayByPlay, null=True, blank=True)
+    play = models.IntegerField(null=True, blank=True, db_index=True)
     external_id = models.IntegerField(primary_key=True)
     mediatype = models.CharField(max_length=200)
     title = models.CharField(max_length=200)

@@ -41,6 +41,7 @@
                         divs.push(gameData);
                     }
                     var carousel = $("#gamesCarousel");
+                    carousel.empty();
                     for (var divid in divs) {
                         var div = divs[divid]["text"];
                         var hasGamePage = divs[divid]["hasGamePage"];
@@ -86,7 +87,7 @@
                         $("#gamesCarousel").empty();
                         $('.autoplay').slick('unslick');
                         updateData("today");
-                    }, 60050);
+                    }, update_time);
                 }
             }
         })
