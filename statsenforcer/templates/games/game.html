@@ -297,6 +297,9 @@
     </div>
 
 </div>
+<div id="canvasArea">
+    <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
+</div>
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
@@ -305,6 +308,10 @@
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/shotChart.js" %}"></script>
 <script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
+<script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script>
     $(document).ready(function() {
         
@@ -361,6 +368,13 @@
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
         shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}");
+
+        savePNG("#shotChartButton", "#shotChart");
+        //savePNG("#saChartButton", "#saChart");
+        //savePNG("#scChartButton", "#scChart");
+        savePNG("#home-corsiButton", "#home-corsi");
+        savePNG("#away-corsiButton", "#away-corsi");
+        //savePNG("#coButton", "#co");
     });
 
     $('.filter-options').click(function(e) {
