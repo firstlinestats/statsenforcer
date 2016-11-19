@@ -16,22 +16,53 @@
                         </h4>
                         <div class="row">
                             <div class="col-md-12">
-                                <form id="gameFilter" class="collapse" action="" method="GET">
-                                    <div class="form-group">
-                                        {{ form.teamstrengths.label }}
-                                        {{ form.teamstrengths }}
+                                <form id="gamesFilter">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            {{ form.teams }}
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    {{ form.startDate }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            {{ form.seasons }}
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="id_date_end">End Date:</label>
+                                                    <input class="form-control input-sm datepicker" id="id_date_end" name="date_end" type="text" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    {{ form.venues }}
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group session-checkbox">
+                                                        {{ form.gameTypes }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group text-right">
+                                                        <input type="reset" class="btn btn-danger btn-sm"></input>
+                                                        <input type="submit" href="#" class="btn btn-primary btn-sm"></input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        {{ form.scoresituation.label }}
-                                        {{ form.scoresituation }}
-                                    </div>
-                                    <div class="form-group">
-                                        {{ form.period.label }}
-                                        {{ form.period }}
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
-                                    </div>
+                                    
                                 </form>
                             </div>
                         </div>
@@ -85,6 +116,7 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
+<script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
         $(document).ready(function() {
 

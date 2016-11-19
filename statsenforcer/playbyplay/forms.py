@@ -1,5 +1,8 @@
 from django import forms
 
+from team import models as tmodels
+import models
+
 TEAMSTRENGTHS_CHOICES = (
     ("all", "All"),
     ("even", "Even Strength 5v5"),
@@ -44,3 +47,21 @@ class GameForm(forms.Form):
         choices=PERIOD_CHOICES,
         widget=forms.Select(attrs={'class' : 'form-control input-md'})
     )
+
+
+class GamesForm(forms.Form):
+    teams = forms.ModelChoiceField(
+        required=False,
+        queryset=tmodels.Team.objects.all(), empty_label="All")
+    startDate = forms.DateField(required=False)
+    seasons = forms.ChoiceField(
+        required=False,
+        choices=(("all", "All"), ) + tuple((season, season) for season in models.Game.objects.order_by('season').values_list('season', flat=True).distinct()))
+    endDate = forms.DateField(required=False)
+    venues = forms.ModelChoiceField(
+        required=False,
+        queryset=tmodels.Venue.objects.all(), empty_label="All")
+    gameTypes = forms.ChoiceField(
+        required=False,
+        choices=(("all", "All"), ) + tuple((gt, gt) for gt in models.Game.objects.order_by('gameType').values_list('gameType', flat=True).distinct()),
+        widget=forms.CheckboxSelectMultiple)

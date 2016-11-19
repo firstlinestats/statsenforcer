@@ -163,8 +163,10 @@ def game(request, game_pk):
 def games(request):
     games = Game.objects.filter(season=20162017, gameState=6).order_by('-dateTime', '-gamePk')[:30]
 
+    form = forms.GamesForm()
     context = {
         'active_page': 'games',
-        'games': games
+        'games': games,
+        'form': form,
     }
     return render(request, 'games/game_list.html', context)
