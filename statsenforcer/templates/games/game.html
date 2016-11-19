@@ -362,12 +362,12 @@
         var playerStats = JSON.parse("{{ playersjson | escapejs }}");
         var homeSkaters = playerStats["{{ game.homeTeam.id }}"];
         var awaySkaters = playerStats["{{ game.awayTeam.id }}"];
-        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}");
-        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}");
+        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}", "{{ form|format_form_state }}");
+        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}", "{{ form|format_form_state }}");
 
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
-        shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}");
+        shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}", "{{ form|format_form_state }}");
 
         savePNG("#shotChartButton", "#shotChart");
         //savePNG("#saChartButton", "#saChart");

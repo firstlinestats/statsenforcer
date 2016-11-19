@@ -1,4 +1,4 @@
-function create_corsi_events(alldata, divid, teamname) {
+function create_corsi_events(alldata, divid, teamname, situations) {
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = (900 - margin.left) / 2 - margin.left - margin.right,
     height = width;
