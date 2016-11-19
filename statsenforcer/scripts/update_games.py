@@ -694,8 +694,8 @@ def main():
                 diff = diff.total_seconds()
             else:
                 diff = 12 * 60 * 60 + 1  # Force an initial email
-            # If it's been at least 12 hours since last email
-            if diff > 12 * 60 * 60:
+            # If it's been at least 12 hours since last email, check to see if anymore games today
+            if diff > 12 * 60 * 60 and seconds > 4 * 60 * 60:
                 # Run daily email check and make sure any corrections from past week are looked at
                 if todaycheck is None:
                     startday = datecheck - datetime.timedelta(hours=12)
