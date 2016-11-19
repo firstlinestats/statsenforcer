@@ -1,5 +1,7 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import pytz
 import json
@@ -44,6 +46,7 @@ def game(request, game_pk):
         goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         for p in goalieteams:
             p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1, p["player__fullName"], p["player__primaryPositionCode"]]
+        print p2t
 
         pip_data = models.PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player__primaryPositionCode", "player_id").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
         pipdict = {}
@@ -161,12 +164,73 @@ def game(request, game_pk):
 
 
 def games(request):
-    games = Game.objects.filter(season=20162017, gameState=6).order_by('-dateTime', '-gamePk')[:30]
-
     form = forms.GamesForm()
+    cd = {'startDate': None, 'endDate': None, 'gameTypes': [],
+        'venues': [], 'teams': [], 'seasons': []}
+    if request.method == 'GET':
+        formcheck = False
+        if len(request.GET) > 1:
+            if "page" not in request.GET:
+                formcheck = True
+            else:
+                if len(request.GET) > 2:
+                    formcheck = True
+        if formcheck:
+            form = forms.GamesForm(request.GET)
+            if form.is_valid():
+                cd = form.cleaned_data
+                print cd
+            else:
+                form = forms.GamesForm()
+
+    games = Game.objects.values("gamePk", "dateTime", "homeTeam__abbreviation", "gameType",
+        "homeTeam__teamName", "awayTeam__abbreviation", "awayTeam__teamName", "homeScore",
+        "awayScore", "homeShots", "awayShots", "awayBlocked", "homeMissed", "homeBlocked",
+        "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7]).order_by('-gamePk')
+    if cd['startDate'] is not None:
+        print cd['startDate']
+        games = games.filter(dateTime__date__gte=cd['startDate'])
+    if cd['endDate'] is not None:
+        print cd['endDate']
+        games = games.filter(endDateTime__date__lte=cd['endDate'])
+    if len(cd['gameTypes']) > 0:
+        games = games.filter(gameType__in=cd['gameTypes'])
+    if len(cd['venues']) > 0:
+        games = games.filter(venue__in=cd['venues'])
+    if len(cd['teams']) > 0:
+        games = games.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    if len(cd['seasons']) > 0:
+        games = games.filter(season__in=cd['seasons'])
+    paginator = Paginator(games, 30)
+
+    page = request.GET.get('page')
+    try:
+        games = paginator.page(page)
+    except PageNotAnInteger:
+        page = 1
+        games = paginator.page(1)
+    except EmptyPage:
+        page = paginator.num_pages
+        games = paginator.page(paginator.num_pages)
+    page_range = games.paginator.page_range
+    page = int(page)
+    if len(page_range) > 5:
+        tpr = []
+        for p in page_range:
+            if page - p <= 2 and page - p >= 0:
+                tpr.append(p)
+            elif p - page >= 1 and p - page <= 4:
+                if len(tpr) < 5:
+                    tpr.append(p)
+                else:
+                    break
+        page_range = tpr
+
     context = {
         'active_page': 'games',
         'games': games,
         'form': form,
+        'page': page,
+        'page_range': page_range,
     }
     return render(request, 'games/game_list.html', context)

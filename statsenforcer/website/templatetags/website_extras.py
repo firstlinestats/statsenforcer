@@ -17,6 +17,13 @@ def get_cpm(player):
     return player["cf"] - player["ca"]
 
 
+@register.simple_tag
+def url_replace(request, field, value):
+    dict_ = request.GET.copy()
+    dict_[field] = value
+    return dict_.urlencode()
+
+
 @register.filter()
 def get_fpm(player):
     return player["ff"] - player["fa"]
@@ -81,11 +88,13 @@ def gameType(value):
 
 @register.filter()
 def checkOT(game):
-    try:
-        ot = models.GamePeriod.objects.get(game=game, period=4)
+    if type(game) != dict:
+        ot = models.GamePeriod.objects.filter(game=game, period=4).exists()
+    else:
+        ot = models.GamePeriod.objects.filter(game=game["gamePk"], period=4).exists()
+    if ot:
         return " (OT)"
-    except:
-        return ""
+    return ""
 
 
 @register.filter()

@@ -1,6 +1,7 @@
 {% extends "wrappers/wrapper.html" %}
 {% load website_extras %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 {% endblock %}
@@ -19,36 +20,45 @@
                                 <form id="gamesFilter">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            {{ form.teams }}
+                                            <label for="id_teams">Only Games Involving:</label>
+                                            {% render_field form.teams class+="form-control" %}
                                             <br />
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    {{ form.startDate }}
+                                                    <label for="id_date_start">Start Date:</label>
+                                                    {% render_field form.startDate class+="form-control datepicker" %}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            {{ form.seasons }}
+                                            <label for="id_seasons">Specify Seasons:</label>
+                                            {% render_field form.seasons class+="form-control" %}
                                             <br />
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <label for="id_date_end">End Date:</label>
-                                                    <input class="form-control input-sm datepicker" id="id_date_end" name="date_end" type="text" />
+                                                    {% render_field form.endDate class+="form-control datepicker" %}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    {{ form.venues }}
+                                                    <label for="id_venues">Specify Venues:</label>
+                                                    {% render_field form.venues class+="form-control" %}
                                                 </div>
                                             </div>
-                                            <br />
                                             <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group session-checkbox">
-                                                        {{ form.gameTypes }}
+                                                <div class="form-group session-checkbox">
+                                                    <label for="id_game_type">Game Types:</label>
+                                                    {% for g, glabel in form.gameTypes.field.choices %}
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="gameTypes" id="id_gameTypes_{{ forloop.counter }}" value="{{ g }}" {% if g in form.gameTypes.value %}checked{% endif %}>
+                                                            {{ glabel }}
+                                                        </label>
                                                     </div>
+                                                    {% endfor %}
                                                 </div>
                                             </div>
                                             <br />
@@ -93,9 +103,9 @@
                           <tr>
                             <td>{{ game.dateTime|date }}</td>
                             <td>{{ game.gameType|gameType }}</td>
-                            <td><img height="17" width="17" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a class ='text-center'href="/teams/{{ game.homeTeam.teamName.split|join:'-' }}">{{ game.homeTeam.teamName }}</a></td>
+                            <td><img height="17" width="17" src='{% with 'img/team/'|add:game.homeTeam__abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a class ='text-center'href="/teams/{{ game.homeTeam__teamName.split|join:'-' }}">{{ game.homeTeam__teamName }}</a></td>
                             <td class="text-center">{{ game.homeScore }} - {{ game.awayScore }}</td>
-                            <td><img height="17" width="17" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a href="/teams/{{ game.awayTeam.teamName.split|join:'-' }}">{{ game.awayTeam.teamName }}</a></td>
+                            <td><img height="17" width="17" src='{% with 'img/team/'|add:game.awayTeam__abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'><a href="/teams/{{ game.awayTeam__teamName.split|join:'-' }}">{{ game.awayTeam__teamName }}</a></td>
                             <td>{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
                             <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
                             <td>{{ game.dateTime|time }} EST</td>
@@ -105,6 +115,17 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <div class="text-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination text-center">
+                                <li{% if not games.has_previous %} class="disabled"{% endif %}><a href="{% if games.has_previous %}?{% url_replace request 'page' games.previous_page_number %}{% else %}#{% endif %}" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a></li>
+                                {% for pagenum in page_range %}
+                                <li {% if pagenum == page %}class="active disabled"{% endif %}><a href="{% if pagenum != game.page %}?{% url_replace request 'page' pagenum %}{% else %}#{% endif %}">{{ pagenum }}{% if pagenum == page %}<span class="sr-only">(current)</span>{% endif %}</a></li>
+                                {% endfor %}
+                                <li{% if not games.has_next %} class="disabled"{% endif %}><a href="{% if games.has_next %}?{% url_replace request 'page' games.next_page_number %}{% else %}#{% endif %}" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
 
                 </div>   

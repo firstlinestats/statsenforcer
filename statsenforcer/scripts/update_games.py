@@ -735,7 +735,16 @@ def fix_missing():
         finished = update_game(game, players)
 
 
+def reset_game(gamePk):
+    players = {}
+    tplayers = pmodels.Player.objects.all()
+    for t in tplayers:
+        players[t.id] = t
+    game = pbpmodels.Game.objects.get(gamePk=gamePk)
+    update_game(game, players)
+
 
 if __name__ == "__main__":
+    #reset_game(2016020259)
     main()
     #fix_missing()

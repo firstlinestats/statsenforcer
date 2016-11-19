@@ -57,3 +57,15 @@ a {
 #gamesCarousel {
     max-height: 200px;
 }
+
+.checkbox input[type=checkbox] {
+    opacity: 0;
+    position: absolute;
+    margin: 0;
+    z-index: -1;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    left: 0;
+    pointer-events: none;
+}

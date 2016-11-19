@@ -3,8 +3,6 @@ from django import template
 from fancystats import constants
 from fancystats import player
 
-from playbyplay.forms import TEAMSTRENGTHS_CHOICES, SCORESITUATION_CHOICES, PERIOD_CHOICES
-
 register = template.Library()
 
 def find_value(default, key, cd, CHOICES):
@@ -15,12 +13,13 @@ def find_value(default, key, cd, CHOICES):
                 break
     return default
 
+
 @register.filter
 def format_form_state(form):
     cd = form.cleaned_data
-    teamstrengths = find_value("All Team Strengths", "teamstrengths", cd, TEAMSTRENGTHS_CHOICES)
-    scoringsituations = find_value("All Scoring Situations", "scoresituation", cd, SCORESITUATION_CHOICES)
-    period = find_value("All Periods", "period", cd, PERIOD_CHOICES)
+    teamstrengths = find_value("All Team Strengths", "teamstrengths", cd, constants.TEAMSTRENGTHS_CHOICES)
+    scoringsituations = find_value("All Scoring Situations", "scoresituation", cd, constants.SCORESITUATION_CHOICES)
+    period = find_value("All Periods", "period", cd, constants.PERIOD_CHOICES)
     if teamstrengths == "All":
         teamstrengths = "All Team Strengths"
     if scoringsituations == "All":
