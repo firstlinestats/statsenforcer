@@ -135,17 +135,71 @@ and (max-device-width : 480px) {
 
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+                        <h2>Division Standings</h2>
+                        <div class="row">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h3 class="text-center">Eastern</h3>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h3 class="text-center">Western</h3>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Central" divisionVal="C" %}
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+<div id="canvasArea">
+    <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
+</div>
 
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
+<script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/teamColors.js" %}"></script>
+<script src="{% static "js/graphs/historicalStandings.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
+<script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script>
     $(document).ready(function() {
         $('#games').DataTable({
             "iDisplayLength": 15,
             "bSort": false
         });
+        var data = {{ divisions|safe }};
+        CreateHistorical("#Ahistorical", data["A"], "#currentA");
+        CreateHistorical("#Mhistorical", data["M"], "#currentM");
+        CreateHistorical("#Chistorical", data["C"], "#currentC");
+        CreateHistorical("#Phistorical", data["P"], "#currentP");
+        savePNG("#AhistoricalButton", "#Ahistorical");
+        savePNG("#MhistoricalButton", "#Mhistorical");
+        savePNG("#ChistoricalButton", "#Chistorical");
+        savePNG("#PhistoricalButton", "#Phistorical");
 
     });
 </script>

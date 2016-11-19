@@ -704,6 +704,7 @@ def main():
                 todaysgames = pbpmodels.Game.objects.filter(dateTime__gte=startday, dateTime__lte=datecheck)
                 if len(todaysgames) > 0:
                     sendemail.send_update_email(todaysgames)
+                    check_rosters()
                     current_games = pbpmodels.Game.objects.filter(dateTime__gte=datecheck-datetime.timedelta(7), dateTime__lte=datecheck)
                     todaycheck = datecheck
                     skip_initial = True
@@ -744,7 +745,38 @@ def reset_game(gamePk):
     update_game(game, players)
 
 
+def check_rosters():
+    teamids = tmodels.Team.objects.values_list("id", flat=True).filter(active=True)
+    rdata = api_calls.get_team_rosters([str(x) for x in teamids])
+    rdata = json.loads(rdata)
+    for team in rdata["teams"]:
+        roster = pmodels.Player.objects.filter(currentTeam_id=team["id"])
+        cplayers = {}
+        for player in team["roster"]["roster"]:
+            cplayers[player["person"]["id"]] = player["person"]["rosterStatus"]
+        for player in roster:
+            if player.id not in cplayers:
+                player.currentTeam = None
+                player.save()
+            else:
+                if cplayers[player.id] != player.rosterStatus:
+                    player.rosterStatus = cplayers[player.id]
+                    player.save()
+                cplayers.pop(player.id, None)
+        print "{} new players for {}".format(len(cplayers), team["teamName"])
+        for pid in cplayers:
+            print pid
+            try:
+                newplayer = pmodels.Player.objects.get(id=pid)
+                newplayer.currentTeam_id = team["id"]
+                newplayer.save()
+            except:
+                newplayer = ingest_player(json.loads(api_calls.get_player(pid))["people"][0])
+                newplayer.save()
+
+
 if __name__ == "__main__":
     #reset_game(2016020259)
     main()
+    #check_rosters()
     #fix_missing()

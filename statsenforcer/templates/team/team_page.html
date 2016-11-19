@@ -1,6 +1,7 @@
 {% extends "wrappers/wrapper.html" %}
 {% load website_extras %}
 {% load staticfiles %}
+{% block title %}{{ team.name }}{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 {% endblock %}

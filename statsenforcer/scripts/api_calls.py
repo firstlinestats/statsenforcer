@@ -14,6 +14,10 @@ headers = {
     "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
 }
 
+def get_team_rosters(ids):
+    url = api_urls.TEAMS.format(",".join(ids))
+    return get_url(url)
+
 
 def get_game_media(id=None):
     url = api_urls.MEDIA_URL.format(id)

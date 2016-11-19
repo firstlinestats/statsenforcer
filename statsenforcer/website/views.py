@@ -33,6 +33,22 @@ def index(request):
         'teams': standings
     }
 
+    historical = SeasonStats.objects.values("team__teamName",
+        "points", "date", "team__division").filter(season=max_date.season).order_by("date")
+    hstand = {}
+    for h in historical:
+        sdate = str(h["date"])
+        teamName = h["team__teamName"]
+        division = h["team__division"]
+        points = h["points"]
+        if division not in hstand:
+            hstand[division] = {}
+        if teamName not in hstand[division]:
+            hstand[division][teamName] = []
+        hstand[division][teamName].append({"date": sdate, "points": points})
+
+    context["divisions"] = json.dumps(hstand, ensure_ascii=True)
+
     return render(request, 'website/index.html', context)
 
 
@@ -43,12 +59,10 @@ def games(request, gamedate):
     try:
         if gamedate == "today":
             gamedate = datetime.datetime.today()
-            print gamedate
         else:
             gamedate = datetime.datetime.strptime(gamedate, dateurlformat)
         gameenddate = gamedate - datetime.timedelta(hours=36)
     except Exception as e:
-        print e
         return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format'}, status=400)
     games = Game.objects.values("gamePk", "homeTeam__abbreviation", "awayTeam__abbreviation", "homeScore", "awayScore", "dateTime", "endDateTime", "gameState").filter(dateTime__gte=gamedate - datetime.timedelta(hours=12), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
     content["date"] = datetime.datetime.strftime(gamedate, dateformat)
