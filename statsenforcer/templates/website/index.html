@@ -135,36 +135,41 @@ and (max-device-width : 480px) {
 
             </div>
         </div>
+        <br />
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="content">
-                        <h2>Division Standings</h2>
-                        <div class="row">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <h3 class="text-center">Eastern</h3>
+                        <h2 class="text-center">Division Standings</h2>
+                        <div class="card">
+                            <div class="row">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <h3 class="text-center">Eastern</h3>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
+                              </div>
+                              <div class="col-md-6">
+                                {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
-                          </div>
                         </div>
-                        <div class="row">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <h3 class="text-center">Western</h3>
+                        <div class="card">
+                            <div class="row">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <h3 class="text-center">Western</h3>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                {% include "website/division_table.html" with division="Central" divisionVal="C" %}
+                              </div>
+                              <div class="col-md-6">
+                                {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Central" divisionVal="C" %}
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
-                          </div>
                         </div>
                     </div>
                 </div>
