@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 import constants
+from fancystats import constants as fconstants
 
 
 class Venue(models.Model):
@@ -19,6 +20,34 @@ class Venue(models.Model):
             return self.name + ", " + self.city
         return self.name
 
+
+class TeamGameStats(models.Model):
+    game = models.ForeignKey('playbyplay.Game')
+    team = models.ForeignKey('team.Team')
+    period = models.CharField(max_length=4, choices=fconstants.PERIOD_CHOICES)
+    teamstrength = models.CharField(max_length=6, choices=fconstants.TEAMSTRENGTHS_CHOICES)
+    scoresituation = models.CharField(max_length=6, choices=fconstants.SCORESITUATION_CHOICES)
+    toi = models.IntegerField(blank=True, null=True)
+    scoringChancesFor = models.IntegerField(blank=True, null=True)
+    scoringChancesAgainst = models.IntegerField(blank=True, null=True)
+    highDangerScoringChancesFor = models.IntegerField(blank=True, null=True)
+    highDangerScoringChancesAgainst = models.IntegerField(blank=True, null=True)
+    offensiveZoneStartsFor = models.IntegerField(blank=True, null=True)
+    offensiveZoneStartsAgainst = models.IntegerField(blank=True, null=True)
+    faceoffWins = models.IntegerField(blank=True, null=True)
+    faceoffLosses = models.IntegerField(blank=True, null=True)
+    shotsFor = models.IntegerField(blank=True, null=True)
+    shotsAgainst = models.IntegerField(blank=True, null=True)
+    missedShotsFor = models.IntegerField(blank=True, null=True)
+    missedShotsAgainst = models.IntegerField(blank=True, null=True)
+    blockedShotsFor = models.IntegerField(blank=True, null=True)
+    blockedShotsAgainst = models.IntegerField(blank=True, null=True)
+    goalsFor = models.IntegerField(blank=True, null=True)
+    goalsAgainst = models.IntegerField(blank=True, null=True)
+    penaltyFor = models.IntegerField(blank=True, null=True)
+    penaltyAgainst = models.IntegerField(blank=True, null=True)
+    giveaways = models.IntegerField(blank=True, null=True)
+    takeaways = models.IntegerField(blank=True, null=True)
 
 
 class Team(models.Model):
