@@ -9,3 +9,4 @@ api_urls.py
 *sendemail.py
 *.queries.py
 statsenforcer/team/queries.py
+statsenforcer/scripts/queries.py
