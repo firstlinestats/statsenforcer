@@ -18,6 +18,7 @@ from team.models import TeamGameStats
 import queries
 
 from fancystats import constants, team
+import sendemail
 
 
 def compile_info(game):
@@ -44,6 +45,10 @@ def compile_info(game):
                             calc_team_stats(stats, game, p, s, ss, homeTeam, awayTeam)
                         if stats[awayTeam]["toiseconds"] != 0:
                             calc_team_stats(stats, game, p, s, ss, awayTeam, homeTeam)
+                        print stats[awayTeam]["toiseconds"], stats[homeTeam]["toiseconds"]
+                        break
+                    break
+                break
 
 
 def calc_team_stats(stats, game, p, s, ss, team1, team2):
@@ -76,17 +81,23 @@ def calc_team_stats(stats, game, p, s, ss, team1, team2):
     tgs.penaltyAgainst = stats[team2]["pn"]
     tgs.giveaways = tdata["give"]
     tgs.takeaways = tdata["take"]
+    tgs.hitsFor = tdata["hit"]
+    tgs.hitsAgainst = stats[team2]["hit"]
+    tgs.corsiFor = tdata["cf"]
+    tgs.corsiAgainst = stats[team2]["cf"]
     tgs.save()
 
 
 def main():
-    games = TeamGameStats.objects.values_list("game_id", flat=True).all()
-    mgames = Game.objects.values_list("gamePk", flat=True).exclude(gamePk__in=games)\
-        .filter(gameState__in=["5", "6", "7"], season=20162017)
+    mgames = Game.objects.values_list("gamePk", flat=True)\
+        .filter(gameState__in=["5", "6", "7"])
     for game in mgames:
         print game
-        compile_info(game)
-
+        try:
+            compile_info(game)
+        except Exception as e:
+            sendemail.send_error_email(e)
+            raise Exception(e)
 
 
 if __name__ == "__main__":

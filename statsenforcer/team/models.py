@@ -24,9 +24,9 @@ class Venue(models.Model):
 class TeamGameStats(models.Model):
     game = models.ForeignKey('playbyplay.Game')
     team = models.ForeignKey('team.Team')
-    period = models.CharField(max_length=4, choices=fconstants.PERIOD_CHOICES)
-    teamstrength = models.CharField(max_length=6, choices=fconstants.TEAMSTRENGTHS_CHOICES)
-    scoresituation = models.CharField(max_length=6, choices=fconstants.SCORESITUATION_CHOICES)
+    period = models.CharField(max_length=4, choices=fconstants.PERIOD_CHOICES, db_index=True)
+    teamstrength = models.CharField(max_length=6, choices=fconstants.TEAMSTRENGTHS_CHOICES, db_index=True)
+    scoresituation = models.CharField(max_length=6, choices=fconstants.SCORESITUATION_CHOICES, db_index=True)
     toi = models.IntegerField(blank=True, null=True)
     scoringChancesFor = models.IntegerField(blank=True, null=True)
     scoringChancesAgainst = models.IntegerField(blank=True, null=True)
@@ -48,6 +48,10 @@ class TeamGameStats(models.Model):
     penaltyAgainst = models.IntegerField(blank=True, null=True)
     giveaways = models.IntegerField(blank=True, null=True)
     takeaways = models.IntegerField(blank=True, null=True)
+    hitsFor = models.IntegerField(blank=True, null=True)
+    hitsAgainst = models.IntegerField(blank=True, null=True)
+    corsiFor = models.IntegerField(blank=True, null=True)
+    corsiAgainst = models.IntegerField(blank=True, null=True)
 
 
 class Team(models.Model):
