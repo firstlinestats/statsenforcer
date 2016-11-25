@@ -46,7 +46,6 @@ def game(request, game_pk):
         goalieteams = models.GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         for p in goalieteams:
             p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1, p["player__fullName"], p["player__primaryPositionCode"]]
-        print p2t
 
         pip_data = models.PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player__primaryPositionCode", "player_id").filter(play_id__in=[x["id"] for x in context["playbyplay"]])
         pipdict = {}
@@ -134,7 +133,7 @@ def game(request, game_pk):
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
                 danger = scoringChance[0]
-                sc = scoringChance[1]                
+                sc = scoringChance[1]
                 team = play["team_id"]
                 play_type = play["playType"]
                 homeinclude, awayinclude = fancystats.team.check_play(play, teamStrengths, scoreSituation, period, hsc, asc, context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
@@ -157,7 +156,7 @@ def game(request, game_pk):
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
         context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
-       
+
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)
