@@ -11,3 +11,4 @@ api_urls.py
 statsenforcer/team/queries.py
 statsenforcer/scripts/queries.py
 statsenforcer/team/teamqueries.py
+statsenforcer/website/indexqueries.py

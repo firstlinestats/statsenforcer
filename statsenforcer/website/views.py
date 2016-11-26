@@ -11,6 +11,8 @@ import pytz
 
 from fancystats.constants import gameStates
 
+import indexqueries
+
 local_tz = pytz.timezone('US/Eastern')
 
 
@@ -20,12 +22,36 @@ def utc_to_local(utc_dt):
 # Create your views here.
 
 def index(request):
-    games = Game.objects.filter(season=20162017, dateTime__lte=datetime.date.today() + datetime.timedelta(1)).order_by('-dateTime', '-gamePk')[:30]
+    start = datetime.datetime.now()
+    games = Game.objects.raw(indexqueries.gamesquery, [20162017, datetime.date.today() + datetime.timedelta(1)])
+    gameData = []
+    for game in games:
+        gd = {}
+        gd["dateTime"] = game.dateTime
+        gd["gameType"] = game.gameType
+        gd["homeTeamAbbreviation"] = game.homeAbbreviation
+        gd["homeTeamName"] = game.homeTeamName
+        gd["awayTeamAbbreviation"] = game.awayAbbreviation
+        gd["awayTeamName"] = game.awayTeamName
+        gd["homeScore"] = game.homeScore
+        gd["awayScore"] = game.awayScore
+        gd["homeShots"] = game.homeShots
+        gd["awayShots"] = game.awayShots
+        gd["awayBlocked"] = game.awayBlocked
+        gd["homeBlocked"] = game.homeBlocked
+        gd["awayMissed"] = game.awayMissed
+        gd["homeMissed"] = game.homeMissed
+        gd["gameState"] = game.gameState
+        gd["endDateTime"] = game.endDateTime
+        gd["gamePk"] = game.gamePk
+        gd["season"] = game.season
+        gameData.append(gd)
+    games = gameData
 
     teamdata = {}
-    currentSeason = games[0].season
-    max_date = SeasonStats.objects.latest("date")
-    standings = SeasonStats.objects.filter(date=max_date.date).order_by("-points")
+    currentSeason = games[0]["season"]
+    max_date = SeasonStats.objects.values_list("date", "season").latest("date")
+    standings = SeasonStats.objects.filter(date=max_date[0]).order_by("-points")
     teamdata = sorted(teamdata.items(), key=lambda k: k[1]["p"])
     context = {
         'active_page': 'index',
@@ -34,7 +60,7 @@ def index(request):
     }
 
     historical = SeasonStats.objects.values("team__teamName",
-        "points", "date", "team__division").filter(season=max_date.season).order_by("date")
+        "points", "date", "team__division").filter(season=max_date[1]).order_by("date")
     hstand = {}
     for h in historical:
         sdate = str(h["date"])
