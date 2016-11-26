@@ -4,6 +4,8 @@ from django.db import models
 
 import constants
 
+from fancystats import constants as fconstants
+
 
 class Player(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -27,6 +29,33 @@ class Player(models.Model):
 
     def __unicode__(self):
         return self.fullName
+
+
+class PlayerGameFilterStats(models.Model):
+    player = models.ForeignKey(Player)
+    game = models.ForeignKey('playbyplay.Game')
+    team = models.ForeignKey('team.Team')
+    period = models.CharField(max_length=4, choices=fconstants.PERIOD_CHOICES, db_index=True)
+    teamstrength = models.CharField(max_length=6, choices=fconstants.TEAMSTRENGTHS_CHOICES, db_index=True)
+    scoresituation = models.CharField(max_length=6, choices=fconstants.SCORESITUATION_CHOICES, db_index=True)
+    toi = models.IntegerField(blank=True, null=True)
+    goals = models.IntegerField(blank=True, null=True)
+    assists1 = models.IntegerField(blank=True, null=True)
+    assists2 = models.IntegerField(blank=True, null=True)
+    points = models.IntegerField(blank=True, null=True)
+    corsiFor = models.IntegerField(blank=True, null=True)
+    corsiAgainst = models.IntegerField(blank=True, null=True)
+    fenwickFor = models.IntegerField(blank=True, null=True)
+    fenwickAgainst = models.IntegerField(blank=True, null=True)
+    goalsFor = models.IntegerField(blank=True, null=True)
+    goalsAgainst = models.IntegerField(blank=True, null=True)
+    fo_w = models.IntegerField(blank=True, null=True)
+    fo_l = models.IntegerField(blank=True, null=True)
+    hitFor = models.IntegerField(blank=True, null=True)
+    hitAgainst = models.IntegerField(blank=True, null=True)
+    penaltyFor = models.IntegerField(blank=True, null=True)
+    penaltyAgainst = models.IntegerField(blank=True, null=True)
+
 
 
 class CompiledPlayerGameStats(models.Model):
