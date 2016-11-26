@@ -26,7 +26,7 @@ from StringIO import StringIO
 
 from urllib2 import Request, urlopen, URLError
 
-from compile_stats import compile_game
+from compile_game_stats import compile_info
 import api_calls
 
 import fancystats
@@ -189,7 +189,7 @@ def ingest_player(jinfo, team=None, player=None):
     except Exception as e:
         print e
         print jinfo
-        
+
 
 def set_player_stats(pd, team, game, players, period):
     pgss = []
@@ -672,9 +672,7 @@ def main():
                         "awayTeam_id": game.awayTeam_id}
                     # Delete any existing
                     with transaction.atomic():
-                        pmodels.CompiledPlayerGameStats.objects.filter(game=game).delete()
-                        pmodels.CompiledGoalieGameStats.objects.filter(game=game).delete()
-                        compile_game(fgame)
+                        compile_info(game.gamePk)
                         findStandings(game.season)
             except Exception as e:
                 sendemail.send_error_email(e)

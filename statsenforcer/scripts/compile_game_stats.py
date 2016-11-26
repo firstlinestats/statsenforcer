@@ -45,10 +45,6 @@ def compile_info(game):
                             calc_team_stats(stats, game, p, s, ss, homeTeam, awayTeam)
                         if stats[awayTeam]["toiseconds"] != 0:
                             calc_team_stats(stats, game, p, s, ss, awayTeam, homeTeam)
-                        print stats[awayTeam]["toiseconds"], stats[homeTeam]["toiseconds"]
-                        break
-                    break
-                break
 
 
 def calc_team_stats(stats, game, p, s, ss, team1, team2):
@@ -92,7 +88,6 @@ def main():
     mgames = Game.objects.values_list("gamePk", flat=True)\
         .filter(gameState__in=["5", "6", "7"])
     for game in mgames:
-        print game
         try:
             compile_info(game)
         except Exception as e:
