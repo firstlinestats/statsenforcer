@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.http import Http404
+from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team, TeamGameStats
 from player.models import Player
+from playbyplay.models import Game
 from playbyplay.forms import GameForm
 from datetime import date, datetime
 import constants
+import json
 
 import teamqueries
 
@@ -20,6 +23,8 @@ def teams(request):
     teamstrength = "all"
     scoresituation = "all"
     period = "all"
+    currentSeason = Game.objects.latest("endDateTime").season
+    seasons = [currentSeason]
     if request.method == "GET":
         form = GameForm(request.GET)
         if form.is_valid():
@@ -27,15 +32,16 @@ def teams(request):
             teamstrength = cd["teamstrengths"]
             scoresituation = cd["scoresituation"]
             period = cd["period"]
-    print [team.id for team in teams]
-    tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [scoresituation, teamstrength, period, [team.id for team in teams]])
-    print tgs.query
+            seasons = cd["seasons"]
+    # print [team.id for team in teams]
+    tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [scoresituation, teamstrength, period, [season for season in seasons], [team.id for team in teams]])
+    # print tgs.query
     stats = {}
     start = datetime.now()
     for row in tgs:
         season = row.season
         teamid = row.team_id
-        print teamid
+        # print teamid
         if teamid not in stats:
             stats[teamid] = {}
         if season not in stats[teamid]:
@@ -55,7 +61,7 @@ def teams(request):
                         stats[teamid][season][key] += row.__dict__[key]
                     except:
                         pass
-    print datetime.now() - start
+    # print datetime.now() - start
     for teamid in stats:
         for season in stats[teamid]:
             row = stats[teamid][season]
@@ -76,8 +82,9 @@ def teams(request):
             row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
             row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
             row["hit"] = '%.2f' % corsi.corsi_percent(row["hitsFor"], row["hitsAgainst"])
-    print datetime.now() - start
+    # print datetime.now() - start
     context["stats"] = stats
+    context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     context["form"] = form
 
     return render(request, 'team/teams.html', context)

@@ -19,6 +19,9 @@ class GameForm(forms.Form):
         choices=constants.PERIOD_CHOICES,
         widget=forms.Select(attrs={'class' : 'form-control input-md'})
     )
+    seasons = forms.MultipleChoiceField(
+        required=False,
+        choices=tuple((season, "-".join([str(season)[:4], str(season)[4:]])) for season in models.Game.objects.order_by('season').values_list('season', flat=True).distinct()))
 
 
 class GamesForm(forms.Form):
