@@ -3,6 +3,7 @@ import sys
 import django
 
 import datetime
+import linecache
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "statsenforcer"))
 sys.path.append("../")
@@ -72,19 +73,17 @@ def compile_info(game):
                     ss = scoresituation[0]
                     for period in constants.PERIOD_CHOICES:
                         p = period[0]
-                        # stats = team.get_stats(pbp, homeTeam, awayTeam, p2t, s, ss, p)
-                        # if stats[homeTeam]["toiseconds"] != 0:
-                        #     calc_team_stats(stats, game, p, s, ss, homeTeam, awayTeam)
-                        # if stats[awayTeam]["toiseconds"] != 0:
-                        #     calc_team_stats(stats, game, p, s, ss, awayTeam, homeTeam)
+                        stats = team.get_stats(pbp, homeTeam, awayTeam, p2t, s, ss, p)
+                        if stats[homeTeam]["toiseconds"] != 0:
+                            calc_team_stats(stats, game, p, s, ss, homeTeam, awayTeam)
+                        if stats[awayTeam]["toiseconds"] != 0:
+                            calc_team_stats(stats, game, p, s, ss, awayTeam, homeTeam)
                         pstats = player.get_stats(pbp, homeTeam, awayTeam, p2t, s, ss, p)
                         for teamid in pstats:
                             for playerid in pstats[teamid]:
                                 pstat = pstats[teamid][playerid]
                                 if pstat["toiseconds"] != 0:
                                     calc_player_stats(pstat, playerid, game, teamid, p, s, ss)
-                        count += 1
-                        print count, total
 
 
 def calc_player_stats(stats, pid, game, team, p, s, ss):
@@ -154,14 +153,25 @@ def calc_team_stats(stats, game, p, s, ss, team1, team2):
 
 
 def main():
+    emailssent = 0
+    existing = set(PlayerGameFilterStats.objects.values_list("game_id", flat=True).distinct())
     mgames = Game.objects.values_list("gamePk", flat=True)\
-        .filter(gameState__in=["5", "6", "7"]).order_by("-gamePk")
+        .filter(gameState__in=["5", "6", "7"]).exclude(gameType="PR").exclude(gamePk__in=existing).order_by("-gamePk")
     for game in mgames:
         try:
             compile_info(game)
         except Exception as e:
-            sendemail.send_error_email(e)
-            raise Exception(e)
+            if emailssent < 5:
+                exc_type, exc_obj, tb = sys.exc_info()
+                f = tb.tb_frame
+                lineno = tb.tb_lineno
+                filename = f.f_code.co_filename
+                linecache.checkcache(filename)
+                line = linecache.getline(filename, lineno, f.f_globals)
+                message = 'GAME: {}, EXCEPTION IN ({}, LINE {} "{}"): {}'.format(game, filename, lineno, line.strip(), exc_obj)
+                sendemail.send_error_email(message)
+                emailssent += 1
+                #raise Exception(e)
 
 
 if __name__ == "__main__":
