@@ -178,7 +178,6 @@ def games(request):
             form = forms.GamesForm(request.GET)
             if form.is_valid():
                 cd = form.cleaned_data
-                print cd
             else:
                 form = forms.GamesForm()
 
@@ -187,10 +186,8 @@ def games(request):
         "awayScore", "homeShots", "awayShots", "awayBlocked", "homeMissed", "homeBlocked",
         "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7]).order_by('-gamePk')
     if cd['startDate'] is not None:
-        print cd['startDate']
         games = games.filter(dateTime__date__gte=cd['startDate'])
     if cd['endDate'] is not None:
-        print cd['endDate']
         games = games.filter(endDateTime__date__lte=cd['endDate'])
     if len(cd['gameTypes']) > 0:
         games = games.filter(gameType__in=cd['gameTypes'])

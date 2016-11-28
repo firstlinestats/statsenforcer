@@ -112,6 +112,24 @@ def calc_player_stats(stats, pid, game, team, p, s, ss):
     tgs.hitAgainst = stats["hitminus"]
     tgs.penaltyFor = stats["pnplus"]
     tgs.penaltyAgainst = stats["pnminus"]
+    tgs.scoringChancesFor = stats["scf"]
+    tgs.scoringChancesAgainst = stats["sca"]
+    tgs.highDangerScoringChancesFor = stats["hscf"]
+    tgs.highDangerScoringChancesAgainst = stats["hsca"]
+    tgs.individualShotsBlocked = stats["bk"]
+    tgs.offensiveZoneStarts = stats["zso"]
+    tgs.defensiveZoneStarts = stats["zsd"]
+    tgs.shotsFor = stats["onsf"]
+    tgs.shotsAgainst = stats["onsa"]
+    tgs.missedShotsFor = stats["onmsf"]
+    tgs.missedShotsAgainst = stats["onmsa"]
+    tgs.blockedShotsFor = stats["onbsf"]
+    tgs.blockedShotsAgainst = stats["onbsa"]
+    tgs.individualShots = stats["sf"]
+    tgs.individualMissedShots = stats["msf"]
+    tgs.individualBlockedShots = stats["bsf"]
+    tgs.individualScoringChances = stats["isc"]
+    tgs.individualHighDangerScoringChances = stats["ihsc"]
     tgs.save()
 
 
@@ -155,6 +173,7 @@ def calc_team_stats(stats, game, p, s, ss, team1, team2):
 def main():
     emailssent = 0
     existing = set(PlayerGameFilterStats.objects.values_list("game_id", flat=True).distinct())
+    existing = []
     mgames = Game.objects.values_list("gamePk", flat=True)\
         .filter(gameState__in=["5", "6", "7"]).exclude(gameType="PR").exclude(gamePk__in=existing).order_by("-gamePk")
     for game in mgames:

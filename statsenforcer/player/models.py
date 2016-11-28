@@ -55,11 +55,29 @@ class PlayerGameFilterStats(models.Model):
     hitAgainst = models.IntegerField(blank=True, null=True)
     penaltyFor = models.IntegerField(blank=True, null=True)
     penaltyAgainst = models.IntegerField(blank=True, null=True)
-
+    scoringChancesFor = models.IntegerField(blank=True, null=True)
+    scoringChancesAgainst = models.IntegerField(blank=True, null=True)
+    highDangerScoringChancesFor = models.IntegerField(blank=True, null=True)
+    highDangerScoringChancesAgainst = models.IntegerField(blank=True, null=True)
+    individualShotsBlocked = models.IntegerField(blank=True, null=True)
+    offensiveZoneStarts = models.IntegerField(blank=True, null=True)
+    defensiveZoneStarts = models.IntegerField(blank=True, null=True)
+    shotsFor = models.IntegerField(blank=True, null=True)
+    shotsAgainst = models.IntegerField(blank=True, null=True)
+    missedShotsFor = models.IntegerField(blank=True, null=True)
+    missedShotsAgainst = models.IntegerField(blank=True, null=True)
+    blockedShotsFor = models.IntegerField(blank=True, null=True)
+    blockedShotsAgainst = models.IntegerField(blank=True, null=True)
+    individualShots = models.IntegerField(blank=True, null=True)
+    individualMissedShots = models.IntegerField(blank=True, null=True)
+    individualBlockedShots = models.IntegerField(blank=True, null=True)
+    individualScoringChances = models.IntegerField(blank=True, null=True)
+    individualHighDangerScoringChances = models.IntegerField(blank=True, null=True)
 
 
 class CompiledPlayerGameStats(models.Model):
     player = models.ForeignKey(Player)
+
     game = models.ForeignKey("playbyplay.Game")
     period = models.IntegerField(db_index=True)
     strength = models.CharField(max_length=4, db_index=True)
