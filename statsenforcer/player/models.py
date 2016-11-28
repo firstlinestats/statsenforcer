@@ -61,6 +61,7 @@ class PlayerGameFilterStats(models.Model):
     highDangerScoringChancesAgainst = models.IntegerField(blank=True, null=True)
     individualShotsBlocked = models.IntegerField(blank=True, null=True)
     offensiveZoneStarts = models.IntegerField(blank=True, null=True)
+    neutralZoneStarts = models.IntegerField(blank=True, null=True)
     defensiveZoneStarts = models.IntegerField(blank=True, null=True)
     shotsFor = models.IntegerField(blank=True, null=True)
     shotsAgainst = models.IntegerField(blank=True, null=True)

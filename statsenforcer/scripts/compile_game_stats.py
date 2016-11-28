@@ -118,6 +118,7 @@ def calc_player_stats(stats, pid, game, team, p, s, ss):
     tgs.highDangerScoringChancesAgainst = stats["hsca"]
     tgs.individualShotsBlocked = stats["bk"]
     tgs.offensiveZoneStarts = stats["zso"]
+    tgs.neutralZoneStarts = stats["zsn"]
     tgs.defensiveZoneStarts = stats["zsd"]
     tgs.shotsFor = stats["onsf"]
     tgs.shotsAgainst = stats["onsa"]

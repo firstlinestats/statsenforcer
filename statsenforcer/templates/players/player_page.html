@@ -127,13 +127,19 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center" title="Season">Season</th>
+                                                        <th class="text-center" title="Games Played">GP</th>
                                                         <th class="text-center" title="Goals">Goals</th>
                                                         <th class="text-center" title="Primary Assists">A1</th>
                                                         <th class="text-center" title="Secondary Assists">A2</th>
                                                         <th class="text-center" title="Points">P</th>
+                                                        <th class="text-center" title="Individual Shots">iSF</th>
+                                                        <th class="text-center" title="Individual Missed Shots">iMSF</th>
+                                                        <th class="text-center" title="Individual Blocked Shots">iBSF</th>
                                                         <th class="text-center" title="Corsi For Percentage">CF%</th>
                                                         <th class="text-center" title="Fenwick For Percentage">FF%</th>
                                                         <th class="text-center" title="Goals For Percentage">GF%</th>
+                                                        <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
+                                                        <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
                                                         <th class="text-center" title="Faceoff Percentage">FO%</th>
                                                         <th class="text-center" title="Hit Percentage">Hit%</th>
                                                         <th class="text-center" title="Penalty Percentage">Pen%</th>
@@ -145,13 +151,19 @@
                                                         {% for season, player in seasons.items %}
                                                     <tr>
                                                         <td title="">{{ season }}</td>
+                                                        <td title="">{{ player.games }}</td>
                                                         <td title="">{{ player.goals }}</td>
                                                         <td title="">{{ player.assists1 }}</td>
                                                         <td title="">{{ player.assists2 }}</td>
                                                         <td title="">{{ player.points }}</td>
+                                                        <td title="">{{ player.individualShots }}</td>
+                                                        <td title="">{{ player.individualMissedShots }}</td>
+                                                        <td title="">{{ player.individualBlockedShots }}</td>
                                                         <td title="">{{ player.cf }}</td>
                                                         <td title="">{{ player.ff }}</td>
                                                         <td title="">{{ player.gf }}</td>
+                                                        <td title="">{{ player.scf }}</td>
+                                                        <td title="">{{ player.hscf }}</td>
                                                         <td title="">{{ player.fo }}</td>
                                                         <td title="">{{ player.hit }}</td>
                                                         <td title="">{{ player.pn }}</td>

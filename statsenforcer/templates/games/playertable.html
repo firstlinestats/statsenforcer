@@ -30,6 +30,9 @@
                 <th class="text-center" title="High Danger Scoring Chances Against">HSCA</th>
                 <th class="text-center" title="Faceoffs Won">FO_W</th>
                 <th class="text-center" title="Faceoffs Lost">FO_L</th>
+                <th class="text-center" title="Offensive Zone Starts">ZSO</th>
+                <th class="text-center" title="Neutral Zone Starts">ZSN</th>
+                <th class="text-center" title="Defensive Zone Starts">ZSD</th>
                 <th class="text-center" title="Hits">HIT</th>
                 <th class="text-center" title="Hits Taken">HIT-</th>
                 <th class="text-center" title="Penalties">PN</th>
@@ -41,7 +44,7 @@
             {% for pid in playerstats|get_item:team.id %}
             {% with player=playerstats|get_item:team.id|get_item:pid %}
             <tr>
-                <td class="text-center" title="Player">{{ player.name }}</td>
+                <td class="text-center" title="Player"><a href="/players/{{ pid }}/">{{ player.name }}</a></td>
                 <td class="text-center" title="Position">{{ player.position|player_position }}</td>
                 <td class="text-center" title="Goals">{{ player.g }}</td>
                 <td class="text-center" title="Primary Assists">{{ player.a1 }}</td>
@@ -61,6 +64,9 @@
                 <td class="text-center" title="High Danger Scoring Chances Against">{{ player.hsca }}</td>
                 <td class="text-center" title="Faceoffs Won">{{ player.fo_w }}</td>
                 <td class="text-center" title="Faceoffs Lost">{{ player.fo_l }}</td>
+                <td class="text-center" title="Offensive Zone Starts">{{ player.zso }}</td>
+                <td class="text-center" title="Neutral Zone Starts">{{ player.zsn }}</td>
+                <td class="text-center" title="Defensive Zone Starts">{{ player.zsd }}</td>
                 <td class="text-center" title="Hits">{{ player.hitplus }}</td>
                 <td class="text-center" title="Hits Taken">{{ player.hitminus }}</td>
                 <td class="text-center" title="Penalties">{{ player.pnplus }}</td>

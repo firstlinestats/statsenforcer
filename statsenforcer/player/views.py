@@ -36,7 +36,6 @@ def player_page(request, player_id):
             stats[playerid] = {}
         if season not in stats[playerid]:
             stats[playerid][season] = row.__dict__
-            print row.__dict__
             stats[playerid][season]["games"] = 1
             stats[playerid][season].pop("_state", None)
             stats[playerid][season].pop("game_id", None)
@@ -66,15 +65,18 @@ def player_page(request, player_id):
             row = stats[playerid][season]
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
-            #row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
-            #row["msf"] = '%.2f' % corsi.corsi_percent(row["missedShotsFor"],
-            #    row["missedShotsAgainst"])
-            #row["bsf"] = '%.2f' % corsi.corsi_percent(row["blockedShotsFor"],
-            #    row["blockedShotsAgainst"])
+            row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
+            row["msf"] = '%.2f' % corsi.corsi_percent(row["missedShotsFor"],
+                row["missedShotsAgainst"])
+            row["bsf"] = '%.2f' % corsi.corsi_percent(row["blockedShotsFor"],
+                row["blockedShotsAgainst"])
             row["gf"] = '%.2f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
             row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
             row["ff"] = '%.2f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
             row["hit"] = '%.2f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
+            row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
+            row["scf"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
+            row["hscf"] = '%.2f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
 
     context = {}
     context["player"] = player
