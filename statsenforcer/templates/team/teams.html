@@ -174,7 +174,7 @@ and (max-device-width : 480px) {
                             </div>
                         </div>
                     </div>
-                    <div id="teamsContent" class="content">
+                    <div id="teamsTabContent" class="content">
                         <div class="tab-content">
                             <div class="tab-pane active" id="tableview">
                                 <div class="row">
@@ -317,14 +317,14 @@ and (max-device-width : 480px) {
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
-            teamCompare('#teamComparison', "gf", "sf", data);
+            teamCompare('#teamComparison', "#teamsTabContent", "gf", "sf", data);
             savePNG("#teamComparisonButton", "#teamComparison");
 
             $('#refreshGraph').click(function(e) {
                 e.preventDefault();
                 var x = $('#xaxis').val();
                 var y = $('#yaxis').val();
-                teamCompare('#teamComparison', x, y, data);
+                teamCompare('#teamComparison', "#teamsTabContent", x, y, data);
             });
 
         });

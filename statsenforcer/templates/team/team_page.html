@@ -113,7 +113,6 @@
             </div>
 
             <div id="teamTabContent" class="content">
-                <div class="content">
                     <div class="tab-content text-center">
                         <div class="tab-pane active" id="statview">
                             <div class="card">
@@ -174,17 +173,48 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="graphview">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Graph View</h3>
-                                        <p>{{ form|format_form_state }}</p>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Graph View</h3>
+                                    <p>{{ form|format_form_state }}</p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-
-                                    </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-10 col-sm-12">
+                                                <div class="form-group">
+                                                    Y-Axis
+                                                    <select class="form-control input-md" id="yaxis">
+                                                        <option value="gf" selected>GF%</option>
+                                                        <option value="sf">SF%</option>
+                                                        <option value="msf">MSF%</option>
+                                                        <option value="bsf">BSF%</option>
+                                                        <option value="cf">CF%</option>
+                                                        <option value="sc">SCF%</option>
+                                                        <option value="hsc">HSCF%</option>
+                                                        <option value="zso">ZSO%</option>
+                                                        <option value="pn">PN%</option>
+                                                        <option value="fo_w">FO_W%</option>
+                                                        <option value="hit">Hit%</option>
+                                                        <option value="toi">TOI/Gm</option>
+                                                    </select>
+                                                <span class="material-input"></span></div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-12">
+                                                <div class="form-group">
+                                                    <button id="refreshGraph" class="btn">Refresh<div class="ripple-container"></div></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-xs btn-primary" id="comparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
+                                    <div id="comparisonGraph"></div>
                                 </div>
                             </div>
                         </div>
@@ -261,7 +291,6 @@
                         </div>
 
                     </div>
-                </div>
             </div>
         </div>
 
@@ -276,8 +305,7 @@
 <script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/shotChart.js" %}"></script>
-<script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
+<script src="{% static "js/graphs/teamCompare.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -291,6 +319,14 @@
             "pageLength": 50,
         });
 
+        var data = JSON.parse("{{ statsJson | escapejs }}");
+        teamCompare('#comparisonGraph', "#teamTabContent", "season", "gf", data);
+        savePNG("#comparisonButton", "#comparisonGraph");
+        $('#refreshGraph').click(function(e) {
+            e.preventDefault();
+            var y = $('#yaxis').val();
+            teamCompare("#comparisonGraph", "#teamTabContent", "season", y, data);
+        });
     });
 </script>
 {% endblock %}

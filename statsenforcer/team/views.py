@@ -154,6 +154,9 @@ def team_page(request, team_name):
         for teamid in stats:
             for season in stats[teamid]:
                 row = stats[teamid][season]
+                row["shortName"] = team.shortName
+                row["teamName"] = team.teamName
+                row["abbreviation"] = team.abbreviation
                 row["toi"] = toi.format_minutes(row["toi"] / row["games"])
                 row["sc"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"],
                     row["scoringChancesAgainst"])
@@ -179,5 +182,6 @@ def team_page(request, team_name):
         'team': team,
         'players': players,
         'stats': stats,
+        'statsJson': json.dumps(stats, cls=DjangoJSONEncoder), 
         'form': form,
     })

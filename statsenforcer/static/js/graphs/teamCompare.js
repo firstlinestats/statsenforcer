@@ -1,4 +1,4 @@
-function teamCompare(divId, xvalue, yvalue, data) {
+function teamCompare(divId, containerId, xvalue, yvalue, data) {
     $(divId).html("");
     var axisText = {
         "gf": "On-Ice Goals For Percentage",
@@ -12,7 +12,8 @@ function teamCompare(divId, xvalue, yvalue, data) {
         "pn": "Penalties Percentage",
         "fo_w": "Faceoffs Won Percentage",
         "hit": "Hit Percentage",
-        "toi": "Time On Ice"
+        "toi": "Time On Ice",
+        "season": "Season"
     };
 
     var xText = axisText[xvalue];
@@ -20,19 +21,28 @@ function teamCompare(divId, xvalue, yvalue, data) {
 
     var margin = {
             top: 20,
-            right: 10,
+            right: 40,
             bottom: 30,
-            left: 40
+            left: 50
         },
-        width = $("#teamsContent").width() - margin.left - margin.right,
+        width = $(containerId).width() - margin.left - margin.right,
         height = 500;
 
     var dataset = [];
+    var seasons = [];
     for (team in data) {
         var teamData = data[team];
         for (season in teamData) {
+            if (seasons.indexOf(season) === -1) {
+                seasons.push(season);
+            };
             teamData[season].season = season;
-            teamData[season].x = parseFloat(teamData[season][xvalue]);
+
+            if (xvalue !== "season") {
+                teamData[season].x = parseFloat(teamData[season][xvalue]);
+            } else {
+                teamData[season].x = parseInt(teamData[season][xvalue]);
+            };
             teamData[season].y = parseFloat(teamData[season][yvalue]);
             dataset.push(teamData[season]);
         };
@@ -173,7 +183,7 @@ function teamCompare(divId, xvalue, yvalue, data) {
 
     texts.append("text")
         .html(function(d) {
-            return season;
+            return d.season;
         })
         .attr("id", function(d) {
             return d["shortName"].replace(" ", "") + d["season"] + "-season";
@@ -191,13 +201,24 @@ function teamCompare(divId, xvalue, yvalue, data) {
         .attr("active", false)
         .style("text-anchor", "middle");
 
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom")
-        .ticks(10)
-        .tickFormat(function(d) {
-            return formatAxisText(d, xText);
-        });
+    if (xvalue === 'season') {
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickValues(seasons)
+            .tickFormat(function(d) {
+                return formatAxisText(d, xText);
+            });
+    } else {
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .ticks(10)
+            .tickFormat(function(d) {
+                return formatAxisText(d, xText);
+            });
+    };
+
 
     var yAxis = d3.svg.axis()
         .scale(y)
