@@ -2,7 +2,7 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
-{% block title %}{{ team.name }}{% endblock %}
+{% block title %}{{ player.fullName }}{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -141,6 +141,7 @@
                                                         <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
                                                         <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
                                                         <th class="text-center" title="Faceoff Percentage">FO%</th>
+                                                        <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
                                                         <th class="text-center" title="Hit Percentage">Hit%</th>
                                                         <th class="text-center" title="Penalty Percentage">Pen%</th>
                                                         <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
@@ -165,6 +166,7 @@
                                                         <td title="">{{ player.scf }}</td>
                                                         <td title="">{{ player.hscf }}</td>
                                                         <td title="">{{ player.fo }}</td>
+                                                        <td title="">{{ player.zso }}</td>
                                                         <td title="">{{ player.hit }}</td>
                                                         <td title="">{{ player.pn }}</td>
                                                         <td title="">{{ player.toi }}</td>
