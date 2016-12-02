@@ -52,7 +52,6 @@ def teams(request):
     gameids = [x for x in gameids]
     # print [team.id for team in teams]
     tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [gameids, scoresituation, teamstrength, period, seasons])
-    print tgs.query
     stats = {}
     start = datetime.now()
     for row in tgs:
