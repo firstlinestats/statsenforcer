@@ -2,6 +2,7 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -21,25 +22,68 @@
                         <div class="col-md-12">
                             <form id="gameFilter" class="collapse" action="" method="GET">
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            {{ form.teamstrengths.label }}
-                                            {{ form.teamstrengths }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            {{ form.scoresituation.label }}
-                                            {{ form.scoresituation }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-12">
-                                        <div class="form-group">
-                                            {{ form.period.label }}
-                                            {{ form.period }}
-                                        </div>
-                                    </div>
-                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.teamstrengths.label }}
+                                                        {{ form.teamstrengths }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.scoresituation.label }}
+                                                        {{ form.scoresituation }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.period.label }}
+                                                        {{ form.period }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.season.label }}
+                                                        {{ form.season }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.teams.label }}
+                                                        {{ form.teams }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        {{ form.venues.label }}
+                                                        {{ form.venues }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label for="id_date_start">Start Date:</label>
+                                                        {% render_field form.startDate class+="form-control datepicker" %}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="id_date_start">End Date:</label>
+                                                        {% render_field form.endDate class+="form-control datepicker" %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label for="id_game_type">Game Types:</label>
+                                                        {% for g, glabel in form.gameTypes.field.choices %}
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" name="gameTypes" id="id_gameTypes_{{ forloop.counter }}" value="{{ g }}" {% if g in form.gameTypes.value %}checked{% endif %}>
+                                                                {{ glabel }}
+                                                            </label>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -180,6 +224,7 @@
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
+<script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
         $(document).ready(function() {
 

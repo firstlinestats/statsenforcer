@@ -1,10 +1,12 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from team.models import Team
 from player.models import Player, PlayerGameFilterStats
+from playbyplay.models import Game
 from datetime import date, datetime
-from playbyplay.forms import GameForm
+from playbyplay.forms import GameFilterForm, GameForm
 
 import playerqueries
 
@@ -15,15 +17,38 @@ def players(request):
     teamstrength = "all"
     scoresituation = "all"
     period = "all"
-    form = GameForm()
+    currentSeason = Game.objects.latest("endDateTime").season
+    seasons = [currentSeason, ]
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
     if request.method == 'GET':
-        form = GameForm(request.GET)
+        form = GameFilterForm(request.GET)
         if form.is_valid():
             cd = form.cleaned_data
             teamstrength = cd["teamstrengths"]
             scoresituation = cd["scoresituation"]
             period = cd["period"]
-    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playersquery, [scoresituation, teamstrength, period])
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+            seasons = cd["seasons"]
+            if len(seasons) == 0:
+                seasons = [currentSeason, ]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
+    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playersquery, [seasons, gameids, scoresituation, teamstrength, period])
 
     stats = {}
     for row in pgs:
