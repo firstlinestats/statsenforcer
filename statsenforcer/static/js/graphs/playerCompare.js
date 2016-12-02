@@ -1,4 +1,4 @@
-function teamCompare(divId, containerId, xvalue, yvalue, data) {
+function playerCompare(divId, containerId, xvalue, yvalue, data) {
     $(divId).html("");
     var axisText = {
         "gf": "On-Ice Goals For Percentage",
@@ -29,22 +29,17 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         height = 500;
 
     var dataset = [];
-    var seasons = [];
     for (team in data) {
         var teamData = data[team];
-        for (season in teamData) {
-            if (seasons.indexOf(season) === -1) {
-                seasons.push(season);
-            };
-            teamData[season].season = season;
-
+        for (player in teamData) {
+            teamData[player].playerId = player;
             if (xvalue !== "season") {
-                teamData[season].x = parseFloat(teamData[season][xvalue]);
+                teamData[player].x = parseFloat(teamData[player][xvalue]);
             } else {
-                teamData[season].x = parseInt(teamData[season][xvalue]);
+                teamData[player].x = parseInt(teamData[player][xvalue]);
             };
-            teamData[season].y = parseFloat(teamData[season][yvalue]);
-            dataset.push(teamData[season]);
+            teamData[player].y = parseFloat(teamData[player][yvalue]);
+            dataset.push(teamData[player]);
         };
     };
 
@@ -86,6 +81,13 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         }, // data -> display
         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
+    var rValue = function(d) {
+            return d.size;
+        },
+        rScale = d3.scale.linear().domain([minRadius, maxRadius]).range([2, 20]),
+        rMap = function(d) {
+            return rScale(rValue(d));
+        };
 
     var x = d3.scale.linear()
         .range([0, width]);
@@ -127,17 +129,17 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("cy", yMap)
         .attr("r", 10)
         .attr("id", function(d) {
-            return d["id"] + d["teamName"].replace(" ", "") + d["season"];
+            return "circle-" + d["playerId"] + '-' + d["team"];
         })
         .style("fill", function(d) {
-            return get_color(d.abbreviation, true);
+            return get_color(d.team, true);
         })
         .style("stroke", function(d) {
-            return get_color(d.abbreviation, false);
+            return get_color(d.team, false);
         })
         .on('click', circleClicked)
         .on("mouseover", function(d) {
-            var html = d.shortName + "<br /><b>" + xvalue + ":</b>" + d[xvalue] + "<br /><b>" + yvalue + ": </b>" + d[yvalue];
+            var html = d.name + "<br /><b>" + xvalue + ":</b>" + d[xvalue] + "<br /><b>" + yvalue + ": </b>" + d[yvalue];
             tooltip.html(html);
             tooltip.style("visibility", "visible");
         })
@@ -155,41 +157,20 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
 
     texts.append("text")
         .html(function(d) {
-            return d["shortName"];
+            return d["name"];
         })
         .attr("id", function(d) {
-            return d["shortName"].replace(" ", "") + d["season"] + "-team";
+            return "name-" + d["playerId"];
         })
         .attr("x", function(d) {
-            return xMap(d) + 50
+            return xMap(d)
         })
         .attr("y", function(d) {
-            return yMap(d) - 5
+            return yMap(d) - 15
         })
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
-        .style("visibility", "hidden")
-        .attr("active", false)
-        .style("text-anchor", "middle");
-
-
-    texts.append("text")
-        .html(function(d) {
-            return d.season;
-        })
-        .attr("id", function(d) {
-            return d["shortName"].replace(" ", "") + d["season"] + "-season";
-        })
-        .attr("x", function(d) {
-            return xMap(d) + 50
-        })
-        .attr("y", function(d) {
-            return yMap(d) + 15
-        })
-        .attr("font-family", "sans-serif")
-        .attr("text-anchor", "middle")
-        .attr("font-size", "14px")
         .style("visibility", "hidden")
         .attr("active", false)
         .style("text-anchor", "middle");
@@ -269,19 +250,14 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .text("firstlinestats.com")
 
     function circleClicked(d) {
-        var teamName = svg.select("#" + d["shortName"].replace(" ", "") + d["season"] + "-team");
-        var seasontText = svg.select("#" + d["shortName"].replace(" ", "") + d["season"] + "-season");
-        var active = teamName.attr("active");
+        var name = svg.select("#name-" + d["playerId"]);
+        var active = name.attr("active");
         if (active === "false") {
-            teamName.style("visibility", "visible");
-            teamName.attr("active", "true");
-            seasontText.style("visibility", "visible");
-            seasontText.attr("active", "true");
+            name.style("visibility", "visible");
+            name.attr("active", "true");
         } else {
-            teamName.style("visibility", "hidden");
-            teamName.attr("active", "false");
-            seasontText.style("visibility", "hidden");
-            seasontText.attr("active", "false");
+            name.style("visibility", "hidden");
+            name.attr("active", "false");
         };
     };
 };

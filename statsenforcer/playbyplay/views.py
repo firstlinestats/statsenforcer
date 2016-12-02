@@ -129,6 +129,7 @@ def game(request, game_pk):
             "home" : [],
             "away" : []
         }
+        print context["game"].awayTeam.id, context["game"].homeTeam.id
         for play in context["playbyplay"]:
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
