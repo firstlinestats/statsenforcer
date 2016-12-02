@@ -4,7 +4,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team, TeamGameStats
 from player.models import Player
 from playbyplay.models import Game
-from playbyplay.forms import GameForm
+from playbyplay.forms import GameFilterForm
 from datetime import date, datetime
 import constants
 import json
@@ -19,23 +19,40 @@ def teams(request):
     context = {
         "teams" : teams
     }
-    form = GameForm()
     teamstrength = "all"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
-    seasons = [currentSeason]
-    if request.method == "GET":
-        form = GameForm(request.GET)
+    seasons = [currentSeason, ]
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
+    if request.method == 'GET':
+        form = GameFilterForm(request.GET)
         if form.is_valid():
             cd = form.cleaned_data
             teamstrength = cd["teamstrengths"]
             scoresituation = cd["scoresituation"]
             period = cd["period"]
-            seasons = cd["seasons"]
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
     # print [team.id for team in teams]
-    tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [scoresituation, teamstrength, period, [season for season in seasons], [team.id for team in teams]])
-    # print tgs.query
+    tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [gameids, scoresituation, teamstrength, period, seasons])
+    print tgs.query
     stats = {}
     start = datetime.now()
     for row in tgs:
@@ -182,6 +199,6 @@ def team_page(request, team_name):
         'team': team,
         'players': players,
         'stats': stats,
-        'statsJson': json.dumps(stats, cls=DjangoJSONEncoder), 
+        'statsJson': json.dumps(stats, cls=DjangoJSONEncoder),
         'form': form,
     })
