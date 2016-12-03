@@ -38,6 +38,13 @@ def game(request, game_pk):
     if context["period"] is not None:
         context["playbyplay"] = models.PlayByPlay.objects.filter(gamePk_id=game_pk).order_by("eventIdx")
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
+        media = models.PlayMedia.objects.values("title", "blurb", "description", "duration", "image", "play", "external_id").filter(game_id=game_pk)
+        context["playmedia"] = {}
+        # for m in media:
+        #     if m["play_id"] not in context["playmedia"]:
+        #         context["playmedia"][m["play_id"]] = []
+        #     mdata = m
+        #     mdata["url"] ""
 
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         p2t = {}
