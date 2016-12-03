@@ -63,7 +63,6 @@ def create_highlight(element, game=None, play=None):
                                                                game=game)
     if play is not None:
         media.play = play.id
-    print element["id"], element["type"], element["title"]
     media.external_id = element["id"]
     media.mediatype = element["type"]
     media.title = element["title"]
@@ -94,4 +93,7 @@ if __name__ == "__main__":
     #     print game.gamePk
     #     game_media(game.gamePk)
     #     break
-    game_media(2016020362)
+    missingvals = set(pbpmodels.PlayMedia.objects.values_list("game_id", flat=True).filter(image=""))
+    for game in missingvals:
+        print game
+        game_media(game)

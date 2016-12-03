@@ -40,11 +40,12 @@ def game(request, game_pk):
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
         media = models.PlayMedia.objects.values("title", "blurb", "description", "duration", "image", "play", "external_id").filter(game_id=game_pk)
         context["playmedia"] = {}
-        # for m in media:
-        #     if m["play_id"] not in context["playmedia"]:
-        #         context["playmedia"][m["play_id"]] = []
-        #     mdata = m
-        #     mdata["url"] ""
+        year, game = game_pk[:4], game_pk[5:]
+        for m in media:
+            mdata = m
+            mdata["url"] = "https://www.nhl.com/video/c-{}".format(m["external_id"])
+            mdata["preview"] = "http://static.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
+            context["playmedia"][m["play"]] = mdata
 
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         p2t = {}
@@ -136,7 +137,6 @@ def game(request, game_pk):
             "home" : [],
             "away" : []
         }
-        print context["game"].awayTeam.id, context["game"].homeTeam.id
         for play in context["playbyplay"]:
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)

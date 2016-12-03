@@ -319,6 +319,23 @@
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
                                             <td>
                                                 {{ play|create_play_text|safe }}
+                                                {% if play.id in playmedia %}
+                                                <br />
+                                                {% with media=playmedia|get_item:play.id %}
+                                                {{ media.blurb }}
+                                                <div class="image-container">
+                                                    <a target="_blank" href="{{ media.url }}">
+                                                        <img src="{{ media.preview }}" class="img img-responsive image-preview" />
+                                                        <div class="after">
+                                                            <span class="image-content">View on NHL.com</span>
+                                                            <span class="zoom">
+                                                                <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                {% endwith %}
+                                                {% endif %}
                                             </td>
                                             <td>
                                                 <table class="table table-bordered table-striped table-condensed">
