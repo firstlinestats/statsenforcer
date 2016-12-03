@@ -110,20 +110,42 @@ def players(request):
     return render(request, 'players/players.html', context)
 
 def player_page(request, player_id):
-    today = datetime.now()
-    player = get_object_or_404(Player, pk=player_id)
-    player.age = today.year - player.birthDate.year - ((today.month, today.day) < (player.birthDate.month, player.birthDate.day))
+    player = get_object_or_404(Player, id=player_id)
     teamstrength = "all"
     scoresituation = "all"
     period = "all"
-    if request.method == "GET":
-        form = GameForm(request.GET)
+    currentSeason = Game.objects.latest("endDateTime").season
+    seasons = [currentSeason, ]
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
+    if request.method == 'GET':
+        form = GameFilterForm(request.GET)
         if form.is_valid():
             cd = form.cleaned_data
             teamstrength = cd["teamstrengths"]
             scoresituation = cd["scoresituation"]
             period = cd["period"]
-    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playerquery, [scoresituation, teamstrength, period, player.id])
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+            seasons = [cd["season"], ]
+            if len(seasons) == 0:
+                seasons = [currentSeason, ]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
+    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playerquery, [seasons, gameids, scoresituation, teamstrength, period, player.id])
     stats = {}
     for row in pgs:
         season = row.season
@@ -149,13 +171,13 @@ def player_page(request, player_id):
                         pass
                 elif key == "abbreviation":
                     if stats[playerid][season][key] != row.__dict__[key]:
-                        stats[playerid][season][key] += ", {}".format(row.__dict__[key])
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
                 elif key == "teamName":
                     if stats[playerid][season][key] != row.__dict__[key]:
-                        stats[playerid][season][key] += ", {}".format(row.__dict__[key])
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
                 elif key == "shortName":
                     if stats[playerid][season][key] != row.__dict__[key]:
-                        stats[playerid][season][key] += ", {}".format(row.__dict__[key])
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
     for playerid in stats:
         for season in stats[playerid]:
             row = stats[playerid][season]
