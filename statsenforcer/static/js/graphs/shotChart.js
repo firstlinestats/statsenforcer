@@ -127,7 +127,7 @@ function shotChart(data, homeabbr, awayabbr, situations) {
             }
         })
         .style("stroke", function(d) {
-            if (d.xcoord > 0)
+            if (d.x > 0)
                 return get_color(homeabbr, true);
             else
                 return get_color(awayabbr, true);
