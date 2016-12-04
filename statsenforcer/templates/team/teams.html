@@ -242,7 +242,7 @@ and (max-device-width : 480px) {
                                                     {% for teamid, seasons in stats.items %}
                                                         {% for season, team in seasons.items %}
                                                         <tr>
-                                                            <td title="Team"><img height="17" width="17" src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}' /><a class ='text-center'href="/teams/{{ team.teamName.split|join:'-' }}">{{ team.abbreviation }}</a></td>
+                                                            <td title="Team">{{ team.abbreviation }}</a></td>
                                                             <td title="Season">{{ season }}</td>
                                                             <td title="Games">{{ team.games }}</td>
                                                             <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
