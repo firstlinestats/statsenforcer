@@ -152,14 +152,14 @@ html {
 }
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 70px;
+  margin-bottom: 110px;
 }
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 60px;
+  height: 100px;
   background-color: #000;
   color: #FFFFFF;
   font-weight: 400;

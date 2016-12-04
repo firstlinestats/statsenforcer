@@ -4,7 +4,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team, TeamGameStats
 from player.models import Player
 from playbyplay.models import Game
-from playbyplay.forms import GameFilterForm
+from playbyplay.forms import GameFilterForm, GameForm
 from datetime import date, datetime
 import constants
 import json
