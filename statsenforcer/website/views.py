@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from playbyplay.templatetags.pbp_extras import get_period
 from playbyplay.models import Game, PlayByPlay
 from team.models import Team, SeasonStats
+from website.models import GlossaryTerm
 
 import datetime
 import json
@@ -80,6 +81,11 @@ def index(request):
 
 def about(request):
     return render(request, 'website/about.html')
+
+
+def glossary(request):
+    terms = GlossaryTerm.objects.all()
+    return render(request, 'website/glossary.html', {'terms': terms})
 
 
 def games(request, gamedate):
