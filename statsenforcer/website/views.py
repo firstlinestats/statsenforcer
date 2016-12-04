@@ -78,6 +78,10 @@ def index(request):
     return render(request, 'website/index.html', context)
 
 
+def about(request):
+    return render(request, 'website/about.html')
+
+
 def games(request, gamedate):
     content = {"games": []}
     dateurlformat = "%Y-%m-%d"

@@ -28,6 +28,23 @@
     {% include "wrappers/navigation.html" %}
     {% include "wrappers/gamesbanner.html" %}
     {% block content %}{% endblock %}
+
+
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <a class="footer-link" href="/about/">About Us</a>
+            </div>
+            <div class="col-md-4">
+                <a class="footer-link" href="/glossary/">Glossary</a>
+            </div>
+            <div class="col-md-4">
+                <p>Copyright © 2016. All rights reserved.</p>
+            </div>
+        </div>
+      </div>
+    </footer>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/material.min.js" %}"></script>
     <script src="{% static "js/material-kit.js" %}"></script>

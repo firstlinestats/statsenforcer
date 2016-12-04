@@ -322,7 +322,6 @@
                                                 {% if play.id in playmedia %}
                                                 <br />
                                                 {% with media=playmedia|get_item:play.id %}
-                                                {{ media.blurb }}
                                                 <div class="image-container">
                                                     <a target="_blank" href="{{ media.url }}">
                                                         <img src="{{ media.preview }}" class="img img-responsive image-preview" />
@@ -334,6 +333,7 @@
                                                         </div>
                                                     </a>
                                                 </div>
+                                                {{ media.blurb }}
                                                 {% endwith %}
                                                 {% endif %}
                                             </td>
