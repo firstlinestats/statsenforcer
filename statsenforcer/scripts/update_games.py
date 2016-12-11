@@ -675,7 +675,7 @@ def main():
                         compile_info(game.gamePk)
                         findStandings(game.season)
             except Exception as e:
-                sendemail.send_error_email(e)
+                sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
                 raise Exception("Issue running. Please debug and restart...")
         #return
         # Find active games and loop back up, repeating
