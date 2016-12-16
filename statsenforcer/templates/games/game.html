@@ -248,18 +248,33 @@
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
-                                                    <option value="gf">GF%</option>
-                                                    <option value="sf">SF%</option>
-                                                    <option value="msf">MSF%</option>
-                                                    <option value="bsf">BSF%</option>
-                                                    <option value="cf">CF%</option>
-                                                    <option value="sc">SCF%</option>
-                                                    <option value="hsc">HSCF%</option>
-                                                    <option value="zso">ZSO%</option>
-                                                    <option value="pn">PN%</option>
-                                                    <option value="fo_w">FO_W%</option>
-                                                    <option value="hit">Hit%</option>
-                                                    <option value="toi">TOI/Gm</option>
+                                                    <option value="g">Goals</option>
+                                                    <option value="a1">Primary Assists</option>
+                                                    <option value="a2">Secondary Assists</option>
+                                                    <option value="p">Points</option>
+                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="ca">Corsi Against Total</option>
+                                                    <option value="ff">Fenwick For Total</option>
+                                                    <option value="fa">Fenwick Against Total</option>
+                                                    <option value="gf">On-Ice Goals For</option>
+                                                    <option value="ga">On-Ice Goals Against</option>
+                                                    <option value="iscf">Individual Scoring Chances For</option>
+                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
+                                                    <option value="scf" selected>Scoring Chances For</option>
+                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="sca">Scoring Chances Against</option>
+                                                    <option value="hsca">High Danger Scoring Chances Against</option>
+                                                    <option value="fo_w">Faceoffs Won</option>
+                                                    <option value="fo_l">Faceoffs Lost</option>
+                                                    <option value="zso">Offensive Zone Starts</option>
+                                                    <option value="zsn">Neutral Zone Starts</option>
+                                                    <option value="zsd">Defensive Zone Starts</option>
+                                                    <option value="hitplus">Hits</option>
+                                                    <option value="hitminus">Hits Taken</option>
+                                                    <option value="pnplus">Penalties</option>
+                                                    <option value="pnminus">Penalties Taken</option>
+                                                    <option value="toi">Time On Ice</option>
+
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -267,18 +282,32 @@
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
-                                                    <option value="gf">GF%</option>
-                                                    <option value="sf" selected>SF%</option>
-                                                    <option value="msf">MSF%</option>
-                                                    <option value="bsf">BSF%</option>
-                                                    <option value="cf">CF%</option>
-                                                    <option value="sc">SCF%</option>
-                                                    <option value="hsc">HSCF%</option>
-                                                    <option value="zso">ZSO%</option>
-                                                    <option value="pn">PN%</option>
-                                                    <option value="fo_w">FO_W%</option>
-                                                    <option value="hit">Hit%</option>
-                                                    <option value="toi">TOI/Gm</option>
+                                                    <option value="g">Goals</option>
+                                                    <option value="a1">Primary Assists</option>
+                                                    <option value="a2">Secondary Assists</option>
+                                                    <option value="p">Points</option>
+                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="ca">Corsi Against Total</option>
+                                                    <option value="ff">Fenwick For Total</option>
+                                                    <option value="fa">Fenwick Against Total</option>
+                                                    <option value="gf">On-Ice Goals For</option>
+                                                    <option value="ga">On-Ice Goals Against</option>
+                                                    <option value="iscf">Individual Scoring Chances For</option>
+                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
+                                                    <option value="scf">Scoring Chances For</option>
+                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="sca" selected>Scoring Chances Against</option>
+                                                    <option value="hsca">High Danger Scoring Chances Against</option>
+                                                    <option value="fo_w">Faceoffs Won</option>
+                                                    <option value="fo_l">Faceoffs Lost</option>
+                                                    <option value="zso">Offensive Zone Starts</option>
+                                                    <option value="zsn">Neutral Zone Starts</option>
+                                                    <option value="zsd">Defensive Zone Starts</option>
+                                                    <option value="hitplus">Hits</option>
+                                                    <option value="hitminus">Hits Taken</option>
+                                                    <option value="pnplus">Penalties</option>
+                                                    <option value="pnminus">Penalties Taken</option>
+                                                    <option value="toi">Time On Ice</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -427,9 +456,8 @@
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
         shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}", "{{ form|format_form_state }}");
-
-        playerCompare('#playerComparison', "#gameTabContent", "gf", "sf", playerStats);
-        savePNG("#playerComparisonButton", "#gameComparison");
+        playerCompare('#playerComparison', "#gameTabContent", "sca", "scf", playerStats);
+        savePNG("#playerComparisonButton", "#playerComparison");
 
         $('#refreshGraph').click(function(e) {
             e.preventDefault();

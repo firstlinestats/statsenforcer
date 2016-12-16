@@ -48,13 +48,13 @@ function create_corsi_events(alldata, divid, teamname, situations) {
     }
   }
 
-  /* 
+  /*
    * value accessor - returns the value to encode for a given data object.
    * scale - maps value to a visual display encoding, such as a pixel position.
    * map function - maps from data value to display value
    * axis - sets up axis
-   */ 
-  // setup x 
+   */
+  // setup x
   var xValue = function(d) { return d.cf + d.ca;}, // data -> value
       xScale = d3.scale.linear().range([0, width]), // value -> display
       xMap = function(d) { return xScale(xValue(d));}, // data -> display
@@ -131,11 +131,11 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .style("fill", "grey")
         .text("firstlinestats.com")
     svg.append("text")
-        .attr("x", (width / 2))             
+        .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 4))
-        .attr("text-anchor", "middle")  
-        .style("font-size", "16px") 
-        .style("text-decoration", "underline")  
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
         .text(teamname + " On-Ice Shot Attempts For/Against");
   // draw dots
   svg.selectAll(".dot")
@@ -163,7 +163,7 @@ function create_corsi_events(alldata, divid, teamname, situations) {
               .attr("id", teamname + "-" + p.cf + "-" + p.ca + "-name")
               .attr("x", xMap(p))
               .attr("y", yMap(p) - 5)
-              .attr("text-anchor", "middle")  
+              .attr("text-anchor", "middle")
               .style("font-size", "16px")
               .text(p.name);
           }
@@ -185,7 +185,7 @@ function create_corsi_events(alldata, divid, teamname, situations) {
             .attr("id", "#" + teamname + "-" + p.cf + "-" + p.ca + "-name")
             .attr("x", xMap(p))
             .attr("y", yMap(p) - 5)
-            .attr("text-anchor", "middle")  
+            .attr("text-anchor", "middle")
             .style("font-size", "16px")
             .on("click", mouseoverName)
             .text(p.name);

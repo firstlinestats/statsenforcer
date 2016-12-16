@@ -1,19 +1,32 @@
 function playerCompare(divId, containerId, xvalue, yvalue, data) {
     $(divId).html("");
     var axisText = {
-        "gf": "On-Ice Goals For Percentage",
-        "sf": "On-Ice Shots-On-Goal For Percentage",
-        "msf": "Missed Shots For Percentage",
-        "bsf": "Blocked Shots Percentage",
-        "cf": "Corsi For Percentage",
-        "sc": "On-Ice Scoring Chances For Percentage",
-        "hsc": "On-Ice High-Danger Scoring Chances For Percentage",
-        "zso": "Offensive Zone Starts Percentage",
-        "pn": "Penalties Percentage",
-        "fo_w": "Faceoffs Won Percentage",
-        "hit": "Hit Percentage",
-        "toi": "Time On Ice",
-        "season": "Season"
+        'g': "Goals",
+        'a1': "Primary Assists",
+        'a2': "Secondary Assists",
+        'p': "Points",
+        'cf': "Corsi For Total",
+        'ca': "Corsi Against Total",
+        'ff': "Fenwick For Total",
+        'fa': "Fenwick Against Total",
+        'gf': "On-Ice Goals For",
+        'ga': "On-Ice Goals Against",
+        'iscf': "Individual Scoring Chances For",
+        'ihscf': "Individual High Danger Scoring Chances For",
+        'scf': "Scoring Chances For",
+        'hscf': "High Danger Scoring Chances For",
+        'sca': "Scoring Chances Against",
+        'hsca': "High Danger Scoring Chances Against",
+        'fo_w': "Faceoffs Won",
+        'fo_l': "Faceoffs Lost",
+        'zso': "Offensive Zone Starts",
+        'zsn': "Neutral Zone Starts",
+        'zsd': "Defensive Zone Starts",
+        'hitplus': "Hits",
+        'hitminus': "Hits Taken",
+        'pnplus': "Penalties",
+        'pnminus': "Penalties Taken",
+        'toi': "Time On Ice"
     };
 
     var xText = axisText[xvalue];
@@ -61,12 +74,22 @@ function playerCompare(divId, containerId, xvalue, yvalue, data) {
         }),
         maxRadius = d3.max(dataset, function(d) {
             return d.size;
+        }),
+        meanX = d3.mean(dataset, function(d) {
+            return d.x;
+        }),
+        meanY = d3.mean(dataset, function(d) {
+            return d.y;
         });
+    var x = d3.scale.linear()
+        .range([0, width]);
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
     var xValue = function(d) {
             return d.x;
         }, // data -> value
-        xScale = d3.scale.linear().domain([minX, maxX]).range([0, width]), // value -> display
+        xScale = d3.scale.linear().domain([minX - (meanX * .05), maxX + (meanX * .05)]).range([0, width]), // value -> display
         xMap = function(d) {
             return xScale(xValue(d));
         }, // data -> display
@@ -75,24 +98,16 @@ function playerCompare(divId, containerId, xvalue, yvalue, data) {
     var yValue = function(d) {
             return d.y;
         }, // data -> value
-        yScale = d3.scale.linear().domain([minY, maxY]).range([height, 0]), // value -> display
+        yScale = d3.scale.linear().domain([minY - (meanY * .05), maxY + (meanY * .05)]).range([height, 0]), // value -> display
         yMap = function(d) {
             return yScale(yValue(d));
         }, // data -> display
         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-    var rValue = function(d) {
-            return d.size;
-        },
-        rScale = d3.scale.linear().domain([minRadius, maxRadius]).range([2, 20]),
-        rMap = function(d) {
-            return rScale(rValue(d));
-        };
 
-    var x = d3.scale.linear()
-        .range([0, width]);
-    var y = d3.scale.linear()
-        .range([height, 0]);
+
+    x.domain([minX - Math.abs((meanX * .05)), maxX +  Math.abs((meanX * .05))]);
+    y.domain([minY - Math.abs((meanY * .05)), maxY +  Math.abs((meanY * .05))]);
 
     var maxallowed = 35,
         minallowed = 2;
@@ -125,8 +140,12 @@ function playerCompare(divId, containerId, xvalue, yvalue, data) {
         .enter()
         .append("circle")
         .attr("class", "circle")
-        .attr("cx", xMap)
-        .attr("cy", yMap)
+        .attr("cx", function(d) {
+            return x(d.x);
+        })
+        .attr("cy", function(d) {
+            return y(d.y);
+        })
         .attr("r", 10)
         .attr("id", function(d) {
             return "circle-" + d["playerId"] + '-' + d["team"];
@@ -203,16 +222,7 @@ function playerCompare(divId, containerId, xvalue, yvalue, data) {
         });
 
 
-    x.domain([d3.min(dataset, function(d) {
-        return d.x;
-    }), d3.max(dataset, function(d) {
-        return d.x;
-    })]);
-    y.domain([d3.min(dataset, function(d) {
-        return d.y;
-    }), d3.max(dataset, function(d) {
-        return d.y;
-    })]);
+
 
     svg.append("g")
         .attr("class", "x axis")
