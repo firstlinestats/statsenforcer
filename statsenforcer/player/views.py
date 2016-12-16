@@ -2,10 +2,12 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
 from player.models import Player, PlayerGameFilterStats
 from playbyplay.models import Game
 from datetime import date, datetime
+import json
 from playbyplay.forms import GameFilterForm, GameForm
 
 import playerqueries
@@ -107,6 +109,7 @@ def players(request):
     context = {}
     context["form"] = form
     context["stats"] = stats
+    context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/players.html', context)
 
 def player_page(request, player_id):

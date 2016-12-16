@@ -193,17 +193,96 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="graphview">
-                        <div class="card">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3>Graph View</h3>
-                                    <p>{{ form|format_form_state }}</p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Graph View</h3>
+                                <p>{{ form|format_form_state }}</p>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                X-Axis
+                                                <select class="form-control input-md" id="xaxis">
+                                                    <option value="g">Goals</option>
+                                                    <option value="a1">Primary Assists</option>
+                                                    <option value="a2">Secondary Assists</option>
+                                                    <option value="p">Points</option>
+                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="ca">Corsi Against Total</option>
+                                                    <option value="ff">Fenwick For Total</option>
+                                                    <option value="fa">Fenwick Against Total</option>
+                                                    <option value="gf">On-Ice Goals For</option>
+                                                    <option value="ga">On-Ice Goals Against</option>
+                                                    <option value="iscf">Individual Scoring Chances For</option>
+                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
+                                                    <option value="scf" selected>Scoring Chances For</option>
+                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="sca">Scoring Chances Against</option>
+                                                    <option value="hsca">High Danger Scoring Chances Against</option>
+                                                    <option value="fo_w">Faceoffs Won</option>
+                                                    <option value="fo_l">Faceoffs Lost</option>
+                                                    <option value="zso">Offensive Zone Starts</option>
+                                                    <option value="zsn">Neutral Zone Starts</option>
+                                                    <option value="zsd">Defensive Zone Starts</option>
+                                                    <option value="hitplus">Hits</option>
+                                                    <option value="hitminus">Hits Taken</option>
+                                                    <option value="pnplus">Penalties</option>
+                                                    <option value="pnminus">Penalties Taken</option>
+                                                    <option value="toi">Time On Ice</option>
 
-                                </div>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                Y-Axis
+                                                <select class="form-control input-md" id="yaxis">
+                                                    <option value="g">Goals</option>
+                                                    <option value="a1">Primary Assists</option>
+                                                    <option value="a2">Secondary Assists</option>
+                                                    <option value="p">Points</option>
+                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="ca">Corsi Against Total</option>
+                                                    <option value="ff">Fenwick For Total</option>
+                                                    <option value="fa">Fenwick Against Total</option>
+                                                    <option value="gf">On-Ice Goals For</option>
+                                                    <option value="ga">On-Ice Goals Against</option>
+                                                    <option value="iscf">Individual Scoring Chances For</option>
+                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
+                                                    <option value="scf">Scoring Chances For</option>
+                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="sca" selected>Scoring Chances Against</option>
+                                                    <option value="hsca">High Danger Scoring Chances Against</option>
+                                                    <option value="fo_w">Faceoffs Won</option>
+                                                    <option value="fo_l">Faceoffs Lost</option>
+                                                    <option value="zso">Offensive Zone Starts</option>
+                                                    <option value="zsn">Neutral Zone Starts</option>
+                                                    <option value="zsd">Defensive Zone Starts</option>
+                                                    <option value="hitplus">Hits</option>
+                                                    <option value="hitminus">Hits Taken</option>
+                                                    <option value="pnplus">Penalties</option>
+                                                    <option value="pnminus">Penalties Taken</option>
+                                                    <option value="toi">Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-4 col-md-12">
+                                            <div class="form-group">
+                                                <button id="refreshGraph" class="btn">Refresh<div class="ripple-container"></div></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
+                                <div id="playerComparison"></div>
                             </div>
                         </div>
                     </div>
@@ -218,8 +297,7 @@
 <script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/shotChart.js" %}"></script>
-<script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
+<script src="{% static "js/graphs/bubbleCompare.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -234,6 +312,36 @@
                 "pageLength": 25,
             });
 
+            var data = JSON.parse("{{ statsJson | escapejs }}");
+            var graphData = [];
+
+            for (player in data) {
+                for (season in data[player]) {
+                    var playerData = data[player][season];
+                    playerData.season = season;
+                    playerData.playerId = parseInt(player);
+                    playerData.x = parseFloat(playerData['points']);
+                    playerData.y = parseFloat(playerData['goals']);
+                    playerData.displayName = playerData.fullName;
+                    playerData.featureId = playerData.playerId;
+                    playerData.fillColor = get_color(playerData.abbreviation, true);;
+                    playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                    graphData.push(playerData);
+                };
+            };
+            console.log(graphData);
+            bubbleCompare('#playerComparison', "#teamTabContent", 'points', 'goals', graphData);
+
+
+
+
+            // playerCompare('#playerComparison', "#teamTabContent", "sca", "scf", data, 'players');
+            //  $('#refreshGraph').click(function(e) {
+            //      e.preventDefault();
+            //      var x = $('#xaxis').val();
+            //      var y = $('#yaxis').val();
+            //      playerCompare('#playerComparison', "#gameTabContent", x, y, data, 'players');
+            //  });
         });
 </script>
 {% endblock %}

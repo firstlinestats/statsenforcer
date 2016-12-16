@@ -1,36 +1,9 @@
-function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
+//trying to create a catch all bubble graph
+//data should be an array with each entry having an x, y, featureId, and displayName properties
+function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
     $(divId).html("");
-    var axisText = {
-        'g': "Goals",
-        'a1': "Primary Assists",
-        'a2': "Secondary Assists",
-        'p': "Points",
-        'cf': "Corsi For Total",
-        'ca': "Corsi Against Total",
-        'ff': "Fenwick For Total",
-        'fa': "Fenwick Against Total",
-        'gf': "On-Ice Goals For",
-        'ga': "On-Ice Goals Against",
-        'iscf': "Individual Scoring Chances For",
-        'ihscf': "Individual High Danger Scoring Chances For",
-        'scf': "Scoring Chances For",
-        'hscf': "High Danger Scoring Chances For",
-        'sca': "Scoring Chances Against",
-        'hsca': "High Danger Scoring Chances Against",
-        'fo_w': "Faceoffs Won",
-        'fo_l': "Faceoffs Lost",
-        'zso': "Offensive Zone Starts",
-        'zsn': "Neutral Zone Starts",
-        'zsd': "Defensive Zone Starts",
-        'hitplus': "Hits",
-        'hitminus': "Hits Taken",
-        'pnplus': "Penalties",
-        'pnminus': "Penalties Taken",
-        'toi': "Time On Ice"
-    };
-
-    var xText = axisText[xvalue];
-    var yText = axisText[yvalue];
+    var xText = xvalue;
+    var yText = yvalue;
 
     var margin = {
             top: 20,
@@ -41,64 +14,32 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         width = $(containerId).width() - margin.left - margin.right,
         height = 500;
 
-    var dataset = [];
-    if (page === 'players') {
-        for (player in data) {
-            var playerData = data[player];
-            for (season in playerData) {
-                var playerStats = playerData[season];
-                playerStats.playerId = player;
-                playerStats.season = season;
-                if (xvalue !== "season") {
-                    playerStats.x = parseFloat(playerStats[xvalue]);
-                } else {
-                    playerStats.x = parseInt(playerStats[xvalue]);
-                };
-                playerStats.y = parseFloat(playerStats[yvalue]);
-                dataset.push(playerStats);
-            };
-        };
-    } else {
-        for (team in data) {
-            var teamData = data[team];
-            for (player in teamData) {
-                teamData[player].playerId = player;
-                if (xvalue !== "season") {
-                    teamData[player].x = parseFloat(teamData[player][xvalue]);
-                } else {
-                    teamData[player].x = parseInt(teamData[player][xvalue]);
-                };
-                teamData[player].y = parseFloat(teamData[player][yvalue]);
-                dataset.push(teamData[player]);
-            };
-        };
-    };
 
-
-    var minX = d3.min(dataset, function(d) {
+    var minX = d3.min(data, function(d) {
             return d.x;
         }),
-        maxX = d3.max(dataset, function(d) {
+        maxX = d3.max(data, function(d) {
             return d.x;
         }),
-        minY = d3.min(dataset, function(d) {
+        minY = d3.min(data, function(d) {
             return d.y;
         }),
-        maxY = d3.max(dataset, function(d) {
+        maxY = d3.max(data, function(d) {
             return d.y;
         }),
-        minRadius = d3.min(dataset, function(d) {
+        minRadius = d3.min(data, function(d) {
             return d.size;
         }),
-        maxRadius = d3.max(dataset, function(d) {
+        maxRadius = d3.max(data, function(d) {
             return d.size;
         }),
-        meanX = d3.mean(dataset, function(d) {
+        meanX = d3.mean(data, function(d) {
             return d.x;
         }),
-        meanY = d3.mean(dataset, function(d) {
+        meanY = d3.mean(data, function(d) {
             return d.y;
         });
+
     var x = d3.scale.linear()
         .range([0, width]);
     var y = d3.scale.linear()
@@ -154,7 +95,7 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         .attr("fill", "white");
 
     svg.selectAll("circle")
-        .data(dataset)
+        .data(data)
         .enter()
         .append("circle")
         .attr("class", "circle")
@@ -166,17 +107,17 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         })
         .attr("r", 10)
         .attr("id", function(d) {
-            return "circle-" + d["playerId"] + '-' + d["team"];
+            return "circle-" + d["featureId"];
         })
         .style("fill", function(d) {
-            return get_color(d.team, true);
+            return d.fillColor;
         })
         .style("stroke", function(d) {
-            return get_color(d.team, false);
+            return d.strokeColor;
         })
         .on('click', circleClicked)
         .on("mouseover", function(d) {
-            var html = d.name + "<br /><b>" + xvalue + ":</b>" + d[xvalue] + "<br /><b>" + yvalue + ": </b>" + d[yvalue];
+            var html = d.displayName + "<br /><b>" + xvalue + ":</b>" + d[xvalue] + "<br /><b>" + yvalue + ": </b>" + d[yvalue];
             tooltip.html(html);
             tooltip.style("visibility", "visible");
         })
@@ -189,15 +130,15 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         });
 
     var texts = svg.selectAll("text")
-        .data(dataset)
+        .data(data)
         .enter();
 
     texts.append("text")
         .html(function(d) {
-            return d["name"];
+            return d.displayName;
         })
         .attr("id", function(d) {
-            return "name-" + d["playerId"];
+            return "name-" + d["featureId"];
         })
         .attr("x", function(d) {
             return xMap(d)
@@ -238,9 +179,6 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         .tickFormat(function(d) {
             return formatAxisText(d, yText);
         });
-
-
-
 
     svg.append("g")
         .attr("class", "x axis")
