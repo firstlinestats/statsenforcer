@@ -3,7 +3,6 @@
 {% load staticfiles %}
 
 <h4>
-    <img height="22px" width="22px" alt="{{ team.abbreviation }} logo" src='{% with 'img/team/'|add:team.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>
     {{ team }}
 </h4>
 <div class="table-responsive">

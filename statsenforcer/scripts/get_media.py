@@ -54,7 +54,7 @@ def game_media(gameid):
                 try:
                     play = pbpmodels.PlayByPlay.objects.get(gamePk=game, eventId=milestone["statsEventId"])
                     create_highlight(milestone["highlight"], game, play)
-                except:
+                except Exception as e:
                     print milestone["statsEventId"]
 
 
@@ -62,9 +62,9 @@ def create_highlight(element, game=None, play=None):
     media, created = pbpmodels.PlayMedia.objects.get_or_create(external_id=element["id"],
                                                                game=game)
     if play is not None:
-        media.play = play
+        media.play = play.id
     media.external_id = element["id"]
-    media.media_type = element["type"]
+    media.mediatype = element["type"]
     media.title = element["title"]
     media.blurb = element["blurb"]
     media.description = element["description"]
@@ -75,7 +75,7 @@ def create_highlight(element, game=None, play=None):
         for cut in element["image"]["cuts"]:
             url = element["image"]["cuts"][cut]["src"]
             break
-    if created:
+    if created or media.image is None or media.image == "":
         imgname = "{}.jpeg".format(media.external_id)
         img = api_calls.get_image(url)
         directory = ""
@@ -88,8 +88,12 @@ def create_highlight(element, game=None, play=None):
 
 
 if __name__ == "__main__":
-    ignoregameids = set(pbpmodels.PlayMedia.objects.values_list("game_id", flat=True).all())
-    for game in pbpmodels.Game.objects.exclude(gamePk__in=ignoregameids).filter(gamePk__gte=2015020501, gameState__in=["5", "6", "7"]):
-        print game.gamePk
-        game_media(game.gamePk)
-        break
+    # ignoregameids = set(pbpmodels.PlayMedia.objects.values_list("game_id", flat=True).all())
+    # for game in pbpmodels.Game.objects.exclude(gamePk__in=ignoregameids).filter(gamePk__gte=2015020501, gameState__in=["5", "6", "7"]):
+    #     print game.gamePk
+    #     game_media(game.gamePk)
+    #     break
+    missingvals = set(pbpmodels.PlayMedia.objects.values_list("game_id", flat=True).filter(image=""))
+    for game in missingvals:
+        print game
+        game_media(game)

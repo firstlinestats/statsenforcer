@@ -12,10 +12,7 @@
 <div class="container">
     <div class="card">
         <div class="row">
-            <div class="col-md-4 text-center">
-                <img class="img-responsive img-center" alt="{{ game.awayTeam.abbreviation }} logo" id="away-team-logo" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}' style="padding-top:40px;">
-            </div>
-            <div class="col-md-4 text-center">
+            <div class="col-md-12 text-center">
                 <div class="row">
                     <div class="col-md-12">
                         <h3 class="away-team" id="away-team-name">{{ game.awayTeam }}</h3>
@@ -47,9 +44,6 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <img class="img-responsive img-center" alt="{{ game.homeTeam.abbreviation }} logo" id="home-team-logo" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}' style="padding-top:40px;">
             </div>
         </div>
     </div>
@@ -157,7 +151,7 @@
                                             <tbody>
                                                 {% for team in teamstats %}
                                                 <tr>
-                                                    <td title="Team"><img height="17" width="17" alt="{{ team.team }} logo" src='{% with 'img/team/'|add:team.team|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ team.team }}</td>
+                                                    <td title="Team">{{ team.team }}</td>
                                                     <td title="On-Ice Goals For Total">{{ team.gf }}</td>
                                                     <td title="On-Ice Shots-On-Goal For Total">{{ team.sf }}</td>
                                                     <td title="Missed Shots For">{{ team.msf }}</td>
@@ -348,12 +342,29 @@
                                             <td>{{ play.homeScore }} - {{ play.awayScore }}</td>
                                             <td>
                                                 {{ play|create_play_text|safe }}
+                                                {% if play.id in playmedia %}
+                                                <br />
+                                                {% with media=playmedia|get_item:play.id %}
+                                                <div class="image-container">
+                                                    <a target="_blank" href="{{ media.url }}">
+                                                        <img src="{{ media.preview }}" class="img img-responsive image-preview" />
+                                                        <div class="after">
+                                                            <span class="image-content">View on NHL.com</span>
+                                                            <span class="zoom">
+                                                                <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                {{ media.blurb }}
+                                                {% endwith %}
+                                                {% endif %}
                                             </td>
                                             <td>
                                                 <table class="table table-bordered table-striped table-condensed">
                                                     <tbody>
                                                         <tr>
-                                                            <th><img height="17" width="17" alt="{{ game.awayTeam.abbreviation }} logo" src='{% with 'img/team/'|add:game.awayTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ game.awayTeam.abbreviation }}</th>
+                                                            <th>{{ game.awayTeam.abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.awayTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
@@ -361,7 +372,7 @@
                                                             {% endfor %}
                                                         </tr>
                                                         <tr>
-                                                            <th><img height="17" width="17" alt="{{ game.homeTeam.abbreviation }} logo" src='{% with 'img/team/'|add:game.homeTeam.abbreviation|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>&nbsp;{{ game.homeTeam.abbreviation }}</th>
+                                                            <th>{{ game.homeTeam.abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.homeTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>

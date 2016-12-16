@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th class="text-center" title="Player">Player</th>
+                <th class="text-center" title="Team">Team</th>
                 <th class="text-center" title="Goals Unknown-Danger">GU</th>
                 <th class="text-center" title="Goals Low-Danger">GL</th>
                 <th class="text-center" title="Goals Medium-Danger">GM</th>
@@ -21,7 +22,8 @@
             {% for pid in goaliestats %}
             {% with player=goaliestats|get_item:pid %}
             <tr>
-                <td class="text-center" title="Player"><img height="17" width="17" alt="{{ player.teamname }} logo" src='{% with 'img/team/'|add:player.teamname|add:'.png' as image_static %}{% static image_static %} {% endwith %}'>{{ player.name }}</td>
+                <td class="text-center" title="Player">{{ player.name }}</td>
+                <td class="text-center" title="Team">{{ player.teamname }}</td>
                 <td class="text-center" title="Goals Unknown-Danger">{{ player.gu }}</td>
                 <td class="text-center" title="Goals Low-Danger">{{ player.gl }}</td>
                 <td class="text-center" title="Goals Medium-Danger">{{ player.gm }}</td>

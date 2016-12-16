@@ -38,6 +38,14 @@ def game(request, game_pk):
     if context["period"] is not None:
         context["playbyplay"] = models.PlayByPlay.objects.filter(gamePk_id=game_pk).order_by("eventIdx")
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
+        media = models.PlayMedia.objects.values("title", "blurb", "description", "duration", "image", "play", "external_id").filter(game_id=game_pk)
+        context["playmedia"] = {}
+        year, game = game_pk[:4], game_pk[5:]
+        for m in media:
+            mdata = m
+            mdata["url"] = "https://www.nhl.com/video/c-{}".format(m["external_id"])
+            mdata["preview"] = "http://static.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
+            context["playmedia"][m["play"]] = mdata
 
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
         p2t = {}
@@ -68,7 +76,10 @@ def game(request, game_pk):
             poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         pt = str(context["playbyplay"][-1]["periodTime"])[:-3].split(":")
-        minutes = 20 - int(pt[0])
+        if context["period"] < 4 or context["game"].gameType == "P":
+            minutes = 20 - int(pt[0])
+        else:
+            minutes = 5 - int(pt[0])
         seconds = 60 - int(pt[1])
         if seconds == 60:
             seconds = 0
@@ -129,7 +140,6 @@ def game(request, game_pk):
             "home" : [],
             "away" : []
         }
-        print context["game"].awayTeam.id, context["game"].homeTeam.id
         for play in context["playbyplay"]:
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
