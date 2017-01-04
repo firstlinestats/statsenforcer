@@ -3,6 +3,10 @@
     border-radius: 0px;
 }
 
+.container {
+    width: 80%;
+}
+
 .card .header-primary {
     background: linear-gradient(60deg, #0A0A0A, #000000);
 }

@@ -421,8 +421,8 @@
         });
 
         var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
-            "iDisplayLength": 25,
-            "bPaginate": false,
+            "iDisplayLength": 10,
+            "bPaginate": true,
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
@@ -430,8 +430,8 @@
         });
 
         $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
-            "iDisplayLength": 25,
-            "bPaginate": false,
+            "iDisplayLength": 10,
+            "bPaginate": true,
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
@@ -439,7 +439,7 @@
         });
 
         $('#teamstats').DataTable({
-            "iDisplayLength": 25,
+            "iDisplayLength": 10,
             "bPaginate": false,
             scrollX: true,
             "fixedColumns": {
@@ -448,7 +448,7 @@
         });
 
         $('#goalietable').DataTable({
-            "iDisplayLength": 25,
+            "iDisplayLength": 10,
             "bPaginate": false,
             scrollX: true,
             "fixedColumns": {
