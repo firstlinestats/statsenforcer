@@ -76,7 +76,7 @@ def game(request, game_pk):
             poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         pt = str(context["playbyplay"][-1]["periodTime"])[:-3].split(":")
-        if context["period"] < 4 or context["game"].gameType == "P":
+        if context["period"].period < 4 or context["game"].gameType == "P":
             minutes = 20 - int(pt[0])
         else:
             minutes = 5 - int(pt[0])

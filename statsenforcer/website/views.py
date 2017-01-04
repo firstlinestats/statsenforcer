@@ -9,6 +9,7 @@ from website.models import GlossaryTerm
 import datetime
 import json
 import pytz
+import arrow
 
 from fancystats.constants import gameStates
 
@@ -24,7 +25,7 @@ def utc_to_local(utc_dt):
 
 def index(request):
     start = datetime.datetime.now()
-    games = Game.objects.raw(indexqueries.gamesquery, [20162017, datetime.date.today() + datetime.timedelta(1)])
+    games = Game.objects.raw(indexqueries.gamesquery, [20162017, arrow.now().datetime + datetime.timedelta(1)])
     gameData = []
     for game in games:
         gd = {}
@@ -90,16 +91,12 @@ def glossary(request):
 
 def games(request, gamedate):
     content = {"games": []}
-    dateurlformat = "%Y-%m-%d"
+    dateurlformat = "YYYY-MM-DD"
     dateformat = "%b %d"
-    try:
-        if gamedate == "today":
-            gamedate = datetime.datetime.today()
-        else:
-            gamedate = datetime.datetime.strptime(gamedate, dateurlformat)
-        gameenddate = gamedate - datetime.timedelta(hours=36)
-    except Exception as e:
-        return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format'}, status=400)
+    if gamedate == "today":
+        gamedate = arrow.now().datetime
+    else:
+        return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format, currently only \'today\' is accepted'}, status=400)
     games = Game.objects.values("gamePk", "homeTeam__abbreviation", "awayTeam__abbreviation", "homeScore", "awayScore", "dateTime", "endDateTime", "gameState").filter(dateTime__gte=gamedate - datetime.timedelta(hours=12), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
     content["date"] = datetime.datetime.strftime(gamedate, dateformat)
     content["yesterday"] = datetime.datetime.strftime(gamedate - datetime.timedelta(hours=24), dateurlformat)
