@@ -270,7 +270,7 @@ def set_player_stats(pd, team, game, players, period):
 
 def find_current_games():
     today = datetime.datetime.now(tz=pytz.UTC)
-    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8]).filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(7))
+    current_games = pbpmodels.Game.objects.exclude(gameState__in=[6,7,8,9]).filter(dateTime__lte=today, dateTime__gte=today - datetime.timedelta(7))
     return current_games
 
 
@@ -658,7 +658,7 @@ def main():
     while keep_running:
         # Loop through current_games
         for game in current_games:
-            try:
+            # try:
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
                 try:
@@ -674,9 +674,9 @@ def main():
                     with transaction.atomic():
                         compile_info(game.gamePk)
                         findStandings(game.season)
-            except Exception as e:
-                sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
-                raise Exception("Issue running. Please debug and restart...")
+            # except Exception as e:
+            #     sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
+            #     raise Exception("Issue running. Please debug and restart...")
         #return
         # Find active games and loop back up, repeating
         current_games = find_current_games()
