@@ -2,7 +2,7 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
-{% block title %}{{ game.awayTeam.abbreviation }} vs {{ game.homeTeam.abbreviation }} {{ game.dateTime }}{% endblock %}
+{% block title %}{{ game.awayTeam.abbreviation }} vs {{ game.homeTeam.abbreviation }} {{ game.dateTime }} | FLS{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -246,7 +246,7 @@
                                                     <option value="a1">Primary Assists</option>
                                                     <option value="a2">Secondary Assists</option>
                                                     <option value="p">Points</option>
-                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="cf" selected="selected">Corsi For Total</option>
                                                     <option value="ca">Corsi Against Total</option>
                                                     <option value="ff">Fenwick For Total</option>
                                                     <option value="fa">Fenwick Against Total</option>
@@ -289,7 +289,7 @@
                                                     <option value="iscf">Individual Scoring Chances For</option>
                                                     <option value="ihscf">Individual High Danger Scoring Chances For</option>
                                                     <option value="scf">Scoring Chances For</option>
-                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="hscf" selected="selected">High Danger Scoring Chances For</option>
                                                     <option value="sca" selected>Scoring Chances Against</option>
                                                     <option value="hsca">High Danger Scoring Chances Against</option>
                                                     <option value="fo_w">Faceoffs Won</option>

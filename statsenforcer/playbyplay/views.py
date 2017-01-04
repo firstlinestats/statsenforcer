@@ -156,7 +156,7 @@ def game(request, game_pk):
                         ycoord = ycoord
                     shotData["home"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
-                        "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
+                        "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
                 elif team == context["game"].awayTeam.id and awayinclude:
                     xcoord = play["xcoord"]
                     ycoord = play["ycoord"]
@@ -165,9 +165,8 @@ def game(request, game_pk):
                         ycoord = -ycoord
                     shotData["away"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
-                        "scoring_chance": sc, "time": str(play["periodTime"])[:-3], "period": play["period"]})
+                        "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
         context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
-
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)
