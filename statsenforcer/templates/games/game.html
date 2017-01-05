@@ -464,6 +464,8 @@
         create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}", "{{ form|format_form_state }}");
         create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}", "{{ form|format_form_state }}");
 
+        var eventChart = {{ eventChart| safe }};
+
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
         shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}", "{{ form|format_form_state }}");
