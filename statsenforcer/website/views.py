@@ -140,3 +140,4 @@ def games(request, gamedate):
 
         content["games"].append(gd)
     return JsonResponse(content)
+

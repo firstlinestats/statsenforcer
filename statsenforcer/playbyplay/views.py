@@ -76,7 +76,7 @@ def game(request, game_pk):
             poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         pt = str(context["playbyplay"][-1]["periodTime"])[:-3].split(":")
-        if context["period"].period < 4 or context["game"].gameType == "P":
+        if context["period"] < 4 or context["game"].gameType == "P":
             minutes = 20 - int(pt[0])
         else:
             minutes = 5 - int(pt[0])
@@ -140,7 +140,34 @@ def game(request, game_pk):
             "home" : [],
             "away" : []
         }
+
+        eventChart = {
+            "endTimeSeconds": 0,
+            "homeShots": [],
+            "awayShots": [],
+            "homeName": context["game"].homeTeam.abbreviation,
+            "awayName": context["game"].awayTeam.abbreviation,
+            "homeSC": [],
+            "awaySC": [],
+            "homePenalties": [],
+            "awayPenalties": [],
+            "homeGoals": [],
+            "awayGoals": [],
+            "periodEnds": [],
+        }
+        periodSeconds = 0
+        homeShotCount = 0
+        awayShotCount = 0
+        homeSCCount = 0
+        awaySCCount = 0
+        home_id = context["game"].homeTeam_id
+        away_id = context["game"].awayTeam_id
+        homePenaltyStart = None
+        awayPenaltyStart = None
+        homePenaltyLength = None
+        awayPenaltyLength = None
         for play in context["playbyplay"]:
+            periodSeconds = play["periodTime"] + (1200 * (play["period"] - 1))
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
                 danger = scoringChance[0]
@@ -157,16 +184,41 @@ def game(request, game_pk):
                     shotData["home"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
-                elif team == context["game"].awayTeam.id and awayinclude:
-                    xcoord = play["xcoord"]
-                    ycoord = play["ycoord"]
-                    if xcoord > 0:
-                        xcoord = -xcoord
-                        ycoord = -ycoord
-                    shotData["away"].append({"x": xcoord,
-                        "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
-                        "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
+                    homeShotCount += 1
+                    eventChart["homeShots"].append((periodSeconds, homeShotCount))
+                    if play["playType"] == "GOAL":
+                        eventChart["homeGoals"].append(periodSeconds)
+                    if sc >= 2:
+                        homeSCCount += 1
+                        eventChart["homeSC"].append((periodSeconds, homeSCCount))
+                    awayShotCount += 1
+                    eventChart["awayShots"].append((periodSeconds, awayShotCount))
+                    if play["playType"] == "GOAL":
+                        eventChart["awayGoals"].append(periodSeconds)
+                    if sc >= 2:
+                        awaySCCount += 1
+                        eventChart["awaySC"].append((periodSeconds, awaySCCount))
+            if play["playType"] == "PENALTY" and play["penaltyMinutes"] in [2, 4]:
+                if play["team_id"] == home_id:
+                    homePenaltyStart = periodSeconds
+                    homePenaltyLength = play["penaltyMinutes"] * 60
+                elif play["team_id"] == away_id:
+                    awayPenaltyStart = periodSeconds
+                    awayPenaltyLength = play["penaltyMinutes"] * 60
+            if play["playType"] == "GOAL":
+                if play["team_id"] != home_id and homePenaltyStart is not None:
+                    eventChart["homePenalties"].append((homePenaltyStart, periodSeconds))
+                elif play["team_id"] != away_id and awayPenaltyStart is not None:
+                    eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds))
+            if homePenaltyStart and periodSeconds >= homePenaltyStart + homePenaltyLength:
+                eventChart["homePenalties"].append((homePenaltyStart, periodSeconds))
+            if awayPenaltyStart and periodSeconds >= awayPenaltyStart + awayPenaltyLength:
+                eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds))
+            if play["playType"] == "PERIOD_END":
+                eventChart["periodEnds"].append(periodSeconds)
+        eventChart["periodSeconds"] = periodSeconds + 5
         context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
+
 
         context["teamstats"] = context["teamstats"].values()
     return render(request, 'games/game.html', context)
