@@ -1,4 +1,6 @@
-function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
+function create_shot_attempts(data, divid, valtype) {
+    var hometeam = data["homeName"],
+        awayteam = data["awayName"];
     // add the graph canvas to the body of the webpage
     var margin = {top: 20, right: 50, bottom: 20, left: 40},
         width = 900 - margin.left - margin.right,
@@ -12,12 +14,12 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
 
     $(divid).width(($("#gameTabContent").width())).height(Math.round($("#gameTabContent").width() * 0.425));
     // setup x 
-    var xValue = function(d) { return d.seconds; }, // data -> value
+    var xValue = function(d) { return d[0]; }, // data -> value
         xScale = d3.scale.linear().range([0, width]), // value -> display
         xMap = function(d) { return xScale(xValue(d)); }, // data -> display
         xAxis = d3.svg.axis().scale(xScale).tickValues([20*60, 40*60, 60*60]).tickFormat(function(d) { return d/60; }).orient("bottom");
     // setup y
-    var yValue = function(d) { return d.value; }, // data -> value
+    var yValue = function(d) { return d[1]; }, // data -> value
         yScale = d3.scale.linear().range([height, 0]), // value -> display
         yMap = function(d) { return yScale(yValue(d)); }, // data -> display
         yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -62,41 +64,12 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
 
     xScale.domain([0, secondsMax]);
     yScale.domain([0, yScaleMax]);
-    // x-axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-      .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("Time");
-    // y-axis
-    if (valtype == "sa")
-        var header = "Shot Attempts By Team";
-    else
-        var header = "Scoring Chances By Team";
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-      .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(header);
+    
     function format_toi(t) {
         var minutes = Math.floor(t / 60);
         var seconds = t - minutes * 60;
         return minutes + ":" + seconds
     }
-    if (valtype == "sa")
-        var header = "Shot Attempts By Team";
-    else
-        var header = "Scoring Chances By Team";
     svg.append("text")
         .attr("x", (width / 2))             
         .attr("y", 0 - (margin.top / 4))
@@ -108,7 +81,7 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
         .interpolate("step-after")
         .x(xMap)
         .y(yMap);
-    createPeriods(svg, data["pend"]);
+    createPeriods(svg, data["periodEnds"]);
     svg.append("path")
         .datum(data["home" + valtype])
         .attr('stroke', get_color(hometeam, true))
@@ -122,10 +95,12 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
         .attr('stroke-width', 2)
         .attr('fill', "none")
         .attr("d", line);
-    createPP(svg, data["homepp"], hometeam);
-    createPP(svg, data["awaypp"], awayteam);
-    createGoals(svg, data["homegoal"], hometeam);
-    createGoals(svg, data["awaygoal"], awayteam);
+
+    createPP(svg, data["awayPenalties"], hometeam);
+    createPP(svg, data["homePenalties"], awayteam);
+
+    createGoals(svg, data["homeGoals"], hometeam);
+    createGoals(svg, data["awayGoals"], awayteam);
     svg.append("rect")
         .attr("x", 115)
         .attr("y", 4)
@@ -141,6 +116,34 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
         .style("fill", "grey")
         .text("firstlinestats.com")
     createLegend(hometeam, awayteam);
+
+    // x-axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Time");
+    // y-axis
+    if (valtype == "Shots")
+        var header = "Shot Attempts By Team";
+    else
+        var header = "Scoring Chances By Team";
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text(header);
+
     function mouseover(p) {
         //tooltip.html(p["full_name"] + "<br />SF:" + p.SF + "<br />SA:" + p.SA + "<br />TOI:" + format_toi(p.TOI));
         tooltip.style("visibility", "visible")
@@ -155,7 +158,7 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
             svg.append("rect")
                 .attr("x", xMap(penl))
                 .attr("y", 0)
-                .attr("width", xScale(penl["length"]))
+                .attr("width", xScale(penl[1]))
                 .attr("height", height)
                 .attr("fill", get_color(teamname, true))
                 .attr("opacity", 0.5)
@@ -179,19 +182,20 @@ function create_shot_attempts(data, divid, valtype, hometeam, awayteam) {
     function createGoals(svg, goals, teamname) {
         for (var i=0; i<goals.length; i++) {
             var seconds = goals[i];
+            console.log(goals);
             svg.append("line")
-                .attr("x1", xMap(seconds))
+                .attr("x1", xScale(seconds))
                 .attr("y1", 0)
-                .attr("x2", xMap(seconds))
+                .attr("x2", xScale(seconds))
                 .attr("y2", height)
                 .style("fill", "none")
                 .style("stroke", get_color(teamname, false))
                 .style("stroke-width", 6)
                 .style("opacity", 1);
             svg.append("line")
-                .attr("x1", xMap(seconds))
+                .attr("x1", xScale(seconds))
                 .attr("y1", 0)
-                .attr("x2", xMap(seconds))
+                .attr("x2", xScale(seconds))
                 .attr("y2", height)
                 .style("fill", "none")
                 .style("stroke", get_color(teamname, true))

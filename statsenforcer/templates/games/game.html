@@ -222,6 +222,18 @@
                             </div>
                         </div>
                         <div class="row">
+                            <h4 class="text-center">Event Chart (Shots)&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="eventChartShotsButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
+                            <div class="col-md-12">
+                                <div id="eventChartShots"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h4 class="text-center">Event Chart (Scoring Chances)&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="eventChartSCButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
+                            <div class="col-md-12">
+                                <div id="eventChartSC"></div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <h4 class="text-center">Player Corsi Events</h4>
                             <p class="text-center">*Click points to toggle information</p>
                             <div class="col-md-6 col-sm-12">
@@ -406,6 +418,7 @@
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/shotChart.js" %}"></script>
 <script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
+<script src="{% static "js/graphs/eventChart.js" %}"></script>
 <script src="{% static "js/graphs/playerCompare.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
@@ -465,6 +478,8 @@
         create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}", "{{ form|format_form_state }}");
 
         var eventChart = {{ eventChart| safe }};
+        create_shot_attempts(eventChart, "#eventChartShots", "Shots");
+        create_shot_attempts(eventChart, "#eventChartSC", "SC");
 
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
@@ -480,11 +495,11 @@
         });
 
         savePNG("#shotChartButton", "#shotChart");
-        //savePNG("#saChartButton", "#saChart");
-        //savePNG("#scChartButton", "#scChart");
+        savePNG("#eventChartShotsButton", "#eventChartShots");
+        savePNG("#eventChartSCButton", "#eventChartSC");
         savePNG("#home-corsiButton", "#home-corsi");
         savePNG("#away-corsiButton", "#away-corsi");
-        //savePNG("#coButton", "#co");
+
     });
 
     $('.filter-options').click(function(e) {

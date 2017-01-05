@@ -191,6 +191,15 @@ def game(request, game_pk):
                     if sc >= 2:
                         homeSCCount += 1
                         eventChart["homeSC"].append((periodSeconds, homeSCCount))
+                elif team == context["game"].awayTeam.id and awayinclude:
+                    xcoord = play["xcoord"]
+                    ycoord = play["ycoord"]
+                    if xcoord > 0:
+                        xcoord = -xcoord
+                        ycoord = -ycoord
+                    shotData["away"].append({"x": xcoord,
+                        "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
+                        "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
                     awayShotCount += 1
                     eventChart["awayShots"].append((periodSeconds, awayShotCount))
                     if play["playType"] == "GOAL":
@@ -207,18 +216,22 @@ def game(request, game_pk):
                     awayPenaltyLength = play["penaltyMinutes"] * 60
             if play["playType"] == "GOAL":
                 if play["team_id"] != home_id and homePenaltyStart is not None:
-                    eventChart["homePenalties"].append((homePenaltyStart, periodSeconds))
+                    eventChart["homePenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
                 elif play["team_id"] != away_id and awayPenaltyStart is not None:
-                    eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds))
+                    eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
             if homePenaltyStart and periodSeconds >= homePenaltyStart + homePenaltyLength:
-                eventChart["homePenalties"].append((homePenaltyStart, periodSeconds))
+                eventChart["homePenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
+                homePenaltyStart = None
+                homePenaltyLength = None
             if awayPenaltyStart and periodSeconds >= awayPenaltyStart + awayPenaltyLength:
-                eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds))
+                eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
+                awayPenaltyStart = None
+                awayPenaltyLength = None
             if play["playType"] == "PERIOD_END":
                 eventChart["periodEnds"].append(periodSeconds)
         eventChart["periodSeconds"] = periodSeconds + 5
         context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
-        context["eventChart"] = eventChart
+        context["eventChart"] = json.dumps(eventChart, cls=DjangoJSONEncoder)
 
 
         context["teamstats"] = context["teamstats"].values()
