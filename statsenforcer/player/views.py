@@ -167,7 +167,7 @@ def player_page(request, player_id):
         else:
             stats[playerid][season]["games"] += 1
             for key in stats[playerid][season]:
-                if key not in ["abbreviation", "teamName", "shortName"]:
+                if key not in ["abbreviation", "teamName", "shortName", "displayName", "fullName"]:
                     try:
                         stats[playerid][season][key] += row.__dict__[key]
                     except:
@@ -207,4 +207,6 @@ def player_page(request, player_id):
     context["player"] = player
     context["form"] = form
     context["stats"] = stats
+    print stats
+    context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/player_page.html', context)

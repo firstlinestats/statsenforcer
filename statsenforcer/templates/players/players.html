@@ -159,28 +159,28 @@
                                         <tbody>
                                             {% for playerid, seasons in stats.items %}
                                                 {% for season, player in seasons.items %}
-                                            <tr>
-                                                <td title="">{{ player.fullName }}</td>
-                                                <td title="">{{ season }}</td>
-                                                <td title="">{{ player.games }}</td>
-                                                <td title="">{{ player.goals }}</td>
-                                                <td title="">{{ player.assists1 }}</td>
-                                                <td title="">{{ player.assists2 }}</td>
-                                                <td title="">{{ player.points }}</td>
-                                                <td title="">{{ player.individualShots }}</td>
-                                                <td title="">{{ player.individualMissedShots }}</td>
-                                                <td title="">{{ player.individualBlockedShots }}</td>
-                                                <td title="">{{ player.cf }}</td>
-                                                <td title="">{{ player.ff }}</td>
-                                                <td title="">{{ player.gf }}</td>
-                                                <td title="">{{ player.scf }}</td>
-                                                <td title="">{{ player.hscf }}</td>
-                                                <td title="">{{ player.fo }}</td>
-                                                <td title="">{{ player.zso }}</td>
-                                                <td title="">{{ player.hit }}</td>
-                                                <td title="">{{ player.pn }}</td>
-                                                <td title="">{{ player.toi }}</td>
-                                            </tr>
+                                                    <tr>
+                                                        <td title=""><a href="/players/{{ playerid }}/">{{ player.fullName }}</a></td>
+                                                        <td title="">{{ season }}</td>
+                                                        <td title="">{{ player.games }}</td>
+                                                        <td title="">{{ player.goals }}</td>
+                                                        <td title="">{{ player.assists1 }}</td>
+                                                        <td title="">{{ player.assists2 }}</td>
+                                                        <td title="">{{ player.points }}</td>
+                                                        <td title="">{{ player.individualShots }}</td>
+                                                        <td title="">{{ player.individualMissedShots }}</td>
+                                                        <td title="">{{ player.individualBlockedShots }}</td>
+                                                        <td title="">{{ player.cf }}</td>
+                                                        <td title="">{{ player.ff }}</td>
+                                                        <td title="">{{ player.gf }}</td>
+                                                        <td title="">{{ player.scf }}</td>
+                                                        <td title="">{{ player.hscf }}</td>
+                                                        <td title="">{{ player.fo }}</td>
+                                                        <td title="">{{ player.zso }}</td>
+                                                        <td title="">{{ player.hit }}</td>
+                                                        <td title="">{{ player.pn }}</td>
+                                                        <td title="">{{ player.toi }}</td>
+                                                    </tr>
                                                 {% endfor %}
                                             {% endfor %}
 
@@ -262,7 +262,7 @@
                                 </form>
                             </div>
                         </div>
-                         <div class="row">
+                        <div class="row">
                             <div class="col-md-12">
                                 <button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
                                 <div id="playerComparison"></div>

@@ -9,195 +9,255 @@
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="content">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="row">
-                                     <div class="col-md-12">
-                                        <h2>{{ player.fullName }}</h2>
-                                        <h4>{{ player.primaryPositionCode|player_position }}</h4>
-                                    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                 <div class="col-md-12">
+                                    <h2>{{ player.fullName }}</h2>
+                                    <h4>{{ player.primaryPositionCode|player_position }}</h4>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <h5>Age: {{ player.age }} Height: {{ player.height }} Weight: {{ player.weight }}</h5>
-                                    </div>
-                                    <div class="col-md-4">
-                                         <h5></h5>
-                                    </div>
-                                </div>
-
                             </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5>Age: {{ player.age }} Height: {{ player.height }} Weight: {{ player.weight }}</h5>
+                                </div>
+                                <div class="col-md-4">
+                                     <h5></h5>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <br/>
+    </div>
+    <br/>
 
-        <div class="card">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="well bs-component">
-                        <h4 class="filter-options" data-toggle="collapse" data-target="#gameFilter">
-                        Filter Options
-                        <img class="filter-collapsed" height="20" width="20" style="float: right"src="{% with 'img/arrow.svg' as image_static %}{% static image_static %} {% endwith %}">
-                        </h4>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <form id="gameFilter" class="collapse" action="" method="GET">
-                                    <div class="row">
-                                        <div class="col-md-4 col-sm-12">
-                                            <div class="form-group">
-                                                {{ form.teamstrengths.label }}
-                                                {{ form.teamstrengths }}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-12">
-                                            <div class="form-group">
-                                                {{ form.scoresituation.label }}
-                                                {{ form.scoresituation }}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-12">
-                                            <div class="form-group">
-                                                {{ form.period.label }}
-                                                {{ form.period }}
-                                            </div>
+    <div class="card">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well bs-component">
+                    <h4 class="filter-options" data-toggle="collapse" data-target="#gameFilter">
+                    Filter Options
+                    <img class="filter-collapsed" height="20" width="20" style="float: right"src="{% with 'img/arrow.svg' as image_static %}{% static image_static %} {% endwith %}">
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="gameFilter" class="collapse" action="" method="GET">
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.teamstrengths.label }}
+                                            {{ form.teamstrengths }}
                                         </div>
                                     </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.scoresituation.label }}
+                                            {{ form.scoresituation }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.period.label }}
+                                            {{ form.period }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-nav-tabs">
+        <div class="header header-primary">
+            <div class="nav-tabs-navigation">
+                <div class="nav-tabs-wrapper">
+                    <ul class="nav nav-tabs" data-tabs="tabs">
+                        <li class="active">
+                            <a href="#statview" data-toggle="tab" aria-expanded="false">
+                                Stats By Season
+                            <div class="ripple-container"></div></a>
+                        </li>
+                        <li class="">
+                            <a href="#graphview" data-toggle="tab" aria-expanded="false">
+                                Graph View
+                            <div class="ripple-container"></div></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="teamTabContent" class="content">
+            <div class="content">
+                <div class="tab-content text-center">
+                    <div class="tab-pane active" id="statview">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Player Stats</h3>
+                                <p>{{ form|format_form_state }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table id="teamstats" class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" title="Season">Season</th>
+                                                <th class="text-center" title="Games Played">GP</th>
+                                                <th class="text-center" title="Goals">Goals</th>
+                                                <th class="text-center" title="Primary Assists">A1</th>
+                                                <th class="text-center" title="Secondary Assists">A2</th>
+                                                <th class="text-center" title="Points">P</th>
+                                                <th class="text-center" title="Individual Shots">iSF</th>
+                                                <th class="text-center" title="Individual Missed Shots">iMSF</th>
+                                                <th class="text-center" title="Individual Blocked Shots">iBSF</th>
+                                                <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                <th class="text-center" title="Fenwick For Percentage">FF%</th>
+                                                <th class="text-center" title="Goals For Percentage">GF%</th>
+                                                <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
+                                                <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
+                                                <th class="text-center" title="Faceoff Percentage">FO%</th>
+                                                <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
+                                                <th class="text-center" title="Hit Percentage">Hit%</th>
+                                                <th class="text-center" title="Penalty Percentage">Pen%</th>
+                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for playerid, seasons in stats.items %}
+                                                {% for season, player in seasons.items %}
+                                            <tr>
+                                                <td title="">{{ season }}</td>
+                                                <td title="">{{ player.games }}</td>
+                                                <td title="">{{ player.goals }}</td>
+                                                <td title="">{{ player.assists1 }}</td>
+                                                <td title="">{{ player.assists2 }}</td>
+                                                <td title="">{{ player.points }}</td>
+                                                <td title="">{{ player.individualShots }}</td>
+                                                <td title="">{{ player.individualMissedShots }}</td>
+                                                <td title="">{{ player.individualBlockedShots }}</td>
+                                                <td title="">{{ player.cf }}</td>
+                                                <td title="">{{ player.ff }}</td>
+                                                <td title="">{{ player.gf }}</td>
+                                                <td title="">{{ player.scf }}</td>
+                                                <td title="">{{ player.hscf }}</td>
+                                                <td title="">{{ player.fo }}</td>
+                                                <td title="">{{ player.zso }}</td>
+                                                <td title="">{{ player.hit }}</td>
+                                                <td title="">{{ player.pn }}</td>
+                                                <td title="">{{ player.toi }}</td>
+                                            </tr>
+                                                {% endfor %}
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="graphview">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Graph View</h3>
+                                <p>{{ form|format_form_state }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-5 col-sm-12">
                                             <div class="form-group">
-                                                <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                                X-Axis
+                                                <select class="form-control input-md" id="xaxis">
+                                                    <option value="season">Season</option>
+                                                    <option value="games" selected>Games Played</option>
+                                                    <option value="goals">Goals</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toi">Average Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-5 col-sm-12">
+                                            <div class="form-group">
+                                                Y-Axis
+                                                <select class="form-control input-md" id="yaxis">
+                                                    <option value="season">Season</option>
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals" selected>Goals</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toi">Average Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-12">
+                                            <div class="form-group">
+                                                <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card card-nav-tabs">
-            <div class="header header-primary">
-                <div class="nav-tabs-navigation">
-                    <div class="nav-tabs-wrapper">
-                        <ul class="nav nav-tabs" data-tabs="tabs">
-                            <li class="active">
-                                <a href="#statview" data-toggle="tab" aria-expanded="false">
-                                    Stats By Season
-                                <div class="ripple-container"></div></a>
-                            </li>
-                            <li class="">
-                                <a href="#graphview" data-toggle="tab" aria-expanded="false">
-                                    Graph View
-                                <div class="ripple-container"></div></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div id="teamTabContent" class="content">
-                <div class="content">
-                    <div class="tab-content text-center">
-                        <div class="tab-pane active" id="statview">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Player Stats</h3>
-                                        <p>{{ form|format_form_state }}</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive">
-                                            <table id="teamstats" class="table table-striped table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center" title="Season">Season</th>
-                                                        <th class="text-center" title="Games Played">GP</th>
-                                                        <th class="text-center" title="Goals">Goals</th>
-                                                        <th class="text-center" title="Primary Assists">A1</th>
-                                                        <th class="text-center" title="Secondary Assists">A2</th>
-                                                        <th class="text-center" title="Points">P</th>
-                                                        <th class="text-center" title="Individual Shots">iSF</th>
-                                                        <th class="text-center" title="Individual Missed Shots">iMSF</th>
-                                                        <th class="text-center" title="Individual Blocked Shots">iBSF</th>
-                                                        <th class="text-center" title="Corsi For Percentage">CF%</th>
-                                                        <th class="text-center" title="Fenwick For Percentage">FF%</th>
-                                                        <th class="text-center" title="Goals For Percentage">GF%</th>
-                                                        <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
-                                                        <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
-                                                        <th class="text-center" title="Faceoff Percentage">FO%</th>
-                                                        <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
-                                                        <th class="text-center" title="Hit Percentage">Hit%</th>
-                                                        <th class="text-center" title="Penalty Percentage">Pen%</th>
-                                                        <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for playerid, seasons in stats.items %}
-                                                        {% for season, player in seasons.items %}
-                                                    <tr>
-                                                        <td title="">{{ season }}</td>
-                                                        <td title="">{{ player.games }}</td>
-                                                        <td title="">{{ player.goals }}</td>
-                                                        <td title="">{{ player.assists1 }}</td>
-                                                        <td title="">{{ player.assists2 }}</td>
-                                                        <td title="">{{ player.points }}</td>
-                                                        <td title="">{{ player.individualShots }}</td>
-                                                        <td title="">{{ player.individualMissedShots }}</td>
-                                                        <td title="">{{ player.individualBlockedShots }}</td>
-                                                        <td title="">{{ player.cf }}</td>
-                                                        <td title="">{{ player.ff }}</td>
-                                                        <td title="">{{ player.gf }}</td>
-                                                        <td title="">{{ player.scf }}</td>
-                                                        <td title="">{{ player.hscf }}</td>
-                                                        <td title="">{{ player.fo }}</td>
-                                                        <td title="">{{ player.zso }}</td>
-                                                        <td title="">{{ player.hit }}</td>
-                                                        <td title="">{{ player.pn }}</td>
-                                                        <td title="">{{ player.toi }}</td>
-                                                    </tr>
-                                                        {% endfor %}
-                                                    {% endfor %}
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="graphview">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Graph View</h3>
-                                        <p>{{ form|format_form_state }}</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-
-                                    </div>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
+                                <div id="playerComparison"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+</div>
 <div id="canvasArea">
     <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
 </div>
@@ -207,8 +267,7 @@
 <script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/shotChart.js" %}"></script>
-<script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
+<script src="{% static "js/graphs/bubbleCompare.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -218,9 +277,54 @@
 
         $('#teamstats').DataTable({
             "bPaginate": true,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "pageLength": 50,
         });
+
+        var data = JSON.parse("{{ statsJson | escapejs }}");
+        var graphData = [];
+        for (player in data) {
+            for (season in data[player]) {
+                var playerData = data[player][season];
+                playerData.season = season;
+                playerData.playerId = parseInt(player);
+                playerData.x = parseFloat(playerData['points']);
+                playerData.y = parseFloat(playerData['goals']);
+                playerData.displayName = playerData.fullName;
+                playerData.featureId = playerData.playerId;
+                playerData.fillColor = get_color(playerData.abbreviation, true);;
+                playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                graphData.push(playerData);
+            };
+        };
+        bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+
+        $('#refreshGraph').click(function(e) {
+            e.preventDefault();
+            var x = $('#xaxis').val();
+            var y = $('#yaxis').val();
+            graphData = [];
+            for (player in data) {
+                for (season in data[player]) {
+                    var playerData = data[player][season];
+                    playerData.season = season;
+                    playerData.playerId = parseInt(player);
+                    playerData.x = parseFloat(playerData[x]);
+                    playerData.y = parseFloat(playerData[y]);
+                    playerData.displayName = playerData.fullName;
+                    playerData.featureId = playerData.playerId;
+                    playerData.fillColor = get_color(playerData.abbreviation, true);;
+                    playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                    graphData.push(playerData);
+                };
+            };
+            bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+        });
+
+
+        savePNG("#playerComparisonButton", "#playerComparison");
 
     });
 </script>
