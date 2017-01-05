@@ -87,7 +87,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <button class="btn" type="submit">Submit<div class="ripple-container"></div></button>
+                                            <button class="btn btn-primary" type="submit">Submit<div class="ripple-container"></div></button>
                                         </div>
                                     </div>
                                 </div>
@@ -122,72 +122,70 @@
             <div class="content">
                 <div class="tab-content text-center">
                     <div class="tab-pane active" id="statview">
-                        <div class="card">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3>Player Stats</h3>
-                                    <p>{{ form|format_form_state }}</p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Player Stats</h3>
+                                <p>{{ form|format_form_state }}</p>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="table-responsive">
-                                        <table id="teamstats" class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center" title="Name">Name</th>
-                                                    <th class="text-center" title="Season">Season</th>
-                                                    <th class="text-center" title="Games Played">GP</th>
-                                                    <th class="text-center" title="Goals">Goals</th>
-                                                    <th class="text-center" title="Primary Assists">A1</th>
-                                                    <th class="text-center" title="Secondary Assists">A2</th>
-                                                    <th class="text-center" title="Points">P</th>
-                                                    <th class="text-center" title="Individual Shots">iSF</th>
-                                                    <th class="text-center" title="Individual Missed Shots">iMSF</th>
-                                                    <th class="text-center" title="Individual Blocked Shots">iBSF</th>
-                                                    <th class="text-center" title="Corsi For Percentage">CF%</th>
-                                                    <th class="text-center" title="Fenwick For Percentage">FF%</th>
-                                                    <th class="text-center" title="Goals For Percentage">GF%</th>
-                                                    <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
-                                                    <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
-                                                    <th class="text-center" title="Faceoff Percentage">FO%</th>
-                                                    <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
-                                                    <th class="text-center" title="Hit Percentage">Hit%</th>
-                                                    <th class="text-center" title="Penalty Percentage">Pen%</th>
-                                                    <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for playerid, seasons in stats.items %}
-                                                    {% for season, player in seasons.items %}
-                                                <tr>
-                                                    <td title="">{{ player.fullName }}</td>
-                                                    <td title="">{{ season }}</td>
-                                                    <td title="">{{ player.games }}</td>
-                                                    <td title="">{{ player.goals }}</td>
-                                                    <td title="">{{ player.assists1 }}</td>
-                                                    <td title="">{{ player.assists2 }}</td>
-                                                    <td title="">{{ player.points }}</td>
-                                                    <td title="">{{ player.individualShots }}</td>
-                                                    <td title="">{{ player.individualMissedShots }}</td>
-                                                    <td title="">{{ player.individualBlockedShots }}</td>
-                                                    <td title="">{{ player.cf }}</td>
-                                                    <td title="">{{ player.ff }}</td>
-                                                    <td title="">{{ player.gf }}</td>
-                                                    <td title="">{{ player.scf }}</td>
-                                                    <td title="">{{ player.hscf }}</td>
-                                                    <td title="">{{ player.fo }}</td>
-                                                    <td title="">{{ player.zso }}</td>
-                                                    <td title="">{{ player.hit }}</td>
-                                                    <td title="">{{ player.pn }}</td>
-                                                    <td title="">{{ player.toi }}</td>
-                                                </tr>
-                                                    {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table id="teamstats" class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" title="Name">Name</th>
+                                                <th class="text-center" title="Season">Season</th>
+                                                <th class="text-center" title="Games Played">GP</th>
+                                                <th class="text-center" title="Goals">Goals</th>
+                                                <th class="text-center" title="Primary Assists">A1</th>
+                                                <th class="text-center" title="Secondary Assists">A2</th>
+                                                <th class="text-center" title="Points">P</th>
+                                                <th class="text-center" title="Individual Shots">iSF</th>
+                                                <th class="text-center" title="Individual Missed Shots">iMSF</th>
+                                                <th class="text-center" title="Individual Blocked Shots">iBSF</th>
+                                                <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                <th class="text-center" title="Fenwick For Percentage">FF%</th>
+                                                <th class="text-center" title="Goals For Percentage">GF%</th>
+                                                <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
+                                                <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
+                                                <th class="text-center" title="Faceoff Percentage">FO%</th>
+                                                <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
+                                                <th class="text-center" title="Hit Percentage">Hit%</th>
+                                                <th class="text-center" title="Penalty Percentage">Pen%</th>
+                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for playerid, seasons in stats.items %}
+                                                {% for season, player in seasons.items %}
+                                            <tr>
+                                                <td title="">{{ player.fullName }}</td>
+                                                <td title="">{{ season }}</td>
+                                                <td title="">{{ player.games }}</td>
+                                                <td title="">{{ player.goals }}</td>
+                                                <td title="">{{ player.assists1 }}</td>
+                                                <td title="">{{ player.assists2 }}</td>
+                                                <td title="">{{ player.points }}</td>
+                                                <td title="">{{ player.individualShots }}</td>
+                                                <td title="">{{ player.individualMissedShots }}</td>
+                                                <td title="">{{ player.individualBlockedShots }}</td>
+                                                <td title="">{{ player.cf }}</td>
+                                                <td title="">{{ player.ff }}</td>
+                                                <td title="">{{ player.gf }}</td>
+                                                <td title="">{{ player.scf }}</td>
+                                                <td title="">{{ player.hscf }}</td>
+                                                <td title="">{{ player.fo }}</td>
+                                                <td title="">{{ player.zso }}</td>
+                                                <td title="">{{ player.hit }}</td>
+                                                <td title="">{{ player.pn }}</td>
+                                                <td title="">{{ player.toi }}</td>
+                                            </tr>
                                                 {% endfor %}
+                                            {% endfor %}
 
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -203,76 +201,61 @@
                             <div class="col-md-12">
                                 <form>
                                     <div class="row">
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-5 col-sm-12">
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
-                                                    <option value="g">Goals</option>
-                                                    <option value="a1">Primary Assists</option>
-                                                    <option value="a2">Secondary Assists</option>
-                                                    <option value="p">Points</option>
-                                                    <option value="cf">Corsi For Total</option>
-                                                    <option value="ca">Corsi Against Total</option>
-                                                    <option value="ff">Fenwick For Total</option>
-                                                    <option value="fa">Fenwick Against Total</option>
-                                                    <option value="gf">On-Ice Goals For</option>
-                                                    <option value="ga">On-Ice Goals Against</option>
-                                                    <option value="iscf">Individual Scoring Chances For</option>
-                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
-                                                    <option value="scf" selected>Scoring Chances For</option>
-                                                    <option value="hscf">High Danger Scoring Chances For</option>
-                                                    <option value="sca">Scoring Chances Against</option>
-                                                    <option value="hsca">High Danger Scoring Chances Against</option>
-                                                    <option value="fo_w">Faceoffs Won</option>
-                                                    <option value="fo_l">Faceoffs Lost</option>
-                                                    <option value="zso">Offensive Zone Starts</option>
-                                                    <option value="zsn">Neutral Zone Starts</option>
-                                                    <option value="zsd">Defensive Zone Starts</option>
-                                                    <option value="hitplus">Hits</option>
-                                                    <option value="hitminus">Hits Taken</option>
-                                                    <option value="pnplus">Penalties</option>
-                                                    <option value="pnminus">Penalties Taken</option>
-                                                    <option value="toi">Time On Ice</option>
-
+                                                    <option value="season">Season</option>
+                                                    <option value="games" selected>Games Played</option>
+                                                    <option value="goals">Goals</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toi">Average Time On Ice</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-5 col-sm-12">
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
-                                                    <option value="g">Goals</option>
-                                                    <option value="a1">Primary Assists</option>
-                                                    <option value="a2">Secondary Assists</option>
-                                                    <option value="p">Points</option>
-                                                    <option value="cf">Corsi For Total</option>
-                                                    <option value="ca">Corsi Against Total</option>
-                                                    <option value="ff">Fenwick For Total</option>
-                                                    <option value="fa">Fenwick Against Total</option>
-                                                    <option value="gf">On-Ice Goals For</option>
-                                                    <option value="ga">On-Ice Goals Against</option>
-                                                    <option value="iscf">Individual Scoring Chances For</option>
-                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
-                                                    <option value="scf">Scoring Chances For</option>
-                                                    <option value="hscf">High Danger Scoring Chances For</option>
-                                                    <option value="sca" selected>Scoring Chances Against</option>
-                                                    <option value="hsca">High Danger Scoring Chances Against</option>
-                                                    <option value="fo_w">Faceoffs Won</option>
-                                                    <option value="fo_l">Faceoffs Lost</option>
-                                                    <option value="zso">Offensive Zone Starts</option>
-                                                    <option value="zsn">Neutral Zone Starts</option>
-                                                    <option value="zsd">Defensive Zone Starts</option>
-                                                    <option value="hitplus">Hits</option>
-                                                    <option value="hitminus">Hits Taken</option>
-                                                    <option value="pnplus">Penalties</option>
-                                                    <option value="pnminus">Penalties Taken</option>
-                                                    <option value="toi">Time On Ice</option>
+                                                    <option value="season">Season</option>
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals" selected>Goals</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toi">Average Time On Ice</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-4 col-md-12">
+                                        <div class="col-md-2 col-sm-12">
                                             <div class="form-group">
-                                                <button id="refreshGraph" class="btn">Refresh<div class="ripple-container"></div></button>
+                                                <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
                                         </div>
                                     </div>
@@ -291,6 +274,9 @@
         </div>
     </div>
 </div>
+<div id="canvasArea">
+    <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
+</div>
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
@@ -308,13 +294,15 @@
 
             $('#teamstats').DataTable({
                 "bPaginate": true,
-                "order": [[1, "desc"], [3, "desc"]],
+                "order": [
+                    [1, "desc"],
+                    [3, "desc"]
+                ],
                 "pageLength": 25,
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
             var graphData = [];
-
             for (player in data) {
                 for (season in data[player]) {
                     var playerData = data[player][season];
@@ -329,19 +317,31 @@
                     graphData.push(playerData);
                 };
             };
-            console.log(graphData);
-            bubbleCompare('#playerComparison', "#teamTabContent", 'points', 'goals', graphData);
+            bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
 
 
-
-
-            // playerCompare('#playerComparison', "#teamTabContent", "sca", "scf", data, 'players');
-            //  $('#refreshGraph').click(function(e) {
-            //      e.preventDefault();
-            //      var x = $('#xaxis').val();
-            //      var y = $('#yaxis').val();
-            //      playerCompare('#playerComparison', "#gameTabContent", x, y, data, 'players');
-            //  });
+            $('#refreshGraph').click(function(e) {
+                e.preventDefault();
+                var x = $('#xaxis').val();
+                var y = $('#yaxis').val();
+                graphData = [];
+                for (player in data) {
+                    for (season in data[player]) {
+                        var playerData = data[player][season];
+                        playerData.season = season;
+                        playerData.playerId = parseInt(player);
+                        playerData.x = parseFloat(playerData[x]);
+                        playerData.y = parseFloat(playerData[y]);
+                        playerData.displayName = playerData.fullName;
+                        playerData.featureId = playerData.playerId;
+                        playerData.fillColor = get_color(playerData.abbreviation, true);;
+                        playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                        graphData.push(playerData);
+                    };
+                };
+                bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+            });
+            savePNG("#playerComparisonButton", "#playerComparison");
         });
 </script>
 {% endblock %}

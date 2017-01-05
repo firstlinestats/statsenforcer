@@ -1,9 +1,7 @@
 //trying to create a catch all bubble graph
 //data should be an array with each entry having an x, y, featureId, and displayName properties
-function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
+function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
     $(divId).html("");
-    var xText = xvalue;
-    var yText = yvalue;
 
     var margin = {
             top: 20,
@@ -40,33 +38,37 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
             return d.y;
         });
 
-    var x = d3.scale.linear()
-        .range([0, width]);
-    var y = d3.scale.linear()
-        .range([height, 0]);
+    var x = d3.scale.linear().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
 
     var xValue = function(d) {
-            return d.x;
-        }, // data -> value
-        xScale = d3.scale.linear().domain([minX - (meanX * .05), maxX + (meanX * .05)]).range([0, width]), // value -> display
-        xMap = function(d) {
-            return xScale(xValue(d));
-        }, // data -> display
-        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        return d.x;
+    }; // data -> value
+
+    var xScale = d3.scale.linear().domain([minX - (meanX * .05), maxX + (meanX * .05)]).range([0, width]); // value -> display
+
+    var xMap = function(d) {
+        return xScale(xValue(d));
+    }; // data -> display
+
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
     var yValue = function(d) {
-            return d.y;
-        }, // data -> value
-        yScale = d3.scale.linear().domain([minY - (meanY * .05), maxY + (meanY * .05)]).range([height, 0]), // value -> display
-        yMap = function(d) {
-            return yScale(yValue(d));
-        }, // data -> display
-        yAxis = d3.svg.axis().scale(yScale).orient("left");
+        return d.y;
+    }; // data -> value
+
+    var yScale = d3.scale.linear().domain([minY - (meanY * .05), maxY]).range([height, 0]); // value -> display
+
+    var yMap = function(d) {
+        return yScale(yValue(d));
+    }; // data -> display
+
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 
 
     x.domain([minX - Math.abs((meanX * .05)), maxX + Math.abs((meanX * .05))]);
-    y.domain([minY - Math.abs((meanY * .05)), maxY + Math.abs((meanY * .05))]);
+    y.domain([minY - Math.abs((meanY * .05)), maxY]);
 
     var maxallowed = 35,
         minallowed = 2;
@@ -117,7 +119,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         })
         .on('click', circleClicked)
         .on("mouseover", function(d) {
-            var html = d.displayName + "<br /><b>" + xvalue + ":</b>" + d[xvalue] + "<br /><b>" + yvalue + ": </b>" + d[yvalue];
+            var html = d.displayName + "<br /><b>" + xLabel + ":</b>" + d.x + "<br /><b>" + yLabel + ": </b>" + d.y;
             tooltip.html(html);
             tooltip.style("visibility", "visible");
         })
@@ -153,13 +155,13 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("active", false)
         .style("text-anchor", "middle");
 
-    if (xvalue === 'season') {
+    if (xLabel === 'Season') {
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom")
-            .tickValues(seasons)
+            .tickValues(season)
             .tickFormat(function(d) {
-                return formatAxisText(d, xText);
+                return formatAxisText(d, xLabel);
             });
     } else {
         var xAxis = d3.svg.axis()
@@ -167,7 +169,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
             .orient("bottom")
             .ticks(10)
             .tickFormat(function(d) {
-                return formatAxisText(d, xText);
+                return formatAxisText(d, xLabel);
             });
     };
 
@@ -177,7 +179,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         .orient("left")
         .ticks(10)
         .tickFormat(function(d) {
-            return formatAxisText(d, yText);
+            return formatAxisText(d, yLabel);
         });
 
     svg.append("g")
@@ -188,7 +190,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("x", width - 50)
         .attr("dy", "-.71em")
         .style("text-anchor", "end")
-        .text(xText);
+        .text(xLabel);
 
     svg.append("g")
         .attr("class", "y axis")
@@ -198,7 +200,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text(yText);
+        .text(yLabel);
 
     svg.append("text")
         .attr("x", (width / 2))
@@ -206,7 +208,7 @@ function bubbleCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .style("text-decoration", "underline")
-        .text(xText + " vs " + yText);
+        .text(xLabel + " vs " + yLabel);
 
     svg.append("text")
         .attr("x", margin.left)
