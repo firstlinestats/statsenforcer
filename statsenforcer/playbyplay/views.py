@@ -184,10 +184,13 @@ def game(request, game_pk):
                     shotData["home"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
-                    homeShotCount += 1
-                    eventChart["homeShots"].append((periodSeconds, homeShotCount))
                     if play["playType"] == "GOAL":
                         eventChart["homeGoals"].append(periodSeconds)
+                        homeShotCount += 1
+                        eventChart["homeShots"].append((periodSeconds, homeShotCount))
+                    elif play["playType"] == "SHOT":
+                        homeShotCount += 1
+                        eventChart["homeShots"].append((periodSeconds, homeShotCount))
                     if sc >= 2:
                         homeSCCount += 1
                         eventChart["homeSC"].append((periodSeconds, homeSCCount))
@@ -200,10 +203,13 @@ def game(request, game_pk):
                     shotData["away"].append({"x": xcoord,
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
-                    awayShotCount += 1
-                    eventChart["awayShots"].append((periodSeconds, awayShotCount))
                     if play["playType"] == "GOAL":
                         eventChart["awayGoals"].append(periodSeconds)
+                        awayShotCount += 1
+                        eventChart["awayShots"].append((periodSeconds, awayShotCount))
+                    elif play["playType"] == "SHOT":
+                        awayShotCount += 1
+                        eventChart["awayShots"].append((periodSeconds, awayShotCount))
                     if sc >= 2:
                         awaySCCount += 1
                         eventChart["awaySC"].append((periodSeconds, awaySCCount))
