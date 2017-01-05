@@ -112,57 +112,55 @@
             <div id="teamTabContent" class="content">
                     <div class="tab-content text-center">
                         <div class="tab-pane active" id="statview">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Team Stats</h3>
-                                        <p>{{ form|format_form_state }}</p>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Team Stats</h3>
+                                    <p>{{ form|format_form_state }}</p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive">
-                                            <table id="teamstats" class="table table-striped table-hover">
-                                                <thead>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table id="teamstats" class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" title="Season">Season</th>
+                                                    <th class="text-center" title="Games">Games</th>
+                                                    <th class="text-center" title="On-Ice Goals For Percentage">GF%</th>
+                                                    <th class="text-center" title="On-Ice Shots-On-Goal For Percentage">SF%</th>
+                                                    <th class="text-center" title="Missed Shots For Percentage">MSF%</th>
+                                                    <th class="text-center" title="Blocked Shots Percentage">BSF%</th>
+                                                    <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                    <th class="text-center" title="On-Ice Scoring Chances For Percentage">SCF%</th>
+                                                    <th class="text-center" title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
+                                                    <th class="text-center" title="Offensive Zone Starts Percentage">ZSO%</th>
+                                                    <th class="text-center" title="Faceoffs Won Percentage">FO_W%</th>
+                                                    <th class="text-center" title="Hit Percentage">Hit%</th>
+                                                    <th class="text-center" title="Time On Ice">TOI/Gm</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for teamid, seasons in stats.items %}
+                                                    {% for season, team in seasons.items %}
                                                     <tr>
-                                                        <th class="text-center" title="Season">Season</th>
-                                                        <th class="text-center" title="Games">Games</th>
-                                                        <th class="text-center" title="On-Ice Goals For Percentage">GF%</th>
-                                                        <th class="text-center" title="On-Ice Shots-On-Goal For Percentage">SF%</th>
-                                                        <th class="text-center" title="Missed Shots For Percentage">MSF%</th>
-                                                        <th class="text-center" title="Blocked Shots Percentage">BSF%</th>
-                                                        <th class="text-center" title="Corsi For Percentage">CF%</th>
-                                                        <th class="text-center" title="On-Ice Scoring Chances For Percentage">SCF%</th>
-                                                        <th class="text-center" title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
-                                                        <th class="text-center" title="Offensive Zone Starts Percentage">ZSO%</th>
-                                                        <th class="text-center" title="Faceoffs Won Percentage">FO_W%</th>
-                                                        <th class="text-center" title="Hit Percentage">Hit%</th>
-                                                        <th class="text-center" title="Time On Ice">TOI/Gm</th>
+                                                        <td title="Season">{{ season }}</td>
+                                                        <td title="Games">{{ team.games }}</td>
+                                                        <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
+                                                        <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
+                                                        <td title="Missed Shots For Percentage">{{ team.msf }}</td>
+                                                        <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
+                                                        <td title="Corsi For Percentage">{{ team.cf }}</td>
+                                                        <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
+                                                        <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
+                                                        <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
+                                                        <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
+                                                        <td title="Hit Percentage">{{ team.hit }}</td>
+                                                        <td title="Time On Ice">{{ team.toi }}</td>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for teamid, seasons in stats.items %}
-                                                        {% for season, team in seasons.items %}
-                                                        <tr>
-                                                            <td title="Season">{{ season }}</td>
-                                                            <td title="Games">{{ team.games }}</td>
-                                                            <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
-                                                            <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
-                                                            <td title="Missed Shots For Percentage">{{ team.msf }}</td>
-                                                            <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
-                                                            <td title="Corsi For Percentage">{{ team.cf }}</td>
-                                                            <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
-                                                            <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
-                                                            <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
-                                                            <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
-                                                            <td title="Hit Percentage">{{ team.hit }}</td>
-                                                            <td title="Time On Ice">{{ team.toi }}</td>
-                                                        </tr>
-                                                        {% endfor %}
                                                     {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -214,73 +212,66 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="tableview">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Team Roster</h3>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Active Roster</h3>
+                                    <table class="table table-striped table-hover ">
+                                      <thead>
+                                        <tr>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Number</th>
+                                            <th class="text-center">Position</th>
+                                            <th class="text-center">Age</th>
+                                            <th class="text-center">Height</th>
+                                            <th class="text-center">Weight</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for player in players %}
+                                            {% if player.rosterStatus == 'Y' %}
+                                              <tr>
+                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td>{{ player.primaryNumber }}</td>
+                                                <td>{{ player.primaryPositionCode|player_position }}</td>
+                                                <td>{{ player.age }}</td>
+                                                <td>{{ player.height }}</td>
+                                                <td>{{ player.weight }}</td>
+                                              </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Active Roster</h3>
-                                        <table class="table table-striped table-hover ">
-                                          <thead>
-                                            <tr>
-                                                <th class="text-center">Name</th>
-                                                <th class="text-center">Number</th>
-                                                <th class="text-center">Position</th>
-                                                <th class="text-center">Age</th>
-                                                <th class="text-center">Height</th>
-                                                <th class="text-center">Weight</th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {% for player in players %}
-                                                {% if player.rosterStatus == 'Y' %}
-                                                  <tr>
-                                                    <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
-                                                    <td>{{ player.primaryNumber }}</td>
-                                                    <td>{{ player.primaryPositionCode|player_position }}</td>
-                                                    <td>{{ player.age }}</td>
-                                                    <td>{{ player.height }}</td>
-                                                    <td>{{ player.weight }}</td>
-                                                  </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                          </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3>Injured Reserve Roster</h3>
-                                        <table class="table table-striped table-hover ">
-                                          <thead>
-                                            <tr>
-                                              <th class="text-center">Name</th>
-                                              <th class="text-center">Number</th>
-                                              <th class="text-center">Position</th>
-                                              <th class="text-center">Age</th>
-                                              <th class="text-center">Height</th>
-                                              <th class="text-center">Weight</th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {% for player in players %}
-                                                {% if player.rosterStatus == 'I' %}
-                                                  <tr>
-                                                    <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
-                                                    <td>{{ player.primaryNumber }}</td>
-                                                    <td>{{ player.primaryPositionCode|player_position }}</td>
-                                                    <td>{{ player.age }}</td>
-                                                    <td>{{ player.height }}</td>
-                                                    <td>{{ player.weight }}</td>
-                                                  </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                          </tbody>
-                                        </table>
-                                    </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Injured Reserve Roster</h3>
+                                    <table class="table table-striped table-hover ">
+                                      <thead>
+                                        <tr>
+                                          <th class="text-center">Name</th>
+                                          <th class="text-center">Number</th>
+                                          <th class="text-center">Position</th>
+                                          <th class="text-center">Age</th>
+                                          <th class="text-center">Height</th>
+                                          <th class="text-center">Weight</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for player in players %}
+                                            {% if player.rosterStatus == 'I' %}
+                                              <tr>
+                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td>{{ player.primaryNumber }}</td>
+                                                <td>{{ player.primaryPositionCode|player_position }}</td>
+                                                <td>{{ player.age }}</td>
+                                                <td>{{ player.height }}</td>
+                                                <td>{{ player.weight }}</td>
+                                              </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

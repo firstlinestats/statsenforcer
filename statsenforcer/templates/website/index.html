@@ -100,9 +100,9 @@ only screen and (max-width: 760px),
                                   <tr>
                                     <td>{{ game.dateTime|date }}</td>
                                     <td>{{ game.gameType|gameType }}</td>
-                                    <td>{{ game.homeTeamName }}</a></td>
+                                    <td><a href='/teams/{{ game.homeTeamName.split|join:"-" }}'>{{ game.homeTeamName }}</a></td>
                                     <td class="text-center">{{ game.homeScore }} - {{ game.awayScore }}</td>
-                                    <td>{{ game.awayTeamName }}</a></td>
+                                    <td><a href='/teams/{{ game.awayTeamName.split|join:"-" }}'>{{ game.awayTeamName }}</a></td>
                                     <td>{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
                                     <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
                                     <td>{{ game.dateTime|time }}</td>
@@ -125,35 +125,31 @@ only screen and (max-width: 760px),
                 <div class="card">
                     <div class="content">
                         <h2 class="text-center">Division Standings</h2>
-                        <div class="card">
-                            <div class="row">
-                              <div class="row">
-                                <div class="col-md-12">
-                                  <h3 class="text-center">Eastern</h3>
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
-                              </div>
-                              <div class="col-md-6">
-                                {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
-                              </div>
+                        <div class="row">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h3 class="text-center">Eastern</h3>
                             </div>
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
+                          </div>
                         </div>
-                        <div class="card">
-                            <div class="row">
-                              <div class="row">
-                                <div class="col-md-12">
-                                  <h3 class="text-center">Western</h3>
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                {% include "website/division_table.html" with division="Central" divisionVal="C" %}
-                              </div>
-                              <div class="col-md-6">
-                                {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
-                              </div>
+                        <div class="row">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h3 class="text-center">Western</h3>
                             </div>
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Central" divisionVal="C" %}
+                          </div>
+                          <div class="col-md-6">
+                            {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
+                          </div>
                         </div>
                     </div>
                 </div>

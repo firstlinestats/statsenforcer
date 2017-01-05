@@ -1,11 +1,17 @@
 {% load staticfiles %}
 {% load website_extras %}
-<div class="card">
-  <h4 class="text-center">{{ division }}</h4>
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#current{{ divisionVal }}" aria-controls="current{{ divisionVal }}" role="tab" data-toggle="tab">Current</a></li>
-    <li role="presentation"><a href="#historical{{ divisionVal }}" aria-controls="historical{{ divisionVal }}" role="tab" data-toggle="tab">Historical</a></li>
-  </ul>
+<h4 class="text-center">{{ division }}</h4>
+<div class="card card-nav-tabs">
+   <div class="header header-primary">
+      <div class="nav-tabs-navigation">
+          <div class="nav-tabs-wrapper">
+              <ul class="nav nav-tabs" data-tabs="tabs">
+                  <li role="presentation" class="active"><a href="#current{{ divisionVal }}" aria-controls="current{{ divisionVal }}" role="tab" data-toggle="tab">Current</a></li>
+                  <li role="presentation"><a href="#historical{{ divisionVal }}" aria-controls="historical{{ divisionVal }}" role="tab" data-toggle="tab">Historical</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="current{{ divisionVal }}">
       <div class="well bs-component">
@@ -26,7 +32,7 @@
             {% for team in teams %}
               {% if team.team.division == divisionVal %}
                 <tr>
-                  <td style="white-space:nowrap;"><a href="/teams/{{ team.team.id }}">{{ team.team.teamName }}</a></td>
+                  <td style="white-space:nowrap;"><a href='/teams/{{ team.team.teamName.split|join:"-" }}'>{{ team.team.teamName }}</a></td>
                   <td>{{ team.gamesPlayed }}</td>
                   <td>{{ team.wins }}</td>
                   <td>{{ team.losses }}</td>

@@ -31,8 +31,10 @@ def index(request):
         gd = {}
         gd["dateTime"] = game.dateTime
         gd["gameType"] = game.gameType
+        gd["homeTeamId"] = game.homeTeam.id
         gd["homeTeamAbbreviation"] = game.homeAbbreviation
         gd["homeTeamName"] = game.homeTeamName
+        gd["awayTeamId"] = game.awayTeam.id
         gd["awayTeamAbbreviation"] = game.awayAbbreviation
         gd["awayTeamName"] = game.awayTeamName
         gd["homeScore"] = game.homeScore
