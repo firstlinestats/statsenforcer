@@ -23,22 +23,14 @@ def utc_to_local(utc_dt):
     return local_tz.normalize(local_dt) # .normalize might be unnecessary
 # Create your views here.
 
-def index(request):
-    start = arrow.now()
-    games = Game.objects.raw(indexqueries.gamesquery, [20162017, arrow.now().datetime + datetime.timedelta(1)])
-    teamdata = {}
-    currentSeason = Game.objects.latest("endDateTime").season
+def standings(request):
+    context = {}
     max_date = SeasonStats.objects.values_list("date", "season").latest("date")
     standings = SeasonStats.objects.raw(indexqueries.standingsquery, [max_date[0], ])
-    print standings.query
-    teamdata = sorted(teamdata.items(), key=lambda k: k[1]["p"])
     context = {
-        'active_page': 'index',
-        'games': games,
+        'active_page': 'standings',
         'teams': standings
     }
-    print arrow.now() - start
-    start = arrow.now()
     historical = SeasonStats.objects.values("team__teamName",
         "points", "date", "team__division").filter(season=max_date[1]).order_by("date")
     hstand = {}
@@ -53,9 +45,15 @@ def index(request):
             hstand[division][teamName] = []
         hstand[division][teamName].append({"date": sdate, "points": points})
 
-    print arrow.now() - start
-    start = arrow.now()
     context["divisions"] = json.dumps(hstand, ensure_ascii=True)
+    return render(request, 'website/standings.html', context)
+
+
+def index(request):
+    games = Game.objects.raw(indexqueries.gamesquery, [20162017, arrow.now().datetime + datetime.timedelta(1)])
+    context = {
+        'games': games,
+    }
     return render(request, 'website/index.html', context)
 
 
