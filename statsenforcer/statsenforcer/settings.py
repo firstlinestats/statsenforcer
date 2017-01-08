@@ -31,9 +31,6 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ['firstlinestats.com', 'www.firstlinestats.com']
 
-CONN_MAX_AGE = None
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,6 +90,7 @@ DATABASES = {
         'PASSWORD': cred.PASSWORD,
         'HOST': cred.HOST,
         'PORT': cred.PORT,
+        'CONN_MAX_AGE': None,
     }
 }
 
