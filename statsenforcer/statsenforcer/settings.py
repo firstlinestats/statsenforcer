@@ -28,6 +28,8 @@ DEBUG = cred.DEBUG
 
 ALLOWED_HOSTS = []
 
+CONN_MAX_AGE = None
+
 
 # Application definition
 
