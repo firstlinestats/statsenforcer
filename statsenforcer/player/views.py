@@ -8,6 +8,7 @@ from player.models import Player, PlayerGameFilterStats
 from playbyplay.models import Game
 from datetime import date, datetime
 import json
+import arrow
 from playbyplay.forms import GameFilterForm, GameForm
 
 import playerqueries
@@ -121,6 +122,7 @@ def players(request):
 
 def player_page(request, player_id):
     player = get_object_or_404(Player, id=player_id)
+    player.age = int((arrow.now() - arrow.get(player.birthDate)).days / 365.25)
     teamstrength = "all"
     scoresituation = "all"
     period = "all"
