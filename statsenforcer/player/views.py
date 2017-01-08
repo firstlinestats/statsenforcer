@@ -125,7 +125,6 @@ def player_page(request, player_id):
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
-    seasons = [currentSeason, ]
     form = GameFilterForm()
     startDate = None
     endDate = None
@@ -142,9 +141,6 @@ def player_page(request, player_id):
             endDate = cd["endDate"]
             venues = cd["venues"]
             teams = cd["teams"]
-            seasons = [cd["season"], ]
-            if len(seasons) == 0:
-                seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
     if startDate is not None:
         gameids = gameids.filter(dateTime__date__gte=startDate)
@@ -155,7 +151,7 @@ def player_page(request, player_id):
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
     gameids = [x for x in gameids]
-    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playerquery, [seasons, gameids, scoresituation, teamstrength, period, player.id])
+    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playerquery, [gameids, scoresituation, teamstrength, period, player.id])
     stats = {}
     for row in pgs:
         season = row.season
