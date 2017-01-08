@@ -210,6 +210,5 @@ def player_page(request, player_id):
     context["player"] = player
     context["form"] = form
     context["stats"] = stats
-    print stats
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/player_page.html', context)

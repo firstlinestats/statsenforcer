@@ -68,7 +68,6 @@ def get_standings(date=None):
 
 def get_team_roster(id):
     url = api_urls.ROSTER_LIST.replace("<teamId>", str(id))
-    print url
     return get_url(url)
 
 
@@ -99,8 +98,6 @@ def get_url(url):
         else:
             html = response.read()
     except URLError, e:
-        print url
-        print e
         return "{}"
     return html
 
