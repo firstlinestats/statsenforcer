@@ -24,45 +24,21 @@ def utc_to_local(utc_dt):
 # Create your views here.
 
 def index(request):
-    start = datetime.datetime.now()
+    start = arrow.now()
     games = Game.objects.raw(indexqueries.gamesquery, [20162017, arrow.now().datetime + datetime.timedelta(1)])
-    gameData = []
-    for game in games:
-        gd = {}
-        gd["dateTime"] = game.dateTime
-        gd["gameType"] = game.gameType
-        gd["homeTeamId"] = game.homeTeam.id
-        gd["homeTeamAbbreviation"] = game.homeAbbreviation
-        gd["homeTeamName"] = game.homeTeamName
-        gd["awayTeamId"] = game.awayTeam.id
-        gd["awayTeamAbbreviation"] = game.awayAbbreviation
-        gd["awayTeamName"] = game.awayTeamName
-        gd["homeScore"] = game.homeScore
-        gd["awayScore"] = game.awayScore
-        gd["homeShots"] = game.homeShots
-        gd["awayShots"] = game.awayShots
-        gd["awayBlocked"] = game.awayBlocked
-        gd["homeBlocked"] = game.homeBlocked
-        gd["awayMissed"] = game.awayMissed
-        gd["homeMissed"] = game.homeMissed
-        gd["gameState"] = game.gameState
-        gd["endDateTime"] = game.endDateTime
-        gd["gamePk"] = game.gamePk
-        gd["season"] = game.season
-        gameData.append(gd)
-    games = gameData
-
     teamdata = {}
-    currentSeason = games[0]["season"]
+    currentSeason = Game.objects.latest("endDateTime").season
     max_date = SeasonStats.objects.values_list("date", "season").latest("date")
-    standings = SeasonStats.objects.filter(date=max_date[0]).order_by("-points")
+    standings = SeasonStats.objects.raw(indexqueries.standingsquery, [max_date[0], ])
+    print standings.query
     teamdata = sorted(teamdata.items(), key=lambda k: k[1]["p"])
     context = {
         'active_page': 'index',
         'games': games,
         'teams': standings
     }
-
+    print arrow.now() - start
+    start = arrow.now()
     historical = SeasonStats.objects.values("team__teamName",
         "points", "date", "team__division").filter(season=max_date[1]).order_by("date")
     hstand = {}
@@ -77,8 +53,9 @@ def index(request):
             hstand[division][teamName] = []
         hstand[division][teamName].append({"date": sdate, "points": points})
 
+    print arrow.now() - start
+    start = arrow.now()
     context["divisions"] = json.dumps(hstand, ensure_ascii=True)
-
     return render(request, 'website/index.html', context)
 
 

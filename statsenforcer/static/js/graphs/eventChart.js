@@ -161,6 +161,7 @@ function create_shot_attempts(data, divid, valtype) {
                 .attr("width", xScale(penl[1]))
                 .attr("height", height)
                 .attr("fill", get_color(teamname, true))
+                .attr("stroke", "none")
                 .attr("opacity", 0.5)
         }
     }
@@ -182,7 +183,6 @@ function create_shot_attempts(data, divid, valtype) {
     function createGoals(svg, goals, teamname) {
         for (var i=0; i<goals.length; i++) {
             var seconds = goals[i];
-            console.log(goals);
             svg.append("line")
                 .attr("x1", xScale(seconds))
                 .attr("y1", 0)

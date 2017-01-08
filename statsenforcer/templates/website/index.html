@@ -5,72 +5,7 @@
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <!--[if !IE]><!-->
-<style>
 
-/*
-Max width before this PARTICULAR table gets nasty
-This query will take effect for any screen smaller than 760px
-and also iPads specifically.
-*/
-@media
-only screen and (max-width: 760px),
-(min-device-width: 768px) and (max-device-width: 1024px)  {
-
-    /* Force table to not be like tables anymore */
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    /* Hide table headers (but not display: none;, for accessibility) */
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    tr { border: 1px solid #ccc; }
-
-    tr:nth-of-type(odd) {
-        background: #eee;
-    }
-
-    td {
-        /* Behave  like a "row" */
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50% !important;
-        min-height: 20px;
-        text-align: left !important;
-    }
-
-    td:before {
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-    }
-
-    /*
-    Label the data
-    */
-    td:nth-of-type(1):before { content: "Game Date"; }
-    td:nth-of-type(2):before { content: "Session"; }
-    td:nth-of-type(3):before { content: "Home"; }
-    td:nth-of-type(4):before { content: "Score"; }
-    td:nth-of-type(5):before { content: "Away"; }
-    td:nth-of-type(6):before { content: "Corsi"; }
-    td:nth-of-type(7):before { content: "Status"; }
-    td:nth-of-type(8):before { content: "Start Time"; }
-    td:nth-of-type(9):before { content: "End Time"; }
-    td:nth-of-type(10):before { content: "View Game"; }
-}
-
-</style>
 <!--<![endif]-->
 {% endblock %}
 {% block content %}
@@ -81,7 +16,7 @@ only screen and (max-width: 760px),
                     <div class="content">
                         <h3>Recent and Upcoming Games</h3>
                         <div class="table-responsive">
-                            <table id="games" class="table responsive nowrap">
+                            <table id="games" class="table table-striped table-hover table-condensed">
                                 <thead>
                                     <th>Game Date</th>
                                     <th>Session</th>
@@ -173,7 +108,7 @@ only screen and (max-width: 760px),
 <script>
     $(document).ready(function() {
         $('#games').DataTable({
-            "iDisplayLength": 15,
+            "iDisplayLength": 25,
             "bSort": false
         });
         var data = {{ divisions|safe }};
@@ -185,6 +120,23 @@ only screen and (max-width: 760px),
         savePNG("#MhistoricalButton", "#Mhistorical");
         savePNG("#ChistoricalButton", "#Chistorical");
         savePNG("#PhistoricalButton", "#Phistorical");
+
+        $('#A-table').DataTable({
+            "bPaginate": false,
+            "bSort": false
+        });
+        $('#M-table').DataTable({
+            "bPaginate": false,
+            "bSort": false
+        });
+        $('#C-table').DataTable({
+            "bPaginate": false,
+            "bSort": false
+        });
+        $('#P-table').DataTable({
+            "bPaginate": false,
+            "bSort": false
+        });
 
     });
 </script>

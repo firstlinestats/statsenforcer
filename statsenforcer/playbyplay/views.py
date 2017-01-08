@@ -226,11 +226,11 @@ def game(request, game_pk):
                 elif play["team_id"] != away_id and awayPenaltyStart is not None:
                     eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
             if homePenaltyStart and periodSeconds >= homePenaltyStart + homePenaltyLength:
-                eventChart["awayPenalties"].append((homePenaltyStart, homePenaltyLength - homePenaltyStart))
+                eventChart["awayPenalties"].append((homePenaltyStart, homePenaltyLength))
                 homePenaltyStart = None
                 homePenaltyLength = None
             if awayPenaltyStart and periodSeconds >= awayPenaltyStart + awayPenaltyLength:
-                eventChart["homePenalties"].append((awayPenaltyStart, awayPenaltyLength - awayPenaltyStart))
+                eventChart["homePenalties"].append((awayPenaltyStart, awayPenaltyLength))
                 awayPenaltyStart = None
                 awayPenaltyLength = None
             if play["playType"] == "PERIOD_END":
