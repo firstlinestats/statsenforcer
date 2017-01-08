@@ -26,7 +26,10 @@ SECRET_KEY = cred.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = cred.DEBUG
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = ['firstlinestats.com', 'www.firstlinestats.com']
 
 CONN_MAX_AGE = None
 
