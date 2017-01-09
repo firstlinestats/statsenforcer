@@ -26,6 +26,11 @@ SECRET_KEY = cred.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = cred.DEBUG
 
+INTERNAL_IPS = (
+    '0.0.0.0',
+    '127.0.0.1',
+)
+
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
