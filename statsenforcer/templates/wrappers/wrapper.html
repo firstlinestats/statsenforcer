@@ -4,6 +4,7 @@
 {% localtime on %}
 <html lang="en">
   <head>
+    {% if not debug %}
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
       (adsbygoogle = window.adsbygoogle || []).push({
@@ -11,6 +12,7 @@
         enable_page_level_ads: true
       });
     </script>
+    {% endif %}
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
