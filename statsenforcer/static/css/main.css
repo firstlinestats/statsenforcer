@@ -179,6 +179,15 @@ body {
     text-decoration: none;
 }
 
+
+.full-width {
+  width: 100% !important;
+}
+/*
+  DataTables stuff
+*/
+.table thead,
+.table th {text-align: center;}
 /*
   This fixes some whacky stuff between datatables and material kit
 */

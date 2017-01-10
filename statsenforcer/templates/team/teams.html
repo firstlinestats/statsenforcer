@@ -218,7 +218,7 @@ and (max-device-width : 480px) {
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table id="teamstats" class="table table-striped table-condensed responsive nowrap">
+                                            <table id="teamstats" class="table full-width">
                                                 <thead>
                                                     <tr>
                                                         <th title="Team">Team</th>
@@ -350,7 +350,13 @@ and (max-device-width : 480px) {
         $(document).ready(function() {
             $('#teamstats').DataTable({
                 "bPaginate": true,
-                "order": [[1, "desc"]],
+                "order": [
+                    [1, "desc"]
+                ],
+                scrollX: true,
+                "fixedColumns": {
+                    leftColumns: 1,
+                }
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
