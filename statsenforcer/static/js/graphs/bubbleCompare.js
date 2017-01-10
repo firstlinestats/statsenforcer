@@ -4,74 +4,81 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
     $(divId).html("");
 
     var margin = {
-            top: 20,
-            right: 10,
-            bottom: 30,
-            left: 40
-        },
-        width = $(containerId).width() - margin.left - margin.right,
-        height = 500;
+        top: 20,
+        right: 40,
+        bottom: 30,
+        left: 40
+    };
 
+    var width = $(containerId).width() - margin.left - margin.right;
+    var height = 500;
 
     var minX = d3.min(data, function(d) {
-            return d.x;
-        }),
-        maxX = d3.max(data, function(d) {
-            return d.x;
-        }),
-        minY = d3.min(data, function(d) {
-            return d.y;
-        }),
-        maxY = d3.max(data, function(d) {
-            return d.y;
-        }),
-        minRadius = d3.min(data, function(d) {
-            return d.size;
-        }),
-        maxRadius = d3.max(data, function(d) {
-            return d.size;
-        }),
-        meanX = d3.mean(data, function(d) {
-            return d.x;
-        }),
-        meanY = d3.mean(data, function(d) {
-            return d.y;
-        });
-
-    var x = d3.scale.linear().range([0, width]);
-    var y = d3.scale.linear().range([height, 0]);
-
-    var xValue = function(d) {
         return d.x;
-    }; // data -> value
+    });
 
-    var xScale = d3.scale.linear().domain([minX - (meanX * .05), maxX + (meanX * .05)]).range([0, width]); // value -> display
+    var maxX = d3.max(data, function(d) {
+        return d.x;
+    });
 
-    var xMap = function(d) {
-        return xScale(xValue(d));
-    }; // data -> display
-
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-    var yValue = function(d) {
+    var minY = d3.min(data, function(d) {
         return d.y;
-    }; // data -> value
+    });
+    var maxY = d3.max(data, function(d) {
+        return d.y;
+    });
 
-    var yScale = d3.scale.linear().domain([minY - (meanY * .05), maxY]).range([height, 0]); // value -> display
+    var minRadius = d3.min(data, function(d) {
+        return d.size;
+    });
+    var maxRadius = d3.max(data, function(d) {
+        return d.size;
+    });
 
+    var meanX = d3.mean(data, function(d) {
+        return d.x;
+    });
+    var meanY = d3.mean(data, function(d) {
+        return d.y;
+    });
+
+    //Setting up x
+    var xScale = d3.scale.linear().range([0, width]);
+    var xMap = function(d) {
+        return xScale(d.x);
+    };
+    if (xLabel === 'Season') {
+        xScale.domain([minX - 1000, maxX])
+        var seasons = data.map(function(d) {
+            return parseInt(d.season);
+        })
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom")
+            .tickValues(seasons)
+            .tickFormat(function(d) {
+                return formatAxisText(d, xLabel);
+            });
+    } else {
+        xScale.domain([minX - (meanX * .05), maxX + (meanX * .05)])
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(function(d) {
+            return formatAxisText(d, xLabel);
+        });;
+    };
+
+
+
+    //Setting up y
+    var yScale = d3.scale.linear().range([height, 0]).domain([minY - (meanY * .05), maxY]);
     var yMap = function(d) {
-        return yScale(yValue(d));
-    }; // data -> display
+        return yScale(d.y);
+    };
+    var yAxis = d3.svg.axis().scale(yScale).orient("left").tickFormat(function(d) {
+        return formatAxisText(d, yLabel);
+    });;
 
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 
-
-    x.domain([minX - Math.abs((meanX * .05)), maxX + Math.abs((meanX * .05))]);
-    y.domain([minY - Math.abs((meanY * .05)), maxY]);
-
-    var maxallowed = 35,
-        minallowed = 2;
 
     // add the tooltip area to the webpage
     var tooltip = d3.select("body")
@@ -101,15 +108,11 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         .enter()
         .append("circle")
         .attr("class", "circle")
-        .attr("cx", function(d) {
-            return x(d.x);
-        })
-        .attr("cy", function(d) {
-            return y(d.y);
-        })
+        .attr("cx", xMap)
+        .attr("cy", yMap)
         .attr("r", 10)
         .attr("id", function(d) {
-            return "circle-" + d["featureId"];
+            return "circle-" + d["featureId"] + d["season"];
         })
         .style("fill", function(d) {
             return d.fillColor;
@@ -140,13 +143,13 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
             return d.displayName;
         })
         .attr("id", function(d) {
-            return "name-" + d["featureId"];
+            return "name-" + d["featureId"] + d["season"];
         })
         .attr("x", function(d) {
-            return xMap(d)
+            return xScale(d.x);
         })
         .attr("y", function(d) {
-            return yMap(d) - 15
+            return yScale(d.y) - 15;
         })
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle")
@@ -154,33 +157,6 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         .style("visibility", "hidden")
         .attr("active", false)
         .style("text-anchor", "middle");
-
-    if (xLabel === 'Season') {
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom")
-            .tickValues(season)
-            .tickFormat(function(d) {
-                return formatAxisText(d, xLabel);
-            });
-    } else {
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom")
-            .ticks(10)
-            .tickFormat(function(d) {
-                return formatAxisText(d, xLabel);
-            });
-    };
-
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        .ticks(10)
-        .tickFormat(function(d) {
-            return formatAxisText(d, yLabel);
-        });
 
     svg.append("g")
         .attr("class", "x axis")
@@ -218,7 +194,7 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         .text("firstlinestats.com")
 
     function circleClicked(d) {
-        var name = svg.select("#name-" + d["playerId"]);
+        var name = svg.select("#name-" + d["playerId"] + d["season"]);
         var active = name.attr("active");
         if (active === "false") {
             name.style("visibility", "visible");

@@ -215,7 +215,6 @@
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
-                                                    <option value="season">Season</option>
                                                     <option value="games">Games Played</option>
                                                     <option value="goals" selected>Goals</option>
                                                     <option value="assists1">Primary Assists</option>
@@ -294,8 +293,8 @@
                 playerData.y = parseFloat(playerData['goals']);
                 playerData.displayName = playerData.fullName;
                 playerData.featureId = playerData.playerId;
-                playerData.fillColor = get_color(playerData.abbreviation, true);;
-                playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                playerData.fillColor = get_color(playerData.abbreviation, true);
+                playerData.strokecolor = get_color(playerData.abbreviation, false);
                 graphData.push(playerData);
             };
         };
@@ -311,15 +310,16 @@
                     var playerData = data[player][season];
                     playerData.season = season;
                     playerData.playerId = parseInt(player);
-                    playerData.x = parseFloat(playerData[x]);
-                    playerData.y = parseFloat(playerData[y]);
+                    playerData.x = (x === 'season') ? parseInt(playerData[x]) : parseFloat(playerData[x]);
+                    playerData.y = (y === 'season') ? parseInt(playerData[y]) : parseFloat(playerData[y]);
                     playerData.displayName = playerData.fullName;
                     playerData.featureId = playerData.playerId;
-                    playerData.fillColor = get_color(playerData.abbreviation, true);;
-                    playerData.strokecolor = get_color(playerData.abbreviation, false);;
+                    playerData.fillColor = get_color(playerData.abbreviation, true);
+                    playerData.strokecolor = get_color(playerData.abbreviation, false);
                     graphData.push(playerData);
                 };
             };
+            console.log(graphData)
             bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
         });
 
