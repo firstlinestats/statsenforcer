@@ -19,7 +19,7 @@ def teams(request):
     context = {
         "teams" : teams
     }
-    teamstrength = "all"
+    teamstrength = "even"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
@@ -108,7 +108,7 @@ def teams(request):
 def team_page(request, team_name):
     try:
         form = GameForm()
-        teamstrength = "all"
+        teamstrength = "even"
         scoresituation = "all"
         period = "all"
         if request.method == "GET":

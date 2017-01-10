@@ -17,7 +17,7 @@ def find_value(default, key, cd, CHOICES):
 @register.filter
 def format_form_state(form):
     cd = form.cleaned_data
-    teamstrengths = find_value("All Team Strengths", "teamstrengths", cd, constants.TEAMSTRENGTHS_CHOICES)
+    teamstrengths = find_value("Even Strength 5v5", "teamstrengths", cd, constants.TEAMSTRENGTHS_CHOICES)
     scoringsituations = find_value("All Scoring Situations", "scoresituation", cd, constants.SCORESITUATION_CHOICES)
     period = find_value("All Periods", "period", cd, constants.PERIOD_CHOICES)
     if teamstrengths == "All":

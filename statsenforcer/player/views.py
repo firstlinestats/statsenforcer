@@ -17,7 +17,7 @@ from fancystats import toi, corsi
 
 
 def players(request):
-    teamstrength = "all"
+    teamstrength = "even"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
@@ -123,7 +123,7 @@ def players(request):
 def player_page(request, player_id):
     player = get_object_or_404(Player, id=player_id)
     player.age = int((arrow.now() - arrow.get(player.birthDate)).days / 365.25)
-    teamstrength = "all"
+    teamstrength = "even"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
