@@ -310,8 +310,8 @@
                     var playerData = data[player][season];
                     playerData.season = season;
                     playerData.playerId = parseInt(player);
-                    playerData.x = (x === 'season') ? parseInt(playerData[x]) : parseFloat(playerData[x]);
-                    playerData.y = (y === 'season') ? parseInt(playerData[y]) : parseFloat(playerData[y]);
+                    playerData.x = parseFloat(playerData[x]);
+                    playerData.y = parseFloat(playerData[y]);
                     playerData.displayName = playerData.fullName;
                     playerData.featureId = playerData.playerId;
                     playerData.fillColor = get_color(playerData.abbreviation, true);

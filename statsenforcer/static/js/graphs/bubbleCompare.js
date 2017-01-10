@@ -7,7 +7,7 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         top: 20,
         right: 40,
         bottom: 30,
-        left: 40
+        left: 60
     };
 
     var width = $(containerId).width() - margin.left - margin.right;

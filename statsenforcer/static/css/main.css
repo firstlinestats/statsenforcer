@@ -178,3 +178,20 @@ body {
     color: inherit;
     text-decoration: none;
 }
+
+/*
+  This fixes some whacky stuff between datatables and material kit
+*/
+div.dataTables_paginate li.next a:after, div.dataTables_paginate li.last a:after {
+  top: 0;
+}
+
+div.dataTables_paginate li.first a:before, div.dataTables_paginate li.previous a:before {
+  top: 0;
+}
+/**/
+
+/* Teams Page*/
+#id_teams, #id_venues {
+  height: 127px;
+}

@@ -23,7 +23,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
             top: 20,
             right: 40,
             bottom: 30,
-            left: 50
+            left: 60
         },
         width = $(containerId).width() - margin.left - margin.right,
         height = 500;
@@ -67,11 +67,17 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         maxRadius = d3.max(dataset, function(d) {
             return d.size;
         });
+    var meanX = d3.mean(data, function(d) {
+        return d.x;
+    });
+    var meanY = d3.mean(data, function(d) {
+        return d.y;
+    });
 
     var xValue = function(d) {
             return d.x;
         }, // data -> value
-        xScale = d3.scale.linear().domain([minX, maxX]).range([0, width]), // value -> display
+        xScale = d3.scale.linear().domain([minX - 1000, maxX]).range([0, width]), // value -> display
         xMap = function(d) {
             return xScale(xValue(d));
         }, // data -> display
@@ -222,9 +228,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         });
 
 
-    x.domain([d3.min(dataset, function(d) {
-        return d.x;
-    }), d3.max(dataset, function(d) {
+    x.domain([minX - 1000, d3.max(dataset, function(d) {
         return d.x;
     })]);
     y.domain([d3.min(dataset, function(d) {
