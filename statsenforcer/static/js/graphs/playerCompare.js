@@ -76,16 +76,16 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
 
 
     var minX = d3.min(dataset, function(d) {
-            return d.x;
+            return d.x - (d.x * 0.01);
         }),
         maxX = d3.max(dataset, function(d) {
-            return d.x;
+            return d.x + (d.x * 0.01);
         }),
         minY = d3.min(dataset, function(d) {
-            return d.y;
+            return d.y - (d.y * 0.01);
         }),
         maxY = d3.max(dataset, function(d) {
-            return d.y;
+            return d.y + (d.y * 0.01);
         }),
         minRadius = d3.min(dataset, function(d) {
             return d.size;

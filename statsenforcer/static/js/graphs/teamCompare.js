@@ -26,7 +26,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
             left: 60
         },
         width = $(containerId).width() - margin.left - margin.right,
-        height = 500;
+        height = 500 - margin.top - margin.bottom;
 
     var dataset = [];
     var seasons = [];
@@ -50,16 +50,16 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
 
 
     var minX = d3.min(dataset, function(d) {
-            return d.x;
+            return d.x - (d.x * 0.01);
         }),
         maxX = d3.max(dataset, function(d) {
-            return d.x;
+            return d.x + (d.x * 0.01);
         }),
         minY = d3.min(dataset, function(d) {
-            return d.y;
+            return d.y - (d.y * 0.01);
         }),
         maxY = d3.max(dataset, function(d) {
-            return d.y;
+            return d.y + (d.y * 0.01);
         }),
         minRadius = d3.min(dataset, function(d) {
             return d.size;
