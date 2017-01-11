@@ -120,9 +120,9 @@
 
         <div id="teamTabContent" class="content">
             <div class="content">
-                <div class="tab-content text-center">
+                <div class="tab-content">
                     <div class="tab-pane active" id="statview">
-                        <div class="row">
+                        <div class="row text-center">
                             <div class="col-md-12">
                                 <h3>Player Stats</h3>
                                 <p>{{ form|format_form_state }}</p>
@@ -196,7 +196,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="graphview">
+                    <div class="tab-pane text-center" id="graphview">
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Graph View</h3>
@@ -284,7 +284,6 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
-<script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/bubbleCompare.js" %}"></script>
@@ -306,7 +305,21 @@
                 scrollX: true,
                 "fixedColumns": {
                     leftColumns: 1,
-                }
+                },
+                dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                    "<'col-sm-12'B>",
+                buttons: [{
+                    extend: 'copy',
+                    className: 'btn-sm btn-primary',
+                }, {
+                    extend: 'csv',
+                    className: 'btn-sm btn-primary',
+                }, {
+                    extend: 'excel',
+                    className: 'btn-sm btn-primary',
+                }]
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
