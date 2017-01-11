@@ -18,7 +18,7 @@ def game(request, game_pk):
     context = {}
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
     context["form"] = forms.GameForm()
-    teamStrengths = "all"
+    teamStrengths = "even"
     scoreSituation = "all"
     hsc = 0
     asc = 0
@@ -143,12 +143,12 @@ def game(request, game_pk):
 
         eventChart = {
             "endTimeSeconds": 0,
-            "homeShots": [],
-            "awayShots": [],
+            "homeShots": [(0, 0)],
+            "awayShots": [(0, 0)],
             "homeName": context["game"].homeTeam.abbreviation,
             "awayName": context["game"].awayTeam.abbreviation,
-            "homeSC": [],
-            "awaySC": [],
+            "homeSC": [(0, 0)],
+            "awaySC": [(0, 0)],
             "homePenalties": [],
             "awayPenalties": [],
             "homeGoals": [],
@@ -237,6 +237,15 @@ def game(request, game_pk):
                 eventChart["periodEnds"].append(periodSeconds)
         eventChart["periodSeconds"] = periodSeconds + 5
         context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
+
+        if eventChart["homeShots"][-1][0] > eventChart["awayShots"][-1][0]:
+            eventChart["awayShots"].append((eventChart["homeShots"][-1][0], eventChart["awayShots"][-1][1]))
+        if eventChart["awayShots"][-1][0] > eventChart["homeShots"][-1][0]:
+            eventChart["homeShots"].append((eventChart["awayShots"][-1][0], eventChart["homeShots"][-1][1]))
+        if eventChart["homeSC"][-1][0] > eventChart["awaySC"][-1][0]:
+            eventChart["awaySC"].append((eventChart["homeSC"][-1][0], eventChart["awaySC"][-1][1]))
+        if eventChart["awaySC"][-1][0] > eventChart["homeSC"][-1][0]:
+            eventChart["homeSC"].append((eventChart["awaySC"][-1][0], eventChart["homeSC"][-1][1]))
         context["eventChart"] = json.dumps(eventChart, cls=DjangoJSONEncoder)
 
 

@@ -17,7 +17,7 @@ from fancystats import toi, corsi
 
 
 def players(request):
-    teamstrength = "all"
+    teamstrength = "even"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
@@ -95,6 +95,7 @@ def players(request):
     for playerid in stats:
         for season in stats[playerid]:
             row = stats[playerid][season]
+            toiSeconds = row["toi"]
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
             row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
@@ -109,6 +110,10 @@ def players(request):
             row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
             row["scf"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
             row["hscf"] = '%.2f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
+            row['gf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["goalsFor"])
+            row['a60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"])
+            row['a160'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"])
+            row['p60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["points"])
             if row["neutralZoneStarts"] is not None:
                 row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
             else:
@@ -123,7 +128,7 @@ def players(request):
 def player_page(request, player_id):
     player = get_object_or_404(Player, id=player_id)
     player.age = int((arrow.now() - arrow.get(player.birthDate)).days / 365.25)
-    teamstrength = "all"
+    teamstrength = "even"
     scoresituation = "all"
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
