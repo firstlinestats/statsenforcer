@@ -5,34 +5,34 @@
     <table id="goalietable" class="table full-width">
         <thead>
             <tr>
-                <th class="text-center" title="Player">Player</th>
-                <th class="text-center" title="Team">Team</th>
-                <th class="text-center" title="Goals Unknown-Danger">GU</th>
-                <th class="text-center" title="Goals Low-Danger">GL</th>
-                <th class="text-center" title="Goals Medium-Danger">GM</th>
-                <th class="text-center" title="Goals High-Danger">GH</th>
-                <th class="text-center" title="Shots Unknown-Danger">SU</th>
-                <th class="text-center" title="Shots Low-Danger">SL</th>
-                <th class="text-center" title="Shots Medium-Danger">SM</th>
-                <th class="text-center" title="Shots High-Danger">SH</th>
-                <th class="text-center" title="Time On Ice">TOI</th>
+                <th title="Player">Player</th>
+                <th title="Team">Team</th>
+                <th title="Goals Unknown-Danger">GU</th>
+                <th title="Goals Low-Danger">GL</th>
+                <th title="Goals Medium-Danger">GM</th>
+                <th title="Goals High-Danger">GH</th>
+                <th title="Shots Unknown-Danger">SU</th>
+                <th title="Shots Low-Danger">SL</th>
+                <th title="Shots Medium-Danger">SM</th>
+                <th title="Shots High-Danger">SH</th>
+                <th title="Time On Ice">TOI</th>
             </tr>
         </thead>
         <tbody>
             {% for pid in goaliestats %}
             {% with player=goaliestats|get_item:pid %}
             <tr>
-                <td class="text-center" title="Player">{{ player.name }}</td>
-                <td class="text-center" title="Team">{{ player.teamname }}</td>
-                <td class="text-center" title="Goals Unknown-Danger">{{ player.gu }}</td>
-                <td class="text-center" title="Goals Low-Danger">{{ player.gl }}</td>
-                <td class="text-center" title="Goals Medium-Danger">{{ player.gm }}</td>
-                <td class="text-center" title="Goals High-Danger">{{ player.gh }}</td>
-                <td class="text-center" title="Shots Unknown-Danger">{{ player.su }}</td>
-                <td class="text-center" title="Shots Low-Danger">{{ player.sl }}</td>
-                <td class="text-center" title="Shots Medium-Danger">{{ player.sm }}</td>
-                <td class="text-center" title="Shots High-Danger">{{ player.sh }}</td>
-                <td class="text-center" title="Time On Ice">{{ player.toi }}</td>
+                <td title="Player">{{ player.name }}</td>
+                <td title="Team">{{ player.teamname }}</td>
+                <td title="Goals Unknown-Danger">{{ player.gu }}</td>
+                <td title="Goals Low-Danger">{{ player.gl }}</td>
+                <td title="Goals Medium-Danger">{{ player.gm }}</td>
+                <td title="Goals High-Danger">{{ player.gh }}</td>
+                <td title="Shots Unknown-Danger">{{ player.su }}</td>
+                <td title="Shots Low-Danger">{{ player.sl }}</td>
+                <td title="Shots Medium-Danger">{{ player.sm }}</td>
+                <td title="Shots High-Danger">{{ player.sh }}</td>
+                <td title="Time On Ice">{{ player.toi }}</td>
             </tr>
             {% endwith %}
             {% endfor %}

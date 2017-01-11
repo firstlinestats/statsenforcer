@@ -110,9 +110,9 @@
             </div>
 
             <div id="teamTabContent" class="content">
-                    <div class="tab-content text-center">
+                    <div class="tab-content">
                         <div class="tab-pane active" id="statview">
-                            <div class="row">
+                            <div class="row text-center">
                                 <div class="col-md-12">
                                     <h3>Team Stats</h3>
                                     <p>{{ form|format_form_state }}</p>
@@ -124,19 +124,19 @@
                                         <table id="teamstats" class="table full-width">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" title="Season">Season</th>
-                                                    <th class="text-center" title="Games">Games</th>
-                                                    <th class="text-center" title="On-Ice Goals For Percentage">GF%</th>
-                                                    <th class="text-center" title="On-Ice Shots-On-Goal For Percentage">SF%</th>
-                                                    <th class="text-center" title="Missed Shots For Percentage">MSF%</th>
-                                                    <th class="text-center" title="Blocked Shots Percentage">BSF%</th>
-                                                    <th class="text-center" title="Corsi For Percentage">CF%</th>
-                                                    <th class="text-center" title="On-Ice Scoring Chances For Percentage">SCF%</th>
-                                                    <th class="text-center" title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
-                                                    <th class="text-center" title="Offensive Zone Starts Percentage">ZSO%</th>
-                                                    <th class="text-center" title="Faceoffs Won Percentage">FO_W%</th>
-                                                    <th class="text-center" title="Hit Percentage">Hit%</th>
-                                                    <th class="text-center" title="Time On Ice">TOI/Gm</th>
+                                                    <th title="Season">Season</th>
+                                                    <th title="Games">Games</th>
+                                                    <th title="On-Ice Goals For Percentage">GF%</th>
+                                                    <th title="On-Ice Shots-On-Goal For Percentage">SF%</th>
+                                                    <th title="Missed Shots For Percentage">MSF%</th>
+                                                    <th title="Blocked Shots Percentage">BSF%</th>
+                                                    <th title="Corsi For Percentage">CF%</th>
+                                                    <th title="On-Ice Scoring Chances For Percentage">SCF%</th>
+                                                    <th title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
+                                                    <th title="Offensive Zone Starts Percentage">ZSO%</th>
+                                                    <th title="Faceoffs Won Percentage">FO_W%</th>
+                                                    <th title="Hit Percentage">Hit%</th>
+                                                    <th title="Time On Ice">TOI/Gm</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -165,7 +165,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="graphview">
+                        <div class="tab-pane text-center" id="graphview">
                             <div class="row">
                                 <div class="col-md-12">
                                     <h3>Graph View</h3>
@@ -288,7 +288,6 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
-<script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/teamCompare.js" %}"></script>
@@ -308,7 +307,22 @@
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
-            }
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>"
+            ,
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
 
         var data = JSON.parse("{{ statsJson | escapejs }}");

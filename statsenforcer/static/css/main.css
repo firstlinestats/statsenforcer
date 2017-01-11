@@ -186,8 +186,7 @@ body {
 /*
   DataTables stuff
 */
-.table thead,
-.table th {text-align: center;}
+/*th, td { text-align: center; }*/
 /*
   This fixes some whacky stuff between datatables and material kit
 */

@@ -118,11 +118,11 @@
         </div>
         <div id="gameTabContent" class="content">
             <div class="content">
-                <div class="tab-content text-center">
+                <div class="tab-content">
                     <div class="tab-pane active" id="tableview">
                         <div class="card">
                             <div class="content">
-                                <div class="row">
+                                <div class="row text-center">
                                     <div class="col-md-12">
                                         <h3>Team Statistics</h3>
                                         <p>{{ form|format_form_state }}</p>
@@ -134,37 +134,37 @@
                                             <table id="teamstats" class="table full-width">
                                                 <thead>
                                                     <tr>
-                                                        <th class="text-center" title="Team">Team</th>
-                                                        <th class="text-center" title="On-Ice Goals For Total">GF</th>
-                                                        <th class="text-center" title="On-Ice Shots-On-Goal For Total">SF</th>
-                                                        <th class="text-center" title="Missed Shots For">MSF</th>
-                                                        <th class="text-center" title="Blocked Shots">BSF</th>
-                                                        <th class="text-center" title="Corsi For Total">CF</th>
-                                                        <th class="text-center" title="On-Ice Scoring Chances For Total">SCF</th>
-                                                        <th class="text-center" title="On-Ice High-Danger Scoring Chances For Total">HSCF</th>
-                                                        <th class="text-center" title="Offensive Zone Starts">ZSO</th>
-                                                        <th class="text-center" title="Hits">HIT</th>
-                                                        <th class="text-center" title="Penalties">PN</th>
-                                                        <th class="text-center" title="Faceoffs Won">FO_W</th>
-                                                        <th class="text-center" title="Time On Ice">TOI</th>
+                                                        <th class="" title="Team">Team</th>
+                                                        <th class="" title="On-Ice Goals For Total">GF</th>
+                                                        <th class="" title="On-Ice Shots-On-Goal For Total">SF</th>
+                                                        <th class="" title="Missed Shots For">MSF</th>
+                                                        <th class="" title="Blocked Shots">BSF</th>
+                                                        <th class="" title="Corsi For Total">CF</th>
+                                                        <th class="" title="On-Ice Scoring Chances For Total">SCF</th>
+                                                        <th class="" title="On-Ice High-Danger Scoring Chances For Total">HSCF</th>
+                                                        <th class="" title="Offensive Zone Starts">ZSO</th>
+                                                        <th class="" title="Hits">HIT</th>
+                                                        <th class="" title="Penalties">PN</th>
+                                                        <th class="" title="Faceoffs Won">FO_W</th>
+                                                        <th class="" title="Time On Ice">TOI</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for team in teamstats %}
                                                     <tr>
-                                                        <td title="Team">{{ team.team }}</td>
-                                                        <td title="On-Ice Goals For Total">{{ team.gf }}</td>
-                                                        <td title="On-Ice Shots-On-Goal For Total">{{ team.sf }}</td>
-                                                        <td title="Missed Shots For">{{ team.msf }}</td>
-                                                        <td title="Blocked Shots">{{ team.bsf }}</td>
-                                                        <td title="Corsi For Total">{{ team.cf }}</td>
-                                                        <td title="On-Ice Scoring Chances For Total">{{ team.scf }}</td>
-                                                        <td title="On-Ice High-Danger Scoring Chances For Total">{{ team.hscf }}</td>
-                                                        <td title="Offensive Zone Starts">{{ team.zso }}</td>
-                                                        <td title="Hits">{{ team.hit }}</td>
-                                                        <td title="Penalties">{{ team.pn }}</td>
-                                                        <td title="Faceoffs Won">{{ team.fo_w }}</td>
-                                                        <td title="Time On Ice">{{ team.toi }}</td>
+                                                        <td class="" title="Team">{{ team.team }}</td>
+                                                        <td class="" title="On-Ice Goals For Total">{{ team.gf }}</td>
+                                                        <td class="" title="On-Ice Shots-On-Goal For Total">{{ team.sf }}</td>
+                                                        <td class="" title="Missed Shots For">{{ team.msf }}</td>
+                                                        <td class="" title="Blocked Shots">{{ team.bsf }}</td>
+                                                        <td class="" title="Corsi For Total">{{ team.cf }}</td>
+                                                        <td class="" title="On-Ice Scoring Chances For Total">{{ team.scf }}</td>
+                                                        <td class="" title="On-Ice High-Danger Scoring Chances For Total">{{ team.hscf }}</td>
+                                                        <td class="" title="Offensive Zone Starts">{{ team.zso }}</td>
+                                                        <td class="" title="Hits">{{ team.hit }}</td>
+                                                        <td class="" title="Penalties">{{ team.pn }}</td>
+                                                        <td class="" title="Faceoffs Won">{{ team.fo_w }}</td>
+                                                        <td class="" title="Time On Ice">{{ team.toi }}</td>
                                                     </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -177,7 +177,7 @@
                         </div>
                         <div class="card">
                             <div class="content">
-                                <div class="row">
+                                <div class="row text-center">
                                     <div class="col-md-12">
                                         <h3>Goalie Statistics</h3>
                                         <p>{{ form|format_form_state }}</p>
@@ -192,7 +192,7 @@
                         </div>
                             <div class="card">
                                 <div class="content">
-                                    <div class="row">
+                                    <div class="row text-center">
                                         <div class="col-md-12">
                                             <h3>Player Statistics</h3>
                                             <p>{{ form|format_form_state }}</p>
@@ -422,7 +422,6 @@
 {% endblock %}
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
-<script src="{% static "js/dataTables.fixedColumns.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/shotChart.js" %}"></script>
@@ -443,21 +442,49 @@
         });
 
         var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
-            "iDisplayLength": 10,
-            "bPaginate": true,
+            "iDisplayLength": 18,
+            "bPaginate": false,
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
-            }
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
 
         $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
-            "iDisplayLength": 10,
-            "bPaginate": true,
+            "iDisplayLength": 18,
+            "bPaginate": false,
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
-            }
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
 
         $('#teamstats').DataTable({
@@ -466,7 +493,21 @@
             scrollX: true,
             "fixedColumns": {
                 leftColumns: 1,
-            }
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
 
         $('#goalietable').DataTable({
@@ -475,7 +516,21 @@
             "scrollX": true,
             "fixedColumns": {
                 leftColumns: 1,
-            }
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
 
 
