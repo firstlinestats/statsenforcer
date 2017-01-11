@@ -59,6 +59,12 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
             .tickFormat(function(d) {
                 return formatAxisText(d, xLabel);
             });
+    } else if (xLabel === 'Average Time On Ice') {
+        xScale.domain([minX, maxX])
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom")
+            .ticks(0);
     } else {
         xScale.domain([minX - (meanX * .05), maxX + (meanX * .05)])
         var xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(function(d) {
@@ -122,7 +128,7 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         })
         .on('click', circleClicked)
         .on("mouseover", function(d) {
-            var html = d.displayName + "<br /><b>" + xLabel + ":</b>" + d.x + "<br /><b>" + yLabel + ": </b>" + d.y;
+            var html = d.displayName + "<br /><b>" + xLabel + ":</b>" + d.x + "<br /><b>" + yLabel + ": </b>" + d.y + "<br /><b>" + "Season" + ": </b>" + d.season;
             tooltip.html(html);
             tooltip.style("visibility", "visible");
         })

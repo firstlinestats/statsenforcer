@@ -212,15 +212,19 @@
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
                                                     <option value="games" selected>Games Played</option>
+                                                    <option value="toi">Average Time On Ice</option>
                                                     <option value="goals">Goals</option>
+                                                    <option value="gf60">Goals For per 60 minutes</option>
                                                     <option value="assists1">Primary Assists</option>
+                                                    <option value="a160">Assists1 For per 60 minutes</option>
                                                     <option value="assists2">Secondary Assists</option>
+                                                    <option value="a60">Assists per 60 minutes</option>
                                                     <option value="points">Points</option>
-                                                    <option value="individualShots">Individual Shots</option>
-                                                    <option value="individualMissedShots">Individual Missed Shots</option>
-                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="p60">Points For per 60 minutes</option>
                                                     <option value="cf">Corsi For Percentage</option>
+                                                    <option value="cf60">Corsi For per 60 minutes</option>
                                                     <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="ff60">Fenwick For per 60 minutes</option>
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
@@ -228,7 +232,6 @@
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                     <option value="pn">Penalty Percentage</option>
-                                                    <option value="toi">Average Time On Ice</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -237,23 +240,25 @@
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
                                                     <option value="games">Games Played</option>
+                                                    <option value="toi">Average Time On Ice</option>
                                                     <option value="goals" selected>Goals</option>
+                                                    <option value="gf60">Goals For per 60 minutes</option>
                                                     <option value="assists1">Primary Assists</option>
+                                                    <option value="a160">Assists1 For per 60 minutes</option>
                                                     <option value="assists2">Secondary Assists</option>
+                                                    <option value="a60">Assists per 60 minutes</option>
                                                     <option value="points">Points</option>
-                                                    <option value="individualShots">Individual Shots</option>
-                                                    <option value="individualMissedShots">Individual Missed Shots</option>
-                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="p60">Points For per 60 minutes</option>
                                                     <option value="cf">Corsi For Percentage</option>
+                                                    <option value="cf60">Corsi For per 60 minutes</option>
                                                     <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="ff60">Fenwick For per 60 minutes</option>
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
                                                     <option value="fo">Face Of Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
-                                                    <option value="pn">Penalty Percentage</option>
-                                                    <option value="toi">Average Time On Ice</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -323,6 +328,7 @@
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
+            console.log(data)
             var graphData = [];
             for (player in data) {
                 for (season in data[player]) {

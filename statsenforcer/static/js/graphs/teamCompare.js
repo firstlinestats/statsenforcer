@@ -77,7 +77,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
     var xValue = function(d) {
             return d.x;
         }, // data -> value
-        xScale = d3.scale.linear().domain([minX - 1000, maxX]).range([0, width]), // value -> display
+        xScale = d3.scale.linear().domain([minX, maxX]).range([0, width]), // value -> display
         xMap = function(d) {
             return xScale(xValue(d));
         }, // data -> display
@@ -228,7 +228,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         });
 
 
-    x.domain([minX - 1000, d3.max(dataset, function(d) {
+    x.domain([minX, d3.max(dataset, function(d) {
         return d.x;
     })]);
     y.domain([d3.min(dataset, function(d) {
