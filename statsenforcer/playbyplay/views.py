@@ -257,6 +257,7 @@ def game(request, game_pk):
 
         if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
             context.pop("form", None)
+            context["eventChart"] = eventChart
             return JsonResponse(context)
         else:
             context["eventChart"] = json.dumps(eventChart, cls=DjangoJSONEncoder)
@@ -333,5 +334,8 @@ def games(request):
         'page_range': page_range,
     }
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context.pop("page_range", None)
+        context["games"] = [item for item in context["games"].object_list]
+        context.pop("form", None)
         return JsonResponse(context)
     return render(request, 'games/game_list.html', context)

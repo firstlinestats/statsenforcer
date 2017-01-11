@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
@@ -124,8 +124,10 @@ def players(request):
                 row["zso"] = "0.0"
 
     context = {}
-    context["form"] = form
     context["stats"] = stats
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        return JsonResponse(context)
+    context["form"] = form
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/players.html', context)
 
@@ -219,7 +221,11 @@ def player_page(request, player_id):
 
     context = {}
     context["player"] = player
-    context["form"] = form
     context["stats"] = stats
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context["player"] = context["player"].__dict__
+        context["player"].pop("_state", None)
+        return JsonResponse(context)
+    context["form"] = form
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/player_page.html', context)

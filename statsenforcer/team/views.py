@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team, TeamGameStats
 from player.models import Player
@@ -100,9 +100,14 @@ def teams(request):
             row["hit"] = '%.2f' % corsi.corsi_percent(row["hitsFor"], row["hitsAgainst"])
     # print datetime.now() - start
     context["stats"] = stats
-    context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     context["form"] = form
 
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context.pop("form")
+        context.pop("teams")
+        return JsonResponse(context)
+    else:
+        context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'team/teams.html', context)
 
 def team_page(request, team_name):
@@ -191,13 +196,23 @@ def team_page(request, team_name):
                 row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
                 row["hit"] = '%.2f' % corsi.corsi_percent(row["hitsFor"], row["hitsAgainst"])
 
+        context = {
+            'team': team,
+            'players': players,
+            'stats': stats,
+            'statsJson': stats,
+            'form': form,
+        }
+        if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+            context['players'] = [x.__dict__ for x in context["players"]]
+            [x.pop("_state", None) for x in context["players"]]
+            context["team"] = context["team"].__dict__
+            context["team"].pop("_state", None)
+            context.pop("form")
+            return JsonResponse(context)
+        else:
+            context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
 
     except Team.DoesNotExist:
         raise Http404("Team does not exist!")
-    return render(request, 'team/team_page.html', {
-        'team': team,
-        'players': players,
-        'stats': stats,
-        'statsJson': json.dumps(stats, cls=DjangoJSONEncoder),
-        'form': form,
-    })
+    return render(request, 'team/team_page.html', context)
