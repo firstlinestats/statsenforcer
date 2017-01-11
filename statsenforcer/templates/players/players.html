@@ -137,13 +137,15 @@
                                                 <th class="text-center" title="Name">Name</th>
                                                 <th class="text-center" title="Season">Season</th>
                                                 <th class="text-center" title="Games Played">GP</th>
+                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
                                                 <th class="text-center" title="Goals">Goals</th>
+                                                <th class="text-center" title="Goals For per 60 minutes">GF60</th>
                                                 <th class="text-center" title="Primary Assists">A1</th>
+                                                <th class="text-center" title="Assist1 per 60 minutes">A160</th>
                                                 <th class="text-center" title="Secondary Assists">A2</th>
+                                                <th class="text-center" title="Assists per 60 minutes">A60</th>
                                                 <th class="text-center" title="Points">P</th>
-                                                <th class="text-center" title="Individual Shots">iSF</th>
-                                                <th class="text-center" title="Individual Missed Shots">iMSF</th>
-                                                <th class="text-center" title="Individual Blocked Shots">iBSF</th>
+                                                <th class="text-center" title="Points For per 60 minutes">PF60</th>
                                                 <th class="text-center" title="Corsi For Percentage">CF%</th>
                                                 <th class="text-center" title="Fenwick For Percentage">FF%</th>
                                                 <th class="text-center" title="Goals For Percentage">GF%</th>
@@ -153,7 +155,6 @@
                                                 <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
                                                 <th class="text-center" title="Hit Percentage">Hit%</th>
                                                 <th class="text-center" title="Penalty Percentage">Pen%</th>
-                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -163,13 +164,15 @@
                                                         <td title=""><a href="/players/{{ playerid }}/">{{ player.fullName }}</a></td>
                                                         <td title="">{{ season }}</td>
                                                         <td title="">{{ player.games }}</td>
+                                                        <td title="">{{ player.toi }}</td>
                                                         <td title="">{{ player.goals }}</td>
+                                                        <td title="">{{ player.gf60 }}</td>
                                                         <td title="">{{ player.assists1 }}</td>
+                                                        <td title="">{{ player.a160 }}</td>
                                                         <td title="">{{ player.assists2 }}</td>
+                                                        <td title="">{{ player.a60 }}</td>
                                                         <td title="">{{ player.points }}</td>
-                                                        <td title="">{{ player.individualShots }}</td>
-                                                        <td title="">{{ player.individualMissedShots }}</td>
-                                                        <td title="">{{ player.individualBlockedShots }}</td>
+                                                        <td title="">{{ player.p60 }}</td>
                                                         <td title="">{{ player.cf }}</td>
                                                         <td title="">{{ player.ff }}</td>
                                                         <td title="">{{ player.gf }}</td>
@@ -179,7 +182,6 @@
                                                         <td title="">{{ player.zso }}</td>
                                                         <td title="">{{ player.hit }}</td>
                                                         <td title="">{{ player.pn }}</td>
-                                                        <td title="">{{ player.toi }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             {% endfor %}
