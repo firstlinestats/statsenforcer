@@ -121,10 +121,10 @@ def game(request, game_pk):
             context["teamstats"][ts]["team"] = team.abbreviation
             if ts == context["game"]["homeTeam_id"]:
                 context["game"]["homeTeam_name"] = team.name
-                context["game"]["homeTeam__abbreviation"] = team.abbreviation
+                context["game"]["homeTeam_abbreviation"] = team.abbreviation
             else:
                 context["game"]["awayTeam_name"] = team.name
-                context["game"]["awayTeam__abbreviation"] = team.abbreviation
+                context["game"]["awayTeam_abbreviation"] = team.abbreviation
 
         context["playerstats"] = fancystats.player.get_stats(
             context["playbyplay"],

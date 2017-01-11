@@ -204,7 +204,7 @@
                                 <div class="content">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {% with team=game.homeTeam_id teamName=game.homeTeam_name %}
+                                            {% with team=game.homeTeam_id teamName=game.homeTeam_name team_abbreviation=game.homeTeam_abbreviation %}
                                                 {% include "games/playertable.html" %}
                                             {% endwith %}
                                         </div>
@@ -215,7 +215,7 @@
                                 <div class="content">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {% with team=game.awayTeam_id teamName=game.awayTeam_name %}
+                                            {% with team=game.awayTeam_id teamName=game.awayTeam_name team_abbreviation=game.awayTeam_abbreviation %}
                                                 {% include "games/playertable.html" %}
                                             {% endwith %}
                                         </div>
@@ -441,7 +441,7 @@
             "bSort": false
         });
 
-        var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
+        var z = $('#{{ game.awayTeam_abbreviation }}-players').DataTable({
             "iDisplayLength": 18,
             "bPaginate": false,
 
@@ -465,7 +465,7 @@
             }]
         });
 
-        $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
+        $('#{{ game.homeTeam_abbreviation }}-players').DataTable({
             "iDisplayLength": 18,
             "bPaginate": false,
             scrollX: true,
