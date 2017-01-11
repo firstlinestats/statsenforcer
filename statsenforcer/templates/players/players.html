@@ -147,7 +147,9 @@
                                                 <th class="text-center" title="Points">P</th>
                                                 <th class="text-center" title="Points For per 60 minutes">PF60</th>
                                                 <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                <th class="text-center" title="Corsi For per 60 minutes">CF60</th>
                                                 <th class="text-center" title="Fenwick For Percentage">FF%</th>
+                                                <th class="text-center" title="Fenwick For per 60 minutes">FF60</th>
                                                 <th class="text-center" title="Goals For Percentage">GF%</th>
                                                 <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
                                                 <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
@@ -173,15 +175,17 @@
                                                         <td title="">{{ player.a60 }}</td>
                                                         <td title="">{{ player.points }}</td>
                                                         <td title="">{{ player.p60 }}</td>
-                                                        <td title="">{{ player.cf }}</td>
-                                                        <td title="">{{ player.ff }}</td>
-                                                        <td title="">{{ player.gf }}</td>
-                                                        <td title="">{{ player.scf }}</td>
-                                                        <td title="">{{ player.hscf }}</td>
-                                                        <td title="">{{ player.fo }}</td>
-                                                        <td title="">{{ player.zso }}</td>
-                                                        <td title="">{{ player.hit }}</td>
-                                                        <td title="">{{ player.pn }}</td>
+                                                        <td title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
+                                                        <td title="">{{ player.cf60 }}</td>
+                                                        <td title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
+                                                        <td title="">{{ player.ff60 }}</td>
+                                                        <td title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
+                                                        <td title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
+                                                        <td title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
+                                                        <td title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
+                                                        <td title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
+                                                        <td title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
+                                                        <td title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             {% endfor %}

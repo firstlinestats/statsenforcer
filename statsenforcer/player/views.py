@@ -114,6 +114,10 @@ def players(request):
             row['a60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"])
             row['a160'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"])
             row['p60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["points"])
+            row['scf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"])
+            row['cf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["corsiFor"])
+            row['ff60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["fenwickFor"])
+            row['hscf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"])
             if row["neutralZoneStarts"] is not None:
                 row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
             else:
