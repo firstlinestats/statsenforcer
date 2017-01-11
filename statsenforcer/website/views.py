@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
 
 from playbyplay.templatetags.pbp_extras import get_period
 from playbyplay.models import Game, PlayByPlay
@@ -45,7 +46,12 @@ def standings(request):
             hstand[division][teamName] = []
         hstand[division][teamName].append({"date": sdate, "points": points})
 
-    context["divisions"] = json.dumps(hstand, ensure_ascii=True)
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context["teams"] = [x.__dict__ for x in context["teams"]]
+        [x.pop("_state") for x in context["teams"]]
+        return JsonResponse(context)
+    else:
+        context["divisions"] = json.dumps(hstand, ensure_ascii=True)
     return render(request, 'website/standings.html', context)
 
 
@@ -54,6 +60,11 @@ def index(request):
     context = {
         'games': games,
     }
+
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context["games"] = [x.__dict__ for x in context["games"]]
+        [x.pop("_state") for x in context["games"]]
+        return JsonResponse(context)
     return render(request, 'website/index.html', context)
 
 
@@ -63,6 +74,10 @@ def about(request):
 
 def glossary(request):
     terms = GlossaryTerm.objects.all()
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        terms = [x.__dict__ for x in terms]
+        [x.pop("_state", None) for x in terms]
+        return JsonResponse(terms, safe=False)
     return render(request, 'website/glossary.html', {'terms': terms})
 
 
