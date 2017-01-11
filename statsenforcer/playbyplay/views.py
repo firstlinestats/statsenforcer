@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -16,7 +17,8 @@ from playbyplay.models import Game
 # Create your views here.
 def game(request, game_pk):
     context = {}
-    context["game"] = get_object_or_404(models.Game, gamePk=game_pk)
+    context["game"] = get_object_or_404(models.Game, gamePk=game_pk).__dict__
+    context["game"].pop("_state", None)
     context["form"] = forms.GameForm()
     teamStrengths = "even"
     scoreSituation = "all"
@@ -30,9 +32,10 @@ def game(request, game_pk):
             teamStrengths = cd["teamstrengths"]
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
-    context["game"].dateTime = context["game"].dateTime.astimezone(pytz.timezone('US/Eastern'))
+    context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
     try:
-        context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime")
+        context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
+        context["period"].pop("_state", None)
     except:
         context["period"] = None
     if context["period"] is not None:
@@ -76,7 +79,7 @@ def game(request, game_pk):
             poidict[play] = sorted(poidict[play], key=lambda x: order.index(x["player__primaryPositionCode"]))
 
         pt = str(context["playbyplay"][-1]["periodTime"])[:-3].split(":")
-        if context["period"].period < 4 or context["game"].gameType == "P":
+        if context["period"]["period"] < 4 or context["game"]["gameType"] == "P":
             minutes = 20 - int(pt[0])
         else:
             minutes = 5 - int(pt[0])
@@ -95,6 +98,7 @@ def game(request, game_pk):
 
         context["periodTimeString"] = periodTimeString
         for play in context["playbyplay"]:
+            play.pop('_state', None)
             play["periodTimeString"] = str(play["periodTime"])[:-3]
             if play["id"] in pipdict:
                 play["players"] = pipdict[play["id"]]
@@ -106,8 +110,8 @@ def game(request, game_pk):
                 play["onice"] = []
         context["teamstats"] = fancystats.team.get_stats(
             context["playbyplay"],
-            context["game"].homeTeam.id,
-            context["game"].awayTeam.id,
+            context["game"]["homeTeam_id"],
+            context["game"]["awayTeam_id"],
             p2t,
             teamStrengths=teamStrengths,
             scoreSituation=scoreSituation,
@@ -115,22 +119,26 @@ def game(request, game_pk):
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation
+            if ts == context["game"]["homeTeam_id"]:
+                context["game"]["homeTeam_name"] = team.name
+                context["game"]["homeTeam__abbreviation"] = team.abbreviation
+            else:
+                context["game"]["awayTeam_name"] = team.name
+                context["game"]["awayTeam__abbreviation"] = team.abbreviation
 
         context["playerstats"] = fancystats.player.get_stats(
             context["playbyplay"],
-            context["game"].homeTeam.id,
-            context["game"].awayTeam.id,
+            context["game"]["homeTeam_id"],
+            context["game"]["awayTeam_id"],
             p2t,
             teamStrengths=teamStrengths,
             scoreSituation=scoreSituation,
             period=period)
 
-        context["playersjson"] = json.dumps(context["playerstats"])
-
         context["goaliestats"] = fancystats.player.get_goalie_stats(
             context["playbyplay"],
-            context["game"].homeTeam.id,
-            context["game"].awayTeam.id,
+            context["game"]["homeTeam_id"],
+            context["game"]["awayTeam_id"],
             p2t,
             teamStrengths=teamStrengths,
             scoreSituation=scoreSituation,
@@ -145,8 +153,8 @@ def game(request, game_pk):
             "endTimeSeconds": 0,
             "homeShots": [(0, 0)],
             "awayShots": [(0, 0)],
-            "homeName": context["game"].homeTeam.abbreviation,
-            "awayName": context["game"].awayTeam.abbreviation,
+            "homeName": context["teamstats"][context["game"]["homeTeam_id"]]["team"],
+            "awayName": context["teamstats"][context["game"]["awayTeam_id"]]["team"],
             "homeSC": [(0, 0)],
             "awaySC": [(0, 0)],
             "homePenalties": [],
@@ -160,8 +168,8 @@ def game(request, game_pk):
         awayShotCount = 0
         homeSCCount = 0
         awaySCCount = 0
-        home_id = context["game"].homeTeam_id
-        away_id = context["game"].awayTeam_id
+        home_id = context["game"]["homeTeam_id"]
+        away_id = context["game"]["awayTeam_id"]
         homePenaltyStart = None
         awayPenaltyStart = None
         homePenaltyLength = None
@@ -174,8 +182,8 @@ def game(request, game_pk):
                 sc = scoringChance[1]
                 team = play["team_id"]
                 play_type = play["playType"]
-                homeinclude, awayinclude = fancystats.team.check_play(play, teamStrengths, scoreSituation, period, hsc, asc, context["game"].homeTeam.id, context["game"].awayTeam.id, p2t)
-                if team == context["game"].homeTeam.id and homeinclude:
+                homeinclude, awayinclude = fancystats.team.check_play(play, teamStrengths, scoreSituation, period, hsc, asc, context["game"]["homeTeam_id"], context["game"]["awayTeam_id"], p2t)
+                if team == home_id and homeinclude:
                     xcoord = play["xcoord"]
                     ycoord = play["ycoord"]
                     if xcoord < 0 and xcoord is not None:
@@ -194,7 +202,7 @@ def game(request, game_pk):
                     if sc >= 2:
                         homeSCCount += 1
                         eventChart["homeSC"].append((periodSeconds, homeSCCount))
-                elif team == context["game"].awayTeam.id and awayinclude:
+                elif team == away_id and awayinclude:
                     xcoord = play["xcoord"]
                     ycoord = play["ycoord"]
                     if xcoord > 0:
@@ -236,7 +244,6 @@ def game(request, game_pk):
             if play["playType"] == "PERIOD_END":
                 eventChart["periodEnds"].append(periodSeconds)
         eventChart["periodSeconds"] = periodSeconds + 5
-        context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
 
         if eventChart["homeShots"][-1][0] > eventChart["awayShots"][-1][0]:
             eventChart["awayShots"].append((eventChart["homeShots"][-1][0], eventChart["awayShots"][-1][1]))
@@ -246,10 +253,15 @@ def game(request, game_pk):
             eventChart["awaySC"].append((eventChart["homeSC"][-1][0], eventChart["awaySC"][-1][1]))
         if eventChart["awaySC"][-1][0] > eventChart["homeSC"][-1][0]:
             eventChart["homeSC"].append((eventChart["awaySC"][-1][0], eventChart["homeSC"][-1][1]))
-        context["eventChart"] = json.dumps(eventChart, cls=DjangoJSONEncoder)
-
-
         context["teamstats"] = context["teamstats"].values()
+
+        if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+            context.pop("form", None)
+            return JsonResponse(context)
+        else:
+            context["eventChart"] = json.dumps(eventChart, cls=DjangoJSONEncoder)
+            context["playersjson"] = json.dumps(context["playerstats"])
+            context["shotdatajson"] = json.dumps(shotData, cls=DjangoJSONEncoder)
     return render(request, 'games/game.html', context)
 
 
@@ -320,4 +332,6 @@ def games(request):
         'page': page,
         'page_range': page_range,
     }
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        return JsonResponse(context)
     return render(request, 'games/game_list.html', context)

@@ -2,7 +2,7 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
-{% block title %}{{ game.awayTeam.abbreviation }} vs {{ game.homeTeam.abbreviation }} {{ game.dateTime }} | FLS{% endblock %}
+{% block title %}{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }} | FLS{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -15,9 +15,9 @@
             <div class="col-md-12 text-center">
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="away-team" id="away-team-name">{{ game.awayTeam }}</h3>
+                        <h3 class="away-team" id="away-team-name">{{ game.awayTeam_name }}</h3>
                         <h4>at</h4>
-                        <h3 class="home-team" id="home-team-name">{{ game.homeTeam }}</h3>
+                        <h3 class="home-team" id="home-team-name">{{ game.homeTeam_name }}</h3>
                     </div>
                 </div>
 
@@ -204,7 +204,7 @@
                                 <div class="content">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {% with team=game.homeTeam %}
+                                            {% with team=game.homeTeam_id teamName=game.homeTeam_name %}
                                                 {% include "games/playertable.html" %}
                                             {% endwith %}
                                         </div>
@@ -215,7 +215,7 @@
                                 <div class="content">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {% with team=game.awayTeam %}
+                                            {% with team=game.awayTeam_id teamName=game.awayTeam_name %}
                                                 {% include "games/playertable.html" %}
                                             {% endwith %}
                                         </div>
@@ -385,7 +385,7 @@
                                                 <table class="table table-bordered table-striped table-condensed">
                                                     <tbody>
                                                         <tr>
-                                                            <th>{{ game.awayTeam.abbreviation }}</th>
+                                                            <th>{{ game.awayTeam_abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.awayTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
@@ -393,7 +393,7 @@
                                                             {% endfor %}
                                                         </tr>
                                                         <tr>
-                                                            <th>{{ game.homeTeam.abbreviation }}</th>
+                                                            <th>{{ game.homeTeam_abbreviation }}</th>
                                                             {% for player in play.onice %}
                                                                 {% if player.team_id == game.homeTeam_id %}
                                                                 <td>{{ player.player__lastName }}<br />{{ player.player__primaryPositionCode }}</td>
@@ -442,7 +442,7 @@
             "bSort": false
         });
 
-        var z = $('#{{ game.awayTeam.abbreviation }}-players').DataTable({
+        var z = $('#{{ game.awayTeam_abbreviation }}-players').DataTable({
             "iDisplayLength": 10,
             "bPaginate": true,
             scrollX: true,
@@ -451,7 +451,7 @@
             }
         });
 
-        $('#{{ game.homeTeam.abbreviation }}-players').DataTable({
+        $('#{{ game.homeTeam_abbreviation }}-players').DataTable({
             "iDisplayLength": 10,
             "bPaginate": true,
             scrollX: true,
@@ -481,10 +481,10 @@
 
         //Creates the corsi graphs
         var playerStats = JSON.parse("{{ playersjson | escapejs }}");
-        var homeSkaters = playerStats["{{ game.homeTeam.id }}"];
-        var awaySkaters = playerStats["{{ game.awayTeam.id }}"];
-        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam.teamName }}", "{{ form|format_form_state }}");
-        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam.teamName }}", "{{ form|format_form_state }}");
+        var homeSkaters = playerStats["{{ game.homeTeam_id }}"];
+        var awaySkaters = playerStats["{{ game.awayTeam_id }}"];
+        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam_name }}", "{{ form|format_form_state }}");
+        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam_name }}", "{{ form|format_form_state }}");
 
         var eventChart = {{ eventChart| safe }};
         create_shot_attempts(eventChart, "#eventChartShots", "Shots");
@@ -492,7 +492,7 @@
 
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
-        shotChart(shotData, "{{ game.homeTeam.abbreviation }}", "{{ game.awayTeam.abbreviation }}", "{{ form|format_form_state }}");
+        shotChart(shotData, "{{ game.homeTeam_abbreviation }}", "{{ game.awayTeam_abbreviation }}", "{{ form|format_form_state }}");
         playerCompare('#playerComparison', "#gameTabContent", "sca", "scf", playerStats);
         savePNG("#playerComparisonButton", "#playerComparison");
 

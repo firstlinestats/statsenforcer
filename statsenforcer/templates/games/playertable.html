@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 <h4>
-    {{ team }}
+    {{ teamName }}
 </h4>
 <div class="table-responsive">
     <table id="{{ team.abbreviation }}-players" class="table full-width">
@@ -40,8 +40,8 @@
             </tr>
         </thead>
         <tbody>
-            {% for pid in playerstats|get_item:team.id %}
-            {% with player=playerstats|get_item:team.id|get_item:pid %}
+            {% for pid in playerstats|get_item:team %}
+            {% with player=playerstats|get_item:team|get_item:pid %}
             <tr>
                 <td class="text-center" title="Player"><a href="/players/{{ pid }}/">{{ player.name }}</a></td>
                 <td class="text-center" title="Position">{{ player.position|player_position }}</td>
