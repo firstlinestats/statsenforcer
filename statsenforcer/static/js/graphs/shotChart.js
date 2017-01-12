@@ -43,7 +43,7 @@ function shotChart(data, homeabbr, awayabbr, situations) {
         .attr("fill", "white");
 
     svg.append("svg:image")
-        .attr("xlink:href", "/svg/rink.png")
+        .attr("xlink:href", "/static/svg/rink.png")
         .attr("width", width - margin.left)
         .attr("height", height - margin.top);
 
