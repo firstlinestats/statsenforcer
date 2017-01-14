@@ -298,12 +298,10 @@
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
-    function getData(data) {
+    function getData(data, x, y) {
         var graphData = [];
         for (player in data) {
-            var playerData = player;
-            console.log(playerData);
-            break;
+            var playerData = data[player];
             playerData.playerId = player.id;
             playerData.x = parseFloat(playerData[x]);
             playerData.y = parseFloat(playerData[y]);
@@ -346,7 +344,7 @@
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
 
-            var graphData = getData(data);
+            var graphData = getData(data, "games", "goals");
             bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
 
 
@@ -354,7 +352,7 @@
                 e.preventDefault();
                 var x = $('#xaxis').val();
                 var y = $('#yaxis').val();
-                graphData = getData(data);
+                graphData = getData(data, x, y);
                 bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
             });
             savePNG("#playerComparisonButton", "#playerComparison");
