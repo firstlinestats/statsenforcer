@@ -3,6 +3,7 @@ from models import Player
 import arrow
 
 class PlayerSitemap(Sitemap):
+    limit = 1000
     changefreq = "daily"
     priority = 0.5
 
