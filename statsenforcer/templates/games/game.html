@@ -117,6 +117,11 @@
                                 Play By Play
                             <div class="ripple-container"></div></a>
                         </li>
+                        <li class="">
+                            <a href="#mediaview" data-toggle="tab" aria-expanded="false">
+                                Media
+                            <div class="ripple-container"></div></a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -407,6 +412,39 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="mediaview">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table id="media" class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Media</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-condensed">
+                                        {% for playid, media in playmedia.items %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <h4>{{ media.blurb }}</h4>
+                                                <div class="image-container">
+                                                    <a target="_blank" href="{{ media.url }}">
+                                                        <img src="{{ media.preview }}" class="img img-responsive image-preview" />
+                                                        <div class="after">
+                                                            <span class="image-content">View on NHL.com</span>
+                                                            <span class="zoom">
+                                                                <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                         {% endfor %}
