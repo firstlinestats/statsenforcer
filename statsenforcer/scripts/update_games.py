@@ -655,10 +655,11 @@ def main():
     for t in tplayers:
         players[t.id] = t
     # Loop through current games
+    emailssent = 0
     while keep_running:
         # Loop through current_games
         for game in current_games:
-            # try:
+            try:
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
                 try:
@@ -674,13 +675,16 @@ def main():
                     with transaction.atomic():
                         compile_info(game.gamePk)
                         findStandings(game.season)
-            # except Exception as e:
-            #     sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
-            #     raise Exception("Issue running. Please debug and restart...")
+            except Exception as e:
+                sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
+                emailssent += 1
+                if emailssent > 5:
+                    raise Exception("Issue running. Please debug and restart...")
         #return
         # Find active games and loop back up, repeating
         current_games = find_current_games()
         if len(current_games) == 0:
+            emailssent = 0
             gameTime = pbpmodels.Game.objects.filter(gameState=1).earliest("dateTime").dateTime
             today = datetime.datetime.now(tz=pytz.UTC)
             diff = gameTime - today
@@ -775,6 +779,9 @@ def check_rosters():
 
 if __name__ == "__main__":
     #reset_game(2016020259)
-    main()
+    try:
+        main()
+    except:
+        sendemail.send_error_email("Too many issues, cancelling...")
     #check_rosters()
     #fix_missing()
