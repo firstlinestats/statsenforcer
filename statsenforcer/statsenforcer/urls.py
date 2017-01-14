@@ -15,10 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.sitemaps import views
+
+from player.sitemap import PlayerSitemap
+from playbyplay.sitemap import GameSitemap
+from team.sitemap import TeamSitemap
+from django.views.decorators.cache import cache_page
+
+sitemaps = {"players": PlayerSitemap, "games": GameSitemap, "teams": TeamSitemap}
 
 urlpatterns = [
     url(r'^', include('website.urls')),
     url(r'^players/', include('player.urls')),
     url(r'^teams/', include('team.urls')),
     url(r'^games/', include('playbyplay.urls')),
+    url(r'^sitemap\.xml$', cache_page(86400)(views.sitemap), {"sitemaps": sitemaps}),
+    url(r'^sitemap-(?P<section>.+)\.xml$', cache_page(86400)(views.sitemap), {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'),
 ]
