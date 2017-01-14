@@ -110,9 +110,9 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
       .enter().append("circle")
         .attr("class", "dot")
         .attr("r", function(d) {
-            if (d.scoring_chance == 1)
+            if (d.danger == "MEDIUM")
                 return 6;
-            else if (d.scoring_chance == 2)
+            else if (d.danger == "HIGH")
                 return 8;
             else
                 return 4;
@@ -123,11 +123,11 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
             if (d.type == "GOAL") {
                 return "#FF0000";
             } else if (d.type == "BLOCKED_SHOT") {
-                return "#00FF00";
+                return "#898989";
             } else if (d.type == "MISSED_SHOT") {
-                return "#000000";
+                return "#FFFFFF";
             } else {
-                return "#0000FF";
+                return "#000000";
             }
         })
         .style("stroke", function(d) {
@@ -169,18 +169,18 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
     createLegend();
 
     function createLegend() {
-        var legendRectSize = 18;
+        var legendRectSize = 9;
         var legendSpacing = 4;
         
-        var data = [{name: "Shot on Goal", color: "#0000FF"},
-            {"name": "Missed Shot", color: "#000000"},
-            {"name": "Blocked Shot", color: "#00FF00"},
+        var data = [{name: "Shot on Goal", color: "#000000"},
+            {"name": "Missed Shot", color: "#FFFFFF"},
+            {"name": "Blocked Shot", color: "#898989"},
             {"name": "Goal", "color": "#FF0000"}]
         svg.append('rect')
             .attr('x', width / 2 - (legendRectSize * 4))
             .attr('y', margin.top + legendRectSize)
-            .attr('width', legendRectSize * 8)
-            .attr('height', legendRectSize * 6)
+            .attr('width', legendRectSize * 12)
+            .attr('height', legendRectSize * 7)
             .style('fill', 'white')
             .style('stroke', 'black')
         var legend = svg.selectAll('.legend')
@@ -198,7 +198,7 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
         legend.append('circle')
             .attr("class", "dot")
             .attr('cx', width / 2 - legendRectSize * 1)
-            .attr('cy', legendRectSize - 3)
+            .attr('cy', legendRectSize)
             .attr('r', legendRectSize / 2)
             .style('fill', function(d) { return d.color; })
             .style('stroke', color)
@@ -208,6 +208,7 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
             .attr('x', width / 2)
             .attr('y', legendRectSize + 5)
             .style("text-anchor", "start")
+            .style("text-size", "8px")
             .text(function(d) { return d.name; });
     }
 

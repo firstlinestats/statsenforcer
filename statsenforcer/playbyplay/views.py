@@ -279,6 +279,10 @@ def game(request, game_pk):
             prevcount = len(play["onice"])
             prevhp = hp
             prevap = ap
+        if homePenaltyStart:
+            eventChart["awayPenalties"].append((homePenaltyStart, periodSeconds))
+        if awayPenaltyStart:
+            eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds))
         eventChart["homeShots"].append((periodSeconds, homeShotCount))
         eventChart["awayShots"].append((periodSeconds, awayShotCount))
         eventChart["homeSC"].append((periodSeconds, homeSCCount))
