@@ -195,7 +195,15 @@ def game(request, game_pk):
         awayPenaltyStart = None
         homePenaltyLength = None
         awayPenaltyLength = None
+        prevcount = None
         for play in context["playbyplay"]:
+            hp = 0
+            ap = 0
+            for player in play["onice"]:
+                if player["team_id"] == context["game"]["homeTeam_id"]:
+                    hp += 1
+                else:
+                    ap += 1
             periodSeconds = play["periodTime"] + (1200 * (play["period"] - 1))
             if play["playType"] in ["SHOT", "GOAL", "MISSED_SHOT", "BLOCKED_SHOT"]:
                 scoringChance = fancystats.shot.scoring_chance_standard(play, None, None)
@@ -242,18 +250,22 @@ def game(request, game_pk):
                     if sc >= 2:
                         awaySCCount += 1
                         eventChart["awaySC"].append((periodSeconds, awaySCCount))
-            if play["playType"] == "PENALTY" and play["penaltyMinutes"] in [2, 4]:
+            if play["playType"] == "PENALTY" and "Fighting" not in play["playDescription"] and play["penaltyMinutes"] != 10:
                 if play["team_id"] == home_id:
                     homePenaltyStart = periodSeconds
                     homePenaltyLength = play["penaltyMinutes"] * 60
                 elif play["team_id"] == away_id:
                     awayPenaltyStart = periodSeconds
                     awayPenaltyLength = play["penaltyMinutes"] * 60
-            if play["playType"] == "GOAL":
-                if play["team_id"] != home_id and homePenaltyStart is not None:
-                    eventChart["awayPenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
-                elif play["team_id"] != away_id and awayPenaltyStart is not None:
-                    eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
+            if (homePenaltyStart or awayPenaltyStart) and len(play["onice"]) > prevcount and prevcount != 0 and play["onice"] != 0:
+                if prevhp < hp and homePenaltyStart:
+                    eventChart["homePenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
+                    homePenaltyStart = None
+                    homePenaltyLength = None
+                elif prevap < ap and awayPenaltyStart:
+                    eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
+                    awayPenaltyStart = None
+                    awayPenaltyLength = None
             if homePenaltyStart and periodSeconds >= homePenaltyStart + homePenaltyLength:
                 eventChart["awayPenalties"].append((homePenaltyStart, homePenaltyLength))
                 homePenaltyStart = None
@@ -264,6 +276,13 @@ def game(request, game_pk):
                 awayPenaltyLength = None
             if play["playType"] == "PERIOD_END":
                 eventChart["periodEnds"].append(periodSeconds)
+            prevcount = len(play["onice"])
+            prevhp = hp
+            prevap = ap
+        eventChart["homeShots"].append((periodSeconds, homeShotCount))
+        eventChart["awayShots"].append((periodSeconds, awayShotCount))
+        eventChart["homeSC"].append((periodSeconds, homeSCCount))
+        eventChart["awaySC"].append((periodSeconds, awaySCCount))
         eventChart["periodSeconds"] = periodSeconds + 5
 
         if eventChart["homeShots"][-1][0] > eventChart["awayShots"][-1][0]:
