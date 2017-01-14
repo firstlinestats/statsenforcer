@@ -298,6 +298,24 @@
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
+    function getData(data) {
+        var graphData = [];
+        for (player in data) {
+            var playerData = player;
+            console.log(playerData);
+            break;
+            playerData.playerId = player.id;
+            playerData.x = parseFloat(playerData[x]);
+            playerData.y = parseFloat(playerData[y]);
+            playerData.displayName = playerData.fullName;
+            playerData.featureId = playerData.playerId;
+            playerData.fillColor = get_color(playerData.abbreviation, true);;
+            playerData.strokecolor = get_color(playerData.abbreviation, false);;
+            graphData.push(playerData);
+        };
+        return graphData
+    }
+
         $(document).ready(function() {
 
             $('#teamstats').DataTable({
@@ -328,21 +346,7 @@
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
 
-            var graphData = [];
-            for (player in data) {
-                for (season in data[player]) {
-                    var playerData = data[player][season];
-                    playerData.season = season;
-                    playerData.playerId = parseInt(player);
-                    playerData.x = parseFloat(playerData['points']);
-                    playerData.y = parseFloat(playerData['goals']);
-                    playerData.displayName = playerData.fullName;
-                    playerData.featureId = playerData.playerId;
-                    playerData.fillColor = get_color(playerData.abbreviation, true);;
-                    playerData.strokecolor = get_color(playerData.abbreviation, false);;
-                    graphData.push(playerData);
-                };
-            };
+            var graphData = getData(data);
             bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
 
 
@@ -350,21 +354,7 @@
                 e.preventDefault();
                 var x = $('#xaxis').val();
                 var y = $('#yaxis').val();
-                graphData = [];
-                for (player in data) {
-                    for (season in data[player]) {
-                        var playerData = data[player][season];
-                        playerData.season = season;
-                        playerData.playerId = parseInt(player);
-                        playerData.x = parseFloat(playerData[x]);
-                        playerData.y = parseFloat(playerData[y]);
-                        playerData.displayName = playerData.fullName;
-                        playerData.featureId = playerData.playerId;
-                        playerData.fillColor = get_color(playerData.abbreviation, true);;
-                        playerData.strokecolor = get_color(playerData.abbreviation, false);;
-                        graphData.push(playerData);
-                    };
-                };
+                graphData = getData(data);
                 bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
             });
             savePNG("#playerComparisonButton", "#playerComparison");

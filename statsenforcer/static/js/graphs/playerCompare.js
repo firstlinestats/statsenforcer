@@ -44,19 +44,16 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
     var dataset = [];
     if (page === 'players') {
         for (player in data) {
-            var playerData = data[player];
-            for (season in playerData) {
-                var playerStats = playerData[season];
-                playerStats.playerId = player;
-                playerStats.season = season;
-                if (xvalue !== "season") {
-                    playerStats.x = parseFloat(playerStats[xvalue]);
-                } else {
-                    playerStats.x = parseInt(playerStats[xvalue]);
-                };
-                playerStats.y = parseFloat(playerStats[yvalue]);
-                dataset.push(playerStats);
+            var playerData = player;
+            var playerStats = playerData;
+            playerStats.playerId = player.id;
+            if (xvalue !== "season") {
+                playerStats.x = parseFloat(playerStats[xvalue]);
+            } else {
+                playerStats.x = parseInt(playerStats[xvalue]);
             };
+            playerStats.y = parseFloat(playerStats[yvalue]);
+            dataset.push(playerStats);
         };
     } else {
         for (team in data) {
