@@ -131,10 +131,11 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive">
-                                    <table id="teamstats" class="table full-width">
+                                    <table id="teamstats" class="table full-width table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th class="text-center" title="Name">Name</th>
+                                                <th class="text-center" title="Team">Team</th>
                                                 <th class="text-center" title="Season">Season</th>
                                                 <th class="text-center" title="Games Played">GP</th>
                                                 <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
@@ -160,34 +161,33 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for playerid, seasons in stats.items %}
-                                                {% for season, player in seasons.items %}
-                                                    <tr>
-                                                        <td title=""><a href="/players/{{ playerid }}/">{{ player.fullName }}</a></td>
-                                                        <td title="">{{ season }}</td>
-                                                        <td title="">{{ player.games }}</td>
-                                                        <td title="">{{ player.toi }}</td>
-                                                        <td title="">{{ player.goals }}</td>
-                                                        <td title="">{{ player.gf60 }}</td>
-                                                        <td title="">{{ player.assists1 }}</td>
-                                                        <td title="">{{ player.a160 }}</td>
-                                                        <td title="">{{ player.assists2 }}</td>
-                                                        <td title="">{{ player.a60 }}</td>
-                                                        <td title="">{{ player.points }}</td>
-                                                        <td title="">{{ player.p60 }}</td>
-                                                        <td title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
-                                                        <td title="">{{ player.cf60 }}</td>
-                                                        <td title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
-                                                        <td title="">{{ player.ff60 }}</td>
-                                                        <td title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
-                                                        <td title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
-                                                        <td title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
-                                                        <td title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
-                                                        <td title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
-                                                        <td title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
-                                                        <td title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
-                                                    </tr>
-                                                {% endfor %}
+                                            {% for player in stats %}
+                                                <tr>
+                                                    <td title=""><a href="/players/{{ playerid }}/">{{ player.fullName }}</a></td>
+                                                    <td title="">{{ player.team }}</td>
+                                                    <td title="">{{ player.season }}</td>
+                                                    <td title="">{{ player.games }}</td>
+                                                    <td title="">{{ player.toi }}</td>
+                                                    <td title="">{{ player.goals }}</td>
+                                                    <td title="">{{ player.gf60 }}</td>
+                                                    <td title="">{{ player.assists1 }}</td>
+                                                    <td title="">{{ player.a160 }}</td>
+                                                    <td title="">{{ player.assists2 }}</td>
+                                                    <td title="">{{ player.a60 }}</td>
+                                                    <td title="">{{ player.points }}</td>
+                                                    <td title="">{{ player.p60 }}</td>
+                                                    <td title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
+                                                    <td title="">{{ player.cf60 }}</td>
+                                                    <td title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
+                                                    <td title="">{{ player.ff60 }}</td>
+                                                    <td title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
+                                                    <td title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
+                                                    <td title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
+                                                    <td title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
+                                                    <td title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
+                                                    <td title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
+                                                    <td title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
+                                                </tr>
                                             {% endfor %}
 
                                         </tbody>
@@ -303,8 +303,7 @@
             $('#teamstats').DataTable({
                 "bPaginate": true,
                 "order": [
-                    [1, "desc"],
-                    [3, "desc"]
+                    [5, "desc"]
                 ],
                 "pageLength": 25,
                 scrollX: true,
@@ -328,7 +327,7 @@
             });
 
             var data = JSON.parse("{{ statsJson | escapejs }}");
-            console.log(data)
+
             var graphData = [];
             for (player in data) {
                 for (season in data[player]) {

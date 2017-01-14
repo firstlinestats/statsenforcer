@@ -38,6 +38,27 @@ def game(request, game_pk):
         context["period"].pop("_state", None)
     except:
         context["period"] = None
+    if context["period"] is None:
+        homeTeam = get_object_or_404(tmodels.Team, id=context["game"]["homeTeam_id"])
+        context["game"]["homeTeam_name"] = homeTeam.name
+        context["game"]["homeTeam_abbreviation"] = homeTeam.abbreviation
+        awayTeam = get_object_or_404(tmodels.Team, id=context["game"]["awayTeam_id"])
+        context["game"]["awayTeam_name"] = awayTeam.name
+        context["game"]["awayTeam_abbreviation"] = awayTeam.abbreviation
+        context["eventChart"] = {
+            "endTimeSeconds": 0,
+            "homeShots": [(0, 0)],
+            "awayShots": [(0, 0)],
+            "homeName": str(context["game"]["homeTeam_abbreviation"]),
+            "awayName": str(context["game"]["awayTeam_abbreviation"]),
+            "homeSC": [(0, 0)],
+            "awaySC": [(0, 0)],
+            "homePenalties": [],
+            "awayPenalties": [],
+            "homeGoals": [],
+            "awayGoals": [],
+            "periodEnds": [],
+        }
     if context["period"] is not None:
         context["playbyplay"] = models.PlayByPlay.objects.filter(gamePk_id=game_pk).order_by("eventIdx")
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]

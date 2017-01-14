@@ -17,9 +17,10 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
     <title>{% block title %}First Line Stats{% endblock %}</title>
+    {% block meta %}
+
+    {% endblock %}
     <!-- Bootstrap core CSS -->
     {% load staticfiles %}
     <link rel='shortcut icon' type='image/x-icon' href='{% static 'images/favicon.png' %}' />
@@ -36,8 +37,50 @@
   <body>
     {% include "wrappers/navigation.html" %}
     {% include "wrappers/gamesbanner.html" %}
+    <div class="container" style="padding-bottom:10px;">
+      <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Header Ad -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1548130003984418"
+                 data-ad-slot="6759692084"
+                 data-ad-format="auto"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="text-center">Advertisment</p>
+        </div>
+      </div>
+    </div>
     {% block content %}{% endblock %}
 
+    <div class="container" style="padding-top:10px;">
+      <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Header Ad -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1548130003984418"
+                 data-ad-slot="6759692084"
+                 data-ad-format="auto"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="text-center">Advertisement</p>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="container">

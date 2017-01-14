@@ -3,12 +3,16 @@
 {% load pbp_extras %}
 {% load staticfiles %}
 {% block title %}{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }} | FLS{% endblock %}
+{% block meta %}
+<meta name="description" content="Game Page for {{ game.awayTeam_name }} vs {{ game.homeTeam_name }} on {{ game.dateTime }} on firstlinestats.com" />
+{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
+{% with formstate=form|format_form_state %}
 <div class="container">
     <div class="card">
         <div class="row">
@@ -26,22 +30,23 @@
                         <h3><span id="away-score">{{ game.awayScore }}</span> - <span id="home-score">{{ game.homeScore }}</span></h3>
                     </div>
                 </div>
-                {% if game.gameState != "7" %}
-                    {% if period is not None %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4><span id="periodTime">{{ periodTimeString }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
-                            <p><span id="liveUpdate"></span></p>
-                        </div>
+                {% if period is not None %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4><span id="periodTime">{{ periodTimeString }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
+                        <p><span id="liveUpdate"></span></p>
                     </div>
-                    {% endif %}
+                </div>                    
                 {% endif %}
                 <div class="row">
                     <div class="col-md-12">
+                        <h4>{{ game.dateTime }}{% if game.endDateTime %} - {{ game.endDateTime }}{% endif %}</h4>
+                        <p><span id="liveUpdate"></span></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <h4>{{ game.gameState|gameStatus }}{{ game|checkOT }}</h4>
-                        {% if game.gameState == "3" or game.gameState == "4" %}
-                        <p>*Live games auto-update every minute</p>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -125,7 +130,7 @@
                                 <div class="row text-center">
                                     <div class="col-md-12">
                                         <h3>Team Statistics</h3>
-                                        <p>{{ form|format_form_state }}</p>
+                                        <p>{{ formstate }}</p>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -180,7 +185,7 @@
                                 <div class="row text-center">
                                     <div class="col-md-12">
                                         <h3>Goalie Statistics</h3>
-                                        <p>{{ form|format_form_state }}</p>
+                                        <p>{{ formstate }}</p>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -195,7 +200,7 @@
                                     <div class="row text-center">
                                         <div class="col-md-12">
                                             <h3>Player Statistics</h3>
-                                            <p>{{ form|format_form_state }}</p>
+                                            <p>{{ formstate }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -419,8 +424,10 @@
 <div id="canvasArea">
     <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
 </div>
+{% endwith %}
 {% endblock %}
 {% block page_js %}
+{% with formstate=form|format_form_state %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
@@ -539,16 +546,16 @@
         var playerStats = JSON.parse("{{ playersjson | escapejs }}");
         var homeSkaters = playerStats["{{ game.homeTeam_id }}"];
         var awaySkaters = playerStats["{{ game.awayTeam_id }}"];
-        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam_name }}", "{{ form|format_form_state }}");
-        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam_name }}", "{{ form|format_form_state }}");
+        create_corsi_events(homeSkaters, "#home-corsi", "{{ game.homeTeam_abbreviation }}", "{{ formstate }}");
+        create_corsi_events(awaySkaters, "#away-corsi", "{{ game.awayTeam_abbreviation }}", "{{ formstate }}");
 
         var eventChart = {{ eventChart| safe }};
-        create_shot_attempts(eventChart, "#eventChartShots", "Shots");
-        create_shot_attempts(eventChart, "#eventChartSC", "SC");
+        create_shot_attempts(eventChart, "#eventChartShots", "Shots", "{{ formstate }}");
+        create_shot_attempts(eventChart, "#eventChartSC", "SC", "{{ formstate }}");
 
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
-        shotChart(shotData, "{{ game.homeTeam_abbreviation }}", "{{ game.awayTeam_abbreviation }}", "{{ form|format_form_state }}");
+        shotChart(shotData, "{{ game.homeTeam_abbreviation }}", "{{ game.awayTeam_abbreviation }}", "{{ form|format_form_state }}", "{{ formstate }}");
         playerCompare('#playerComparison', "#gameTabContent", "sca", "scf", playerStats);
         savePNG("#playerComparisonButton", "#playerComparison");
 
@@ -578,10 +585,6 @@
             icon.addClass('filter-collapsed');
         }
     });
-
-    {% if game.gameState == "3" or game.gameState == "4" %}
-        var interval = 1000 * 60 * 1; // where X is your every X minutes
-        setTimeout(function() { location.reload(); }, interval);
-    {% endif %}
+{% endwith %}
 </script>
 {% endblock %}

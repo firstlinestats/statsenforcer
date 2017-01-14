@@ -1,4 +1,4 @@
-function create_shot_attempts(data, divid, valtype) {
+function create_shot_attempts(data, divid, valtype, formstate) {
     var hometeam = data["homeName"],
         awayteam = data["awayName"];
     // add the graph canvas to the body of the webpage
@@ -115,6 +115,15 @@ function create_shot_attempts(data, divid, valtype) {
         .style("font-size", "20px")
         .style("fill", "grey")
         .text("firstlinestats.com")
+
+    svg.append("g")
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width / 2)
+        .attr("y", height - 12)
+        .attr("dy", ".71em")
+        .style("text-anchor", "middle")
+        .text(formstate);
     createLegend(hometeam, awayteam);
 
     // x-axis

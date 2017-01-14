@@ -118,6 +118,15 @@ function create_corsi_events(alldata, divid, teamname, situations) {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Corsi For Minus Corsi Against");
+  svg.append("g")
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width / 2)
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "middle")
+      .attr("font-size", "10px")
+      .text(situations);
   function format_toi(t) {
     var minutes = Math.floor(t / 60);
     var seconds = t - minutes * 60;
@@ -135,8 +144,9 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .attr("y", 0 - (margin.top / 4))
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
-        .style("text-decoration", "underline")
+        .style("font-weight", "bold")
         .text(teamname + " On-Ice Shot Attempts For/Against");
+
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -150,26 +160,19 @@ function create_corsi_events(alldata, divid, teamname, situations) {
       .on("click", mouseover)
 
     function mouseover(p) {
-        var tooltip = d3.select("#" + teamname + "-" + p.cf + "-" + p.ca + "-tooltip");
-        var active = tooltip.attr("active"),
-          newOpacity = active ? 0 : 1;
-        tooltip.html(p["name"] + "<br />SF:" + p.cf + "<br />SA:" + p.ca + "<br />TOI:" + p.toi);
-        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-        if (active == "false") {
-          tooltip.style("visibility", "visible")
-          tooltip.attr("active", "true")
-          if ($("#" + teamname + "-" + p.cf + "-" + p.ca + "-name").length == 0) {
-            svg.append("text")
-              .attr("id", teamname + "-" + p.cf + "-" + p.ca + "-name")
-              .attr("x", xMap(p))
-              .attr("y", yMap(p) - 5)
-              .attr("text-anchor", "middle")
-              .style("font-size", "16px")
-              .text(p.name);
-          }
-        } else {
-          tooltip.style("visibility", "hidden")
-          tooltip.attr("active", "false")
+        var nameid = p.name
+        for (i=0; i<nameid.length; i++) {
+          nameid = nameid.replace(" ", "-").replace(",", "")
+        }
+        var existing = d3.select("#" + nameid + "-" + p.cf + "-" + p.ca + "-name");
+        if (existing[0][0] == null) {
+          svg.append("text")
+            .attr("id", nameid + "-" + p.cf + "-" + p.ca + "-name")
+            .attr("x", xMap(p))
+            .attr("y", yMap(p) - 5)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "10px")
+            .text(p.name);
         }
     }
     function mouseoverName(p) {

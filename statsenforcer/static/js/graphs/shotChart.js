@@ -1,4 +1,4 @@
-function shotChart(data, homeabbr, awayabbr, situations) {
+function shotChart(data, homeabbr, awayabbr, situations, formstate) {
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = 900 - margin.left - margin.right,
         height = width * 0.425 + margin.left;
@@ -156,6 +156,15 @@ function shotChart(data, homeabbr, awayabbr, situations) {
             d3.selectAll("text").classed("active", false);
             tooltip.style("visibility", "hidden");
         });
+
+    svg.append("g")
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width / 2)
+        .attr("y", height - 12)
+        .attr("dy", ".71em")
+        .style("text-anchor", "middle")
+        .text(formstate);
 
     createLegend();
 
