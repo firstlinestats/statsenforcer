@@ -108,11 +108,11 @@
                                 Stats By Season
                             <div class="ripple-container"></div></a>
                         </li>
-                        <li class="">
+                        <!-- <li class="">
                             <a href="#graphview" data-toggle="tab" aria-expanded="false">
                                 Graph View
                             <div class="ripple-container"></div></a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane text-center" id="graphview">
+                    <!-- <div class="tab-pane text-center" id="graphview">
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Graph View</h3>
@@ -277,7 +277,7 @@
                                 <div id="playerComparison"></div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -342,20 +342,20 @@
                 }]
             });
 
-            var data = JSON.parse("{{ statsJson | escapejs }}");
+            //var data = JSON.parse("");
 
-            var graphData = getData(data, "games", "goals");
-            bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+            // var graphData = getData(data, "games", "goals");
+            // bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
 
 
-            $('#refreshGraph').click(function(e) {
-                e.preventDefault();
-                var x = $('#xaxis').val();
-                var y = $('#yaxis').val();
-                graphData = getData(data, x, y);
-                bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
-            });
-            savePNG("#playerComparisonButton", "#playerComparison");
+            // $('#refreshGraph').click(function(e) {
+            //     e.preventDefault();
+            //     var x = $('#xaxis').val();
+            //     var y = $('#yaxis').val();
+            //     graphData = getData(data, x, y);
+            //     bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+            // });
+            // savePNG("#playerComparisonButton", "#playerComparison");
         });
 </script>
 {% endblock %}
