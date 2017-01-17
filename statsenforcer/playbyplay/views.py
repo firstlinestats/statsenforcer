@@ -280,9 +280,9 @@ def game(request, game_pk):
             prevhp = hp
             prevap = ap
         if homePenaltyStart:
-            eventChart["awayPenalties"].append((homePenaltyStart, periodSeconds))
+            eventChart["awayPenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
         if awayPenaltyStart:
-            eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds))
+            eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
         eventChart["homeShots"].append((periodSeconds, homeShotCount))
         eventChart["awayShots"].append((periodSeconds, awayShotCount))
         eventChart["homeSC"].append((periodSeconds, homeSCCount))
