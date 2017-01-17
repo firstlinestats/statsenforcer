@@ -778,7 +778,7 @@ def check_rosters():
 
 
 if __name__ == "__main__":
-    #reset_game(2016020259)
+    #reset_game(2016020623)
     try:
         main()
     except:
