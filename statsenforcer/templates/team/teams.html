@@ -5,96 +5,6 @@
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
-<!--[if !IE]><!-->
-<style>
-
-/*
-Max width before this PARTICULAR table gets nasty
-This query will take effect for any screen smaller than 760px
-and also iPads specifically.
-*/
-@media
-only screen and (max-width: 760px),
-(min-device-width: 768px) and (max-device-width: 1024px)  {
-
-    /* Force table to not be like tables anymore */
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    /* Hide table headers (but not display: none;, for accessibility) */
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    tr { border: 1px solid #ccc; }
-
-    tr:nth-of-type(odd) {
-        background: #eee;
-    }
-
-    td {
-        /* Behave  like a "row" */
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50% !important;
-        min-height: 20px;
-        text-align: left !important;
-    }
-
-    td:before {
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-    }
-
-    /*
-    Label the data
-    */
-
-    td:nth-of-type(1):before { content: "Team"; }
-    td:nth-of-type(2):before { content: "Season"; }
-    td:nth-of-type(3):before { content: "Games"; }
-    td:nth-of-type(4):before { content: "GF%"; }
-    td:nth-of-type(5):before { content: "SF%"; }
-    td:nth-of-type(6):before { content: "MSF%"; }
-    td:nth-of-type(7):before { content: "BSF%"; }
-    td:nth-of-type(8):before { content: "CF%"; }
-    td:nth-of-type(9):before { content: "SCF%"; }
-    td:nth-of-type(10):before { content: "HSCF%"; }
-    td:nth-of-type(11):before { content: "ZSO%"; }
-    td:nth-of-type(12):before { content: "PN%"; }
-    td:nth-of-type(13):before { content: "FO_W%"; }
-    td:nth-of-type(14):before { content: "Hit%"; }
-    td:nth-of-type(15):before { content: "TOI/Gm"; }
-}
-
-/* Smartphones (portrait and landscape) ----------- */
-@media only screen
-and (min-device-width : 320px)
-and (max-device-width : 480px) {
-    body {
-        padding: 0;
-        margin: 0;}
-    }
-
-/* iPads (portrait and landscape) ----------- */
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-    body {
-        width: 495px;
-    }
-}
-
-</style>
-<!--<![endif]-->
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -216,52 +126,50 @@ and (max-device-width : 480px) {
                             <div class="tab-pane active" id="tableview">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="table-responsive">
-                                            <table id="teamstats" class="table full-width">
-                                                <thead>
+                                        <table id="teamstats" class="table full-width">
+                                            <thead>
+                                                <tr>
+                                                    <th title="Team">Team</th>
+                                                    <th title="Season">Season</th>
+                                                    <th title="Games">Games</th>
+                                                    <th title="On-Ice Goals For Percentage">GF%</th>
+                                                    <th title="On-Ice Shots-On-Goal For Percentage">SF%</th>
+                                                    <th title="Missed Shots For Percentage">MSF%</th>
+                                                    <th title="Blocked Shots Percentage">BSF%</th>
+                                                    <th title="Corsi For Percentage">CF%</th>
+                                                    <th title="On-Ice Scoring Chances For Percentage">SCF%</th>
+                                                    <th title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
+                                                    <th title="Offensive Zone Starts Percentage">ZSO%</th>
+                                                    <th title="Penalties Percentage">PN%</th>
+                                                    <th title="Faceoffs Won Percentage">FO_W%</th>
+                                                    <th title="Hit Percentage">Hit%</th>
+                                                    <th title="Time On Ice">TOI/Gm</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for teamid, seasons in stats.items %}
+                                                    {% for season, team in seasons.items %}
                                                     <tr>
-                                                        <th title="Team">Team</th>
-                                                        <th title="Season">Season</th>
-                                                        <th title="Games">Games</th>
-                                                        <th title="On-Ice Goals For Percentage">GF%</th>
-                                                        <th title="On-Ice Shots-On-Goal For Percentage">SF%</th>
-                                                        <th title="Missed Shots For Percentage">MSF%</th>
-                                                        <th title="Blocked Shots Percentage">BSF%</th>
-                                                        <th title="Corsi For Percentage">CF%</th>
-                                                        <th title="On-Ice Scoring Chances For Percentage">SCF%</th>
-                                                        <th title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
-                                                        <th title="Offensive Zone Starts Percentage">ZSO%</th>
-                                                        <th title="Penalties Percentage">PN%</th>
-                                                        <th title="Faceoffs Won Percentage">FO_W%</th>
-                                                        <th title="Hit Percentage">Hit%</th>
-                                                        <th title="Time On Ice">TOI/Gm</th>
+                                                        <td title="Team"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
+                                                        <td title="Season">{{ season }}</td>
+                                                        <td title="Games">{{ team.games }}</td>
+                                                        <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
+                                                        <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
+                                                        <td title="Missed Shots For Percentage">{{ team.msf }}</td>
+                                                        <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
+                                                        <td title="Corsi For Percentage">{{ team.cf }}</td>
+                                                        <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
+                                                        <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
+                                                        <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
+                                                        <td title="Penalties Percentage">{{ team.pn }}</td>
+                                                        <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
+                                                        <td title="Hit Percentage">{{ team.hit }}</td>
+                                                        <td title="Time On Ice">{{ team.toi }}</td>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for teamid, seasons in stats.items %}
-                                                        {% for season, team in seasons.items %}
-                                                        <tr>
-                                                            <td title="Team"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
-                                                            <td title="Season">{{ season }}</td>
-                                                            <td title="Games">{{ team.games }}</td>
-                                                            <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
-                                                            <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
-                                                            <td title="Missed Shots For Percentage">{{ team.msf }}</td>
-                                                            <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
-                                                            <td title="Corsi For Percentage">{{ team.cf }}</td>
-                                                            <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
-                                                            <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
-                                                            <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
-                                                            <td title="Penalties Percentage">{{ team.pn }}</td>
-                                                            <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
-                                                            <td title="Hit Percentage">{{ team.hit }}</td>
-                                                            <td title="Time On Ice">{{ team.toi }}</td>
-                                                        </tr>
-                                                        {% endfor %}
                                                     {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
