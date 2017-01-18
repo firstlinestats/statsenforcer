@@ -274,6 +274,10 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         .style("font-size", "12px")
         .text("firstlinestats.com")
 
+    svg.selectAll(".axis path")
+      .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})
+
+
     function circleClicked(d) {
         var name = svg.select("#name-" + d["playerId"]);
         var active = name.attr("active");

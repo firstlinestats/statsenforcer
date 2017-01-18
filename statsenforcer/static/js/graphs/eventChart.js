@@ -13,7 +13,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .range([height, 0]);
 
     $(divid).width(($("#gameTabContent").width())).height(Math.round($("#gameTabContent").width() * 0.425));
-    // setup x 
+    // setup x
     var xValue = function(d) { return d[0]; }, // data -> value
         xScale = d3.scale.linear().range([0, width]), // value -> display
         xMap = function(d) { return xScale(xValue(d)); }, // data -> display
@@ -64,18 +64,18 @@ function create_shot_attempts(data, divid, valtype, formstate) {
 
     xScale.domain([0, secondsMax]);
     yScale.domain([0, yScaleMax]);
-    
+
     function format_toi(t) {
         var minutes = Math.floor(t / 60);
         var seconds = t - minutes * 60;
         return minutes + ":" + seconds
     }
     svg.append("text")
-        .attr("x", (width / 2))             
+        .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 4))
-        .attr("text-anchor", "middle")  
-        .style("font-size", "16px") 
-        .style("text-decoration", "underline")  
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
         .text(header);
     var line = d3.svg.line()
         .interpolate("step-after")
@@ -88,7 +88,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr('stroke-width', 2)
         .attr('fill', "none")
         .attr("d", line);
-    
+
     svg.append("path")
         .datum(data["away" + valtype])
         .attr('stroke', get_color(awayteam, true))
@@ -152,6 +152,9 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text(header);
+
+    svg.selectAll(".axis path")
+      .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})
 
     function mouseover(p) {
         //tooltip.html(p["full_name"] + "<br />SF:" + p.SF + "<br />SA:" + p.SA + "<br />TOI:" + format_toi(p.TOI));

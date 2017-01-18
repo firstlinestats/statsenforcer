@@ -272,6 +272,9 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .style("font-size", "12px")
         .text("firstlinestats.com")
 
+    svg.selectAll(".axis path")
+      .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})
+
     function circleClicked(d) {
         var teamName = svg.select("#" + d["shortName"].replace(" ", "") + d["season"] + "-team");
         var seasontText = svg.select("#" + d["shortName"].replace(" ", "") + d["season"] + "-season");

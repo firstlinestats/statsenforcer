@@ -36,7 +36,7 @@
                         <h4><span id="periodTime">{{ periodTimeString }}</span>&nbsp;<span id="period">{{ period.period|get_period }}</span></h4>
                         <p><span id="liveUpdate"></span></p>
                     </div>
-                </div>                    
+                </div>
                 {% endif %}
                 <div class="row">
                     <div class="col-md-12">
@@ -265,11 +265,11 @@
                             </div>
                         </div>
                         <div class="row">
-                            <h4 class="text-center">Player Comparison</h4>
+                            <h4 class="text-center">Player Comparison&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button></h4>
                             <div class="col-md-12">
                                 <form>
-                                    <div class="row">
-                                        <div class="col-md-4 col-sm-12">
+                                    <div class="row text-center">
+                                        <div class="col-md-5 col-sm-12">
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
@@ -303,7 +303,7 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-4 col-sm-12">
+                                        <div class="col-md-5 col-sm-12">
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
@@ -336,9 +336,9 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-4 col-md-12">
+                                        <div class="col-md-2 col-md-12">
                                             <div class="form-group">
-                                                <button id="refreshGraph" class="btn">Refresh<div class="ripple-container"></div></button>
+                                                <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
                                         </div>
                                     </div>
@@ -347,7 +347,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
+
                                 <div id="playerComparison"></div>
                             </div>
                         </div>

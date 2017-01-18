@@ -118,6 +118,10 @@ function create_corsi_events(alldata, divid, teamname, situations) {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Corsi For Minus Corsi Against");
+
+   svg.selectAll(".axis path")
+      .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})
+
   svg.append("g")
     .append("text")
       .attr("class", "label")
