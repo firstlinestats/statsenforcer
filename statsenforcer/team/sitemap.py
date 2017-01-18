@@ -3,7 +3,7 @@ from models import Team
 import arrow
 
 class TeamSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.5
 
     def items(self):

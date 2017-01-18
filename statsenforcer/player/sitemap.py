@@ -4,7 +4,7 @@ import arrow
 
 class PlayerSitemap(Sitemap):
     limit = 1000
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.5
 
     def items(self):
