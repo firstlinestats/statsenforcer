@@ -7,6 +7,59 @@
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
+<style>
+rect {
+  fill: transparent;
+  shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.1);
+  shape-rendering: crispEdges;
+}
+
+.axisLine {
+  fill: none;
+  shape-rendering: crispEdges;
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 2px;
+}
+
+.dot {
+  fill-opacity: .5;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -108,11 +161,11 @@
                                 Stats By Season
                             <div class="ripple-container"></div></a>
                         </li>
-                        <!-- <li class="">
+                        <li class="">
                             <a href="#graphview" data-toggle="tab" aria-expanded="false">
                                 Graph View
                             <div class="ripple-container"></div></a>
-                        </li> -->
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -163,7 +216,7 @@
                                         <tbody>
                                             {% for player in stats %}
                                                 <tr>
-                                                    <td title=""><a href="/players/{{ playerid }}/">{{ player.fullName }}</a></td>
+                                                    <td title=""><a href="/players/{{ player.player_id }}/">{{ player.fullName }}</a></td>
                                                     <td title="">{{ player.team }}</td>
                                                     <td title="">{{ player.season }}</td>
                                                     <td title="">{{ player.games }}</td>
@@ -196,7 +249,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="tab-pane text-center" id="graphview">
+                    <div class="tab-pane text-center" id="graphview">
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Graph View</h3>
@@ -207,7 +260,7 @@
                             <div class="col-md-12">
                                 <form>
                                     <div class="row">
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
@@ -228,14 +281,14 @@
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
-                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                     <option value="pn">Penalty Percentage</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
@@ -256,13 +309,40 @@
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
-                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-2 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                Radius
+                                                <select class="form-control input-md" id="raxis">
+                                                    <option value="games">Games Played</option>
+                                                    <option value="toi">Average Time On Ice</option>
+                                                    <option value="goals">Goals</option>
+                                                    <option value="gf60">Goals For per 60 minutes</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="a160">Assists1 For per 60 minutes</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="a60">Assists per 60 minutes</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="p60">Points For per 60 minutes</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="cf60">Corsi For per 60 minutes</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="ff60">Fenwick For per 60 minutes</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
+                                                    <option value="zso" selected>Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
@@ -277,7 +357,7 @@
                                 <div id="playerComparison"></div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -291,71 +371,63 @@
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/bubbleCompare.js" %}"></script>
+<script src="{% static "js/d3.tip.js" %}"></script>
+<script src="{% static "js/graphs/zoomchart.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
-    function getData(data, x, y) {
-        var graphData = [];
-        for (player in data) {
-            var playerData = data[player];
-            playerData.playerId = player.id;
-            playerData.x = parseFloat(playerData[x]);
-            playerData.y = parseFloat(playerData[y]);
-            playerData.displayName = playerData.fullName;
-            playerData.featureId = playerData.playerId;
-            playerData.fillColor = get_color(playerData.abbreviation, true);;
-            playerData.strokecolor = get_color(playerData.abbreviation, false);;
-            graphData.push(playerData);
-        };
-        return graphData
-    }
+    var data = JSON.parse("{{ statsJson|escapejs }}");
 
-        $(document).ready(function() {
+    $(document).ready(function() {
 
-            $('#teamstats').DataTable({
-                "bPaginate": true,
-                "order": [
-                    [5, "desc"]
-                ],
-                "pageLength": 25,
-                scrollX: true,
-                "fixedColumns": {
-                    leftColumns: 1,
-                },
-                dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
-                    "<'col-sm-12'B>",
-                buttons: [{
-                    extend: 'copy',
-                    className: 'btn-sm btn-primary',
-                }, {
-                    extend: 'csv',
-                    className: 'btn-sm btn-primary',
-                }, {
-                    extend: 'excel',
-                    className: 'btn-sm btn-primary',
-                }]
-            });
-
-            //var data = JSON.parse("");
-
-            // var graphData = getData(data, "games", "goals");
-            // bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
-
-
-            // $('#refreshGraph').click(function(e) {
-            //     e.preventDefault();
-            //     var x = $('#xaxis').val();
-            //     var y = $('#yaxis').val();
-            //     graphData = getData(data, x, y);
-            //     bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
-            // });
-            // savePNG("#playerComparisonButton", "#playerComparison");
+        $('#teamstats').DataTable({
+            "bPaginate": true,
+            "order": [
+                [5, "desc"]
+            ],
+            "pageLength": 25,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
         });
+
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText);
+        savePNG("#playerComparisonButton", "#playerComparison");
+    });
+
+    $('#refreshGraph').click(function(e) {
+        e.preventDefault()
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText);
+    });
 </script>
 {% endblock %}
