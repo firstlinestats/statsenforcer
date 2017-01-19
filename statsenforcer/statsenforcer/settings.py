@@ -34,7 +34,7 @@ INTERNAL_IPS = (
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
-    ALLOWED_HOSTS = ['firstlinestats.com', 'www.firstlinestats.com', '.elasticbeanstalk.com', 'dev.firstlinestats.com']
+    ALLOWED_HOSTS = ['firstlinestats.com', 'www.firstlinestats.com']
 
 # Application definition
 
