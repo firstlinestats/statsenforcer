@@ -68,7 +68,7 @@ MIDDLEWARE = [
 ]
 
 HTML_MINIFY = True
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 
 ROOT_URLCONF = 'statsenforcer.urls'
 
