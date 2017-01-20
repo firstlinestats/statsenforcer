@@ -67,8 +67,8 @@ MIDDLEWARE = [
     'htmlmin.middleware.MarkRequestMiddleware',
 ]
 
-HTML_MINIFY = True
-COMPRESS_ENABLED = True
+HTML_MINIFY = False
+COMPRESS_ENABLED = False
 
 ROOT_URLCONF = 'statsenforcer.urls'
 
