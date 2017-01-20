@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'team',
     'player',
     'website',
+    'compressor'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware',
 ]
+
+HTML_MINIFY = True
+COMPRESS_ENABLED = True
 
 ROOT_URLCONF = 'statsenforcer.urls'
 
@@ -133,12 +139,21 @@ USE_L10N = True
 
 USE_TZ = True
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+COMPRESS_ROOT = os.path.join(BASE_DIR, "static/min")
 
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

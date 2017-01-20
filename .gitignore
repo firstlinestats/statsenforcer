@@ -16,3 +16,4 @@ statsenforcer/player/playerqueries.py
 statsenforcer/scripts/preview/2016/20475/47534903.jpeg
 *.jpeg
 statsenforcer/scripts/output.json
+static/min/*
