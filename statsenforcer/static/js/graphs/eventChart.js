@@ -133,7 +133,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .call(xAxis)
       .append("text")
         .attr("class", "label")
-        .attr("x", width)
+        .attr("x", width - margin.right)
         .attr("y", -6)
         .style("text-anchor", "end")
         .text("Time");

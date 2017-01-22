@@ -738,13 +738,23 @@ def fix_missing():
         finished = update_game(game, players)
 
 
-def reset_game(gamePk):
+def get_players():
     players = {}
     tplayers = pmodels.Player.objects.all()
     for t in tplayers:
         players[t.id] = t
+    return players
+
+
+def reset_game(gamePk, players=None):
+    if not players:
+        players = {}
+        tplayers = pmodels.Player.objects.all()
+        for t in tplayers:
+            players[t.id] = t
     game = pbpmodels.Game.objects.get(gamePk=gamePk)
     update_game(game, players)
+    compile_info(gamePk)
 
 
 def check_rosters():
@@ -777,8 +787,17 @@ def check_rosters():
                 newplayer.save()
 
 
+def reset_games():
+    game_list = [2015020926, 2015021045, 2015021058, 2015021198, 2015021214]
+    players = get_players()
+    for game in game_list:
+        print "Fixing {}...".format(game)
+        reset_game(game)
+
+
 if __name__ == "__main__":
-    #reset_game(2016020623)
+    #reset_game(2015021214)
+    #reset_games()
     try:
         main()
     except:
