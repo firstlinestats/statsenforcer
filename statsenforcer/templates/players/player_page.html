@@ -7,6 +7,59 @@
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
+<style>
+    rect {
+      fill: transparent;
+      shape-rendering: crispEdges;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: rgba(0, 0, 0, 0.1);
+      shape-rendering: crispEdges;
+    }
+
+    .axisLine {
+      fill: none;
+      shape-rendering: crispEdges;
+      stroke: rgba(0, 0, 0, 0.5);
+      stroke-width: 2px;
+    }
+
+    .dot {
+      fill-opacity: .5;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+</style>
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -185,7 +238,7 @@
                             <div class="col-md-12">
                                 <form>
                                     <div class="row">
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
@@ -211,7 +264,7 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
@@ -236,7 +289,32 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-2 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                Radius
+                                                <select class="form-control input-md" id="raxis">
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals">Goals</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="points" selected>Points</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toi">Average Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
@@ -264,8 +342,9 @@
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/d3.tip.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/bubbleCompare.js" %}"></script>
+<script src="{% static "js/graphs/zoomchart.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -299,44 +378,45 @@
             }]
         });
         var data = JSON.parse("{{ statsJson | escapejs }}");
-        var graphData = [];
-        for (player in data) {
-            for (season in data[player]) {
-                var playerData = data[player][season];
-                playerData.season = season;
-                playerData.playerId = parseInt(player);
-                playerData.x = parseFloat(playerData['points']);
-                playerData.y = parseFloat(playerData['goals']);
-                playerData.displayName = playerData.fullName;
-                playerData.featureId = playerData.playerId;
-                playerData.fillColor = get_color(playerData.abbreviation, true);
-                playerData.strokecolor = get_color(playerData.abbreviation, false);
-                graphData.push(playerData);
+        
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        
+        var playerData = [];
+        for (key in data) {
+            for (season in data[key]) {
+                data[key][season].season = season;
+                data[key][season].team = data[key][season].teamName;
+                playerData.push(data[key][season])
             };
         };
-        bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+
+        zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
+        savePNG("#playerComparisonButton", "#playerComparison");
 
         $('#refreshGraph').click(function(e) {
             e.preventDefault();
-            var x = $('#xaxis').val();
-            var y = $('#yaxis').val();
-            graphData = [];
-            for (player in data) {
-                for (season in data[player]) {
-                    var playerData = data[player][season];
-                    playerData.season = season;
-                    playerData.playerId = parseInt(player);
-                    playerData.x = parseFloat(playerData[x]);
-                    playerData.y = parseFloat(playerData[y]);
-                    playerData.displayName = playerData.fullName;
-                    playerData.featureId = playerData.playerId;
-                    playerData.fillColor = get_color(playerData.abbreviation, true);
-                    playerData.strokecolor = get_color(playerData.abbreviation, false);
-                    graphData.push(playerData);
+            var xCat = $('#xaxis').find(":selected").val(),
+                yCat = $('#yaxis').find(":selected").val(),
+                rCat = $('#raxis').find(":selected").val();
+            var xText = $('#xaxis').find(":selected").text(),
+                yText = $('#yaxis').find(":selected").text(),
+                rText = $('#raxis').find(":selected").text();
+            
+            var playerData = [];
+            for (key in data) {
+                for (season in data[key]) {
+                    data[key][season].season = season;
+                    data[key][season].team = data[key][season].teamName;
+                    playerData.push(data[key][season])
                 };
             };
-            console.log(graphData)
-            bubbleCompare('#playerComparison', "#teamTabContent", $('#xaxis').find(":selected").text(), $('#yaxis').find(":selected").text(), graphData);
+            zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
+            
         });
 
 
