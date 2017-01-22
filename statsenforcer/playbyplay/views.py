@@ -288,55 +288,16 @@ def game(request, game_pk):
                         del penalties["starts"][pindex]
                         del penalties["lengths"][pindex]
 
-
-
-
-            # Add these events to the event chart
-            # if play["playType"] == "PENALTY" and "Fighting" not in play["playDescription"] and play["penaltyMinutes"] != 10:
-            #     # Determine which team the penalty is on
-            #     if play["team_id"] == home_id:
-            #         # If there is already a penalty, append the time to the current time, otherwise create new penalty start
-            #         if not homePenaltyStart:
-            #             homePenaltyStart = periodSeconds
-            #             homePenaltyLength = play["penaltyMinutes"] * 60
-            #         else:
-            #             homePenaltyLength = play["penaltyMinutes"] * 60 + periodSeconds - homePenaltyStart
-            #         print "home", play["playDescription"], homePenaltyStart, homePenaltyLength
-            #     elif play["team_id"] == away_id:
-            #         # If there is already a penalty, append the time to the current time, otherwise create new penalty start
-            #         if not awayPenaltyStart:
-            #             awayPenaltyStart = periodSeconds
-            #             awayPenaltyLength = play["penaltyMinutes"] * 60
-            #         else:
-            #             awayPenaltyLength = play["penaltyMinutes"] * 60 + periodSeconds - awayPenaltyStart
-            #         print "away", play["playDescription"], awayPenaltyStart, awayPenaltyLength
-            # if (homePenaltyStart or awayPenaltyStart) and len(play["onice"]) > prevcount and prevcount != 0 and play["onice"] != 0:
-            #     if prevhp < hp and homePenaltyStart:
-            #         eventChart["homePenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
-            #         homePenaltyStart = None
-            #         homePenaltyLength = None
-            #     if prevap < ap and awayPenaltyStart:
-            #         eventChart["awayPenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
-            #         awayPenaltyStart = None
-            #         awayPenaltyLength = None
-            # if homePenaltyStart and periodSeconds >= homePenaltyStart + homePenaltyLength:
-            #     eventChart["awayPenalties"].append((homePenaltyStart, homePenaltyLength))
-            #     homePenaltyStart = None
-            #     homePenaltyLength = None
-            # if awayPenaltyStart and periodSeconds >= awayPenaltyStart + awayPenaltyLength:
-            #     eventChart["homePenalties"].append((awayPenaltyStart, awayPenaltyLength))
-            #     awayPenaltyStart = None
-            #     awayPenaltyLength = None
-
             if play["playType"] == "PERIOD_END":
                 eventChart["periodEnds"].append(periodSeconds)
             prevcount = len(play["onice"])
             prevhp = hp
             prevap = ap
-        # if homePenaltyStart:
-        #     eventChart["awayPenalties"].append((homePenaltyStart, periodSeconds - homePenaltyStart))
-        # if awayPenaltyStart:
-        #     eventChart["homePenalties"].append((awayPenaltyStart, periodSeconds - awayPenaltyStart))
+
+        # Add currently going on penalties
+        for penalties in [homePenalties, awayPenalties]:
+            for penalty in xrange(len(penalties["starts"])):
+                eventChart[penalties["eChart"]].append((penalties["starts"][penalty], periodSeconds - penalties["starts"][penalty]))
         eventChart["homeShots"].append((periodSeconds, homeShotCount))
         eventChart["awayShots"].append((periodSeconds, awayShotCount))
         eventChart["homeSC"].append((periodSeconds, homeSCCount))
