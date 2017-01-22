@@ -124,9 +124,9 @@ def games(request, gamedate):
                 gd["dateTime"] = "{} {}".format(periodVal, periodTimeString)
             else:
                 gd["dateTime"] = "End of {}".format(periodVal)
-        elif game["endDateTime"] is not None:
+        elif game["gameState"] in ["5", "6", "7"]:
             gd["finished"] = True
-            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["endDateTime"]), "%b %d, %I:%M %p %Z")
+            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
         else:
             gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
 

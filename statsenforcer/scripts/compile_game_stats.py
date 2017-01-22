@@ -26,6 +26,8 @@ import sendemail
 
 
 def compile_info(game):
+    # DELETE OLD
+    PlayerGameFilterStats.objects.filter(game_id=game).delete()
     pbp = [x.__dict__ for x in PlayByPlay.objects.raw(queries.playbyplayquery, [game, ])]
     if len(pbp) > 0:
         homeTeam = pbp[0]["homeTeam_id"]
@@ -120,13 +122,14 @@ def compile_info(game):
                         for teamid in pstats:
                             for playerid in pstats[teamid]:
                                 pstat = pstats[teamid][playerid]
-                                if pstat["toiseconds"] != 0:
+                                if pstat["toiseconds"] > 0:
                                     calc_player_stats(pstat, playerid, game, teamid, p, s, ss)
+                                elif pstat["toiseconds"] < 0:
+                                    raise Exception("NHL why...")
 
 
 def calc_player_stats(stats, pid, game, team, p, s, ss):
-    tgs, created = PlayerGameFilterStats.objects.get_or_create(player_id=pid, game_id=game, team_id=team,
-        period=p, teamstrength=s, scoresituation=ss)
+    tgs = PlayerGameFilterStats()
     tgs.player_id = pid
     tgs.game_id = game
     tgs.team_id = team

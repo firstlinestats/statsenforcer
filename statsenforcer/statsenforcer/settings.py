@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'team',
     'player',
     'website',
-    'compressor'
 ]
 
 MIDDLEWARE = [
@@ -67,8 +66,7 @@ MIDDLEWARE = [
     'htmlmin.middleware.MarkRequestMiddleware',
 ]
 
-HTML_MINIFY = True
-COMPRESS_ENABLED = False
+HTML_MINIFY = False
 
 ROOT_URLCONF = 'statsenforcer.urls'
 
