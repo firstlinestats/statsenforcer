@@ -284,12 +284,15 @@ def game(request, game_pk):
                 del penalties["lengths"][pindex]
 
             for penalties in [homePenalties, awayPenalties]:
+                deletes = []
                 for penalty in xrange(len(penalties["starts"])):
                     pend = penalties["starts"][penalty] + penalties["lengths"][penalty]
                     if pend < periodSeconds:
                         eventChart[penalties["eChart"]].append((penalties["starts"][penalty], penalties["lengths"][penalty]))
-                        del penalties["starts"][pindex]
-                        del penalties["lengths"][pindex]
+                        deletes.insert(0, pindex)
+                for delete in deletes:
+                    del penalties["starts"][delete]
+                    del penalties["lengths"][delete]
 
             if play["playType"] == "PERIOD_END":
                 eventChart["periodEnds"].append(periodSeconds)
