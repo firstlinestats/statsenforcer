@@ -20,6 +20,7 @@ import arrow
 # Create your views here.
 def game(request, game_pk):
     context = {}
+    game_pk = int(game_pk)
     context["game"] = get_object_or_404(models.Game, gamePk=game_pk).__dict__
     context["game"].pop("_state", None)
     context["form"] = forms.GameForm()
@@ -36,11 +37,15 @@ def game(request, game_pk):
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
     context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
-    try:
-        context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
-        context["period"].pop("_state", None)
-    except:
-        context["period"] = None
+    if game_pk > 2015000000:
+        try:
+            print game_pk
+            context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
+            context["period"].pop("_state", None)
+        except:
+            context["period"] = None
+    else:
+        context["period"] = {"period": models.PlayByPlay.objects.filter(gamePk_id=game_pk).latest("eventIdx").period}
     if context["period"] is None:
         homeTeam = get_object_or_404(tmodels.Team, id=context["game"]["homeTeam_id"])
         context["game"]["homeTeam_name"] = homeTeam.name
@@ -67,7 +72,7 @@ def game(request, game_pk):
         context["playbyplay"] = [x.__dict__ for x in context["playbyplay"]]
         media = models.PlayMedia.objects.values("title", "blurb", "description", "duration", "image", "play", "external_id").filter(game_id=game_pk)
         context["playmedia"] = {}
-        year, game = game_pk[:4], game_pk[5:]
+        year, game = str(game_pk)[:4], str(game_pk)[5:]
         for m in media:
             mdata = m
             mdata["url"] = "https://www.nhl.com/video/c-{}".format(m["external_id"])
