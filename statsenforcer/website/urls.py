@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^about/', views.about, name="about"),
     url(r'^glossary/', views.glossary, name="glossary"),
     url(r'^standings/', views.standings, name="standings"),
+    url(r'^rink/', views.rink, name="rink"),
 ]

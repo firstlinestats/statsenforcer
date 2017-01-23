@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
 from playbyplay.templatetags.pbp_extras import get_period
@@ -17,6 +17,11 @@ from fancystats.constants import gameStates
 import indexqueries
 
 local_tz = pytz.timezone('US/Eastern')
+
+
+def rink(request):
+    image_data = open("static/svg/rink.png", "rb").read()
+    return HttpResponse(image_data, content_type="image/png")
 
 
 def utc_to_local(utc_dt):
