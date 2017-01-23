@@ -43,7 +43,7 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
         .attr("fill", "white");
 
     svg.append("svg:image")
-        .attr("xlink:href", "/static/svg/rink.png")
+        .attr("xlink:href", "http://static.firstlinestats.com/static/svg/rink.png")
         .attr("width", width - margin.left)
         .attr("height", height - margin.top);
 
@@ -171,7 +171,7 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
     function createLegend() {
         var legendRectSize = 9;
         var legendSpacing = 4;
-        
+
         var data = [{name: "Shot on Goal", color: "#000000"},
             {"name": "Missed Shot", color: "#FFFFFF"},
             {"name": "Blocked Shot", color: "#898989"},
