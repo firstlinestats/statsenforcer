@@ -169,6 +169,7 @@ def player_page(request, player_id):
     for playerid in stats:
         for season in stats[playerid]:
             row = stats[playerid][season]
+            row["toiSeconds"] = row["toi"] / row["games"]
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
             row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])

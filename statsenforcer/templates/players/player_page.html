@@ -391,10 +391,10 @@
             for (season in data[key]) {
                 data[key][season].season = season;
                 data[key][season].team = data[key][season].teamName;
+                data[key][season].toi = Math.floor(data[key][season].toiSeconds / 60);
                 playerData.push(data[key][season])
             };
         };
-
         zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
         savePNG("#playerComparisonButton", "#playerComparison");
 
@@ -407,14 +407,6 @@
                 yText = $('#yaxis').find(":selected").text(),
                 rText = $('#raxis').find(":selected").text();
             
-            var playerData = [];
-            for (key in data) {
-                for (season in data[key]) {
-                    data[key][season].season = season;
-                    data[key][season].team = data[key][season].teamName;
-                    playerData.push(data[key][season])
-                };
-            };
             zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
             
         });

@@ -10,6 +10,59 @@
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
+<style>
+    rect {
+      fill: transparent;
+      shape-rendering: crispEdges;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: rgba(0, 0, 0, 0.1);
+      shape-rendering: crispEdges;
+    }
+
+    .axisLine {
+      fill: none;
+      shape-rendering: crispEdges;
+      stroke: rgba(0, 0, 0, 0.5);
+      stroke-width: 2px;
+    }
+
+    .dot {
+      fill-opacity: .5;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+</style>
 {% endblock %}
 {% block content %}
 {% with formstate=form|format_form_state %}
@@ -269,7 +322,7 @@
                             <div class="col-md-12">
                                 <form>
                                     <div class="row text-center">
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
@@ -303,7 +356,7 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-5 col-sm-12">
+                                        <div class="col-md-3 col-sm-12">
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
@@ -336,7 +389,40 @@
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
-                                        <div class="col-md-2 col-md-12">
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                Radius
+                                                <select class="form-control input-md" id="raxis">
+                                                    <option value="g">Goals</option>
+                                                    <option value="a1">Primary Assists</option>
+                                                    <option value="a2">Secondary Assists</option>
+                                                    <option value="p">Points</option>
+                                                    <option value="cf">Corsi For Total</option>
+                                                    <option value="ca">Corsi Against Total</option>
+                                                    <option value="ff">Fenwick For Total</option>
+                                                    <option value="fa">Fenwick Against Total</option>
+                                                    <option value="gf">On-Ice Goals For</option>
+                                                    <option value="ga">On-Ice Goals Against</option>
+                                                    <option value="iscf">Individual Scoring Chances For</option>
+                                                    <option value="ihscf">Individual High Danger Scoring Chances For</option>
+                                                    <option value="scf">Scoring Chances For</option>
+                                                    <option value="hscf">High Danger Scoring Chances For</option>
+                                                    <option value="sca">Scoring Chances Against</option>
+                                                    <option value="hsca">High Danger Scoring Chances Against</option>
+                                                    <option value="fo_w">Faceoffs Won</option>
+                                                    <option value="fo_l">Faceoffs Lost</option>
+                                                    <option value="zso" selected>Offensive Zone Starts</option>
+                                                    <option value="zsn">Neutral Zone Starts</option>
+                                                    <option value="zsd">Defensive Zone Starts</option>
+                                                    <option value="hitplus">Hits</option>
+                                                    <option value="hitminus">Hits Taken</option>
+                                                    <option value="pnplus">Penalties</option>
+                                                    <option value="pnminus">Penalties Taken</option>
+                                                    <option value="toi">Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-md-12">
                                             <div class="form-group">
                                                 <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                             </div>
@@ -468,11 +554,12 @@
 {% with formstate=form|format_form_state %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/d3.tip.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/shotChart.js" %}"></script>
 <script src="{% static "js/graphs/corsiEventChart.js" %}"></script>
 <script src="{% static "js/graphs/eventChart.js" %}"></script>
-<script src="{% static "js/graphs/playerCompare.js" %}"></script>
+<script src="{% static "js/graphs/zoomchart.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -594,14 +681,40 @@
         //shot graph
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
         shotChart(shotData, "{{ game.homeTeam_abbreviation }}", "{{ game.awayTeam_abbreviation }}", "{{ form|format_form_state }}", "{{ formstate }}");
-        playerCompare('#playerComparison', "#gameTabContent", "sca", "scf", playerStats);
+
+        
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+
+        var playerStatsFormatted = [];
+        var teamNames = {};
+        teamNames["{{ game.awayTeam_id }}"] = "{{ game.awayTeam_abbreviation }}"
+        teamNames["{{ game.homeTeam_id }}"] = "{{ game.homeTeam_abbreviation }}"
+        
+        for (team in playerStats) {
+            for (player in playerStats[team]) {
+                playerStats[team][player].team = teamNames[playerStats[team][player].team];
+                playerStats[team][player].fullName = playerStats[team][player].name;
+                playerStatsFormatted.push(playerStats[team][player])
+            }
+        };
+
+        zoomchart('#playerComparison', "#gameTabContent", playerStatsFormatted, xCat, yCat, rCat, xText, yText, rText);
         savePNG("#playerComparisonButton", "#playerComparison");
 
         $('#refreshGraph').click(function(e) {
             e.preventDefault();
-            var x = $('#xaxis').val();
-            var y = $('#yaxis').val();
-            playerCompare('#playerComparison', "#gameTabContent", x, y, playerStats);
+            var xCat = $('#xaxis').find(":selected").val(),
+                yCat = $('#yaxis').find(":selected").val(),
+                rCat = $('#raxis').find(":selected").val();
+            var xText = $('#xaxis').find(":selected").text(),
+                yText = $('#yaxis').find(":selected").text(),
+                rText = $('#raxis').find(":selected").text();
+            zoomchart('#playerComparison', "#gameTabContent", playerStatsFormatted, xCat, yCat, rCat, xText, yText, rText);
         });
 
         savePNG("#shotChartButton", "#shotChart");

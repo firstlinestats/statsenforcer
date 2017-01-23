@@ -81,6 +81,7 @@ def teams(request):
     for teamid in stats:
         for season in stats[teamid]:
             row = stats[teamid][season]
+            row["toiSeconds"] = row["toi"] / row["games"]
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["sc"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"],
                 row["scoringChancesAgainst"])
@@ -178,6 +179,7 @@ def team_page(request, team_name):
                 row["shortName"] = team.shortName
                 row["teamName"] = team.teamName
                 row["abbreviation"] = team.abbreviation
+                row["toiSeconds"] = row["toi"] / row["games"]
                 row["toi"] = toi.format_minutes(row["toi"] / row["games"])
                 row["sc"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"],
                     row["scoringChancesAgainst"])

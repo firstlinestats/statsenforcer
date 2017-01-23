@@ -7,6 +7,59 @@
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
+<style>
+rect {
+  fill: transparent;
+  shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.1);
+  shape-rendering: crispEdges;
+}
+
+.axisLine {
+  fill: none;
+  shape-rendering: crispEdges;
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 2px;
+}
+
+.dot {
+  fill-opacity: .5;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -176,10 +229,10 @@
                                 <div class="col-md-12">
                                     <form>
                                         <div class="row">
-                                            <div class="col-md-10 col-sm-12">
+                                            <div class="col-md-3 col-sm-12">
                                                 <div class="form-group">
-                                                    Y-Axis
-                                                    <select class="form-control input-md" id="yaxis">
+                                                    X-Axis
+                                                    <select class="form-control input-md" id="xaxis">
                                                         <option value="gf" selected>GF%</option>
                                                         <option value="sf">SF%</option>
                                                         <option value="msf">MSF%</option>
@@ -195,9 +248,47 @@
                                                     </select>
                                                 <span class="material-input"></span></div>
                                             </div>
-                                            <div class="col-md-2 col-sm-12">
+                                            <div class="col-md-3 col-sm-12">
                                                 <div class="form-group">
-                                                    <button id="refreshGraph" class="btn">Refresh<div class="ripple-container"></div></button>
+                                                    Y-Axis
+                                                    <select class="form-control input-md" id="yaxis">
+                                                        <option value="gf">GF%</option>
+                                                        <option value="sf" selected>SF%</option>
+                                                        <option value="msf">MSF%</option>
+                                                        <option value="bsf">BSF%</option>
+                                                        <option value="cf">CF%</option>
+                                                        <option value="sc">SCF%</option>
+                                                        <option value="hsc">HSCF%</option>
+                                                        <option value="zso">ZSO%</option>
+                                                        <option value="pn">PN%</option>
+                                                        <option value="fo_w">FO_W%</option>
+                                                        <option value="hit">Hit%</option>
+                                                        <option value="toi">TOI/Gm</option>
+                                                    </select>
+                                                <span class="material-input"></span></div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-12">
+                                                <div class="form-group">
+                                                    Radius
+                                                    <select class="form-control input-md" id="raxis">
+                                                        <option value="gf">GF%</option>
+                                                        <option value="sf">SF%</option>
+                                                        <option value="msf" selected>MSF%</option>
+                                                        <option value="bsf">BSF%</option>
+                                                        <option value="cf">CF%</option>
+                                                        <option value="sc">SCF%</option>
+                                                        <option value="hsc">HSCF%</option>
+                                                        <option value="zso">ZSO%</option>
+                                                        <option value="pn">PN%</option>
+                                                        <option value="fo_w">FO_W%</option>
+                                                        <option value="hit">Hit%</option>
+                                                        <option value="toi">TOI/Gm</option>
+                                                    </select>
+                                                <span class="material-input"></span></div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-12">
+                                                <div class="form-group">
+                                                    <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -289,13 +380,15 @@
 {% block page_js %}
 <script src="{% static "js/datatables.min.js" %}"></script>
 <script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/d3.tip.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
-<script src="{% static "js/graphs/teamCompare.js" %}"></script>
+<script src="{% static "js/graphs/zoomchart.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script>
+    var data = JSON.parse("{{ statsJson | escapejs }}");
     $(document).ready(function() {
 
         $('#teamstats').DataTable({
@@ -324,14 +417,36 @@
                 className: 'btn-sm btn-primary',
             }]
         });
+        
+        var teamData = [];
+        for (team in data) {
+            for (season in data[team]) {
+                data[team][season].season = season;
+                data[team][season].team_id = team;
+                data[team][season].team = data[team][season].abbreviation;
+                data[team][season].fullName = season;//using season here for display
+                data[team][season].toi = Math.floor(data[team][season].toiSeconds / 60);
+                teamData.push(data[team][season]); 
+            };
+        };
 
-        var data = JSON.parse("{{ statsJson | escapejs }}");
-        teamCompare('#comparisonGraph', "#teamTabContent", "season", "gf", data);
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
         savePNG("#comparisonButton", "#comparisonGraph");
         $('#refreshGraph').click(function(e) {
             e.preventDefault();
-            var y = $('#yaxis').val();
-            teamCompare("#comparisonGraph", "#teamTabContent", "season", y, data);
+            var xCat = $('#xaxis').find(":selected").val(),
+                yCat = $('#yaxis').find(":selected").val(),
+                rCat = $('#raxis').find(":selected").val();
+            var xText = $('#xaxis').find(":selected").text(),
+                yText = $('#yaxis').find(":selected").text(),
+                rText = $('#raxis').find(":selected").text();
+            zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
         });
     });
 </script>
