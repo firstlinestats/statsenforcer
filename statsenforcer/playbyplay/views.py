@@ -39,7 +39,6 @@ def game(request, game_pk):
     context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
     if game_pk > 2015000000:
         try:
-            print game_pk
             context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
             context["period"].pop("_state", None)
         except:

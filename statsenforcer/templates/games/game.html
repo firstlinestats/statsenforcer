@@ -11,10 +11,6 @@
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
 <link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
 <style>
-    rect {
-      fill: transparent;
-      shape-rendering: crispEdges;
-    }
 
     .axis path,
     .axis line {
@@ -682,7 +678,7 @@
         var shotData = JSON.parse("{{ shotdatajson | escapejs }}");
         shotChart(shotData, "{{ game.homeTeam_abbreviation }}", "{{ game.awayTeam_abbreviation }}", "{{ form|format_form_state }}", "{{ formstate }}");
 
-        
+
         var xCat = $('#xaxis').find(":selected").val(),
             yCat = $('#yaxis').find(":selected").val(),
             rCat = $('#raxis').find(":selected").val();
@@ -694,7 +690,7 @@
         var teamNames = {};
         teamNames["{{ game.awayTeam_id }}"] = "{{ game.awayTeam_abbreviation }}"
         teamNames["{{ game.homeTeam_id }}"] = "{{ game.homeTeam_abbreviation }}"
-        
+
         for (team in playerStats) {
             for (player in playerStats[team]) {
                 playerStats[team][player].team = teamNames[playerStats[team][player].team];
