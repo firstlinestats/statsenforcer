@@ -4,7 +4,7 @@ from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
-from player.models import Player, PlayerGameFilterStats
+from player.models import Player, PlayerGameFilterStats, PlayersPrecalc
 from playbyplay.models import Game
 from datetime import date, datetime
 import json
@@ -51,46 +51,95 @@ def players(request):
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
     gameids = [x for x in gameids]
-    pgs = PlayerGameFilterStats.objects.raw(playerqueries.newplayersquery, [seasons, gameids, scoresituation, teamstrength, period])
 
     teamnames = {}
     teams = Team.objects.all()
     for team in teams:
         teamnames[team.id] = team.abbreviation
+    numTeams = len(teamnames)
 
     stats = []
-    for playerid in pgs:
-        row = playerid.__dict__
-        row.pop("_state")
-        toiSeconds = row["toi"]
-        row["team"] = teamnames[row["team_id"]]
-        row["toi"] = toi.format_minutes(row["toi"] / row["games"])
-        row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
-        row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
-        row["msf"] = '%.2f' % corsi.corsi_percent(row["missedShotsFor"],
-            row["missedShotsAgainst"])
-        row["bsf"] = '%.2f' % corsi.corsi_percent(row["blockedShotsFor"],
-            row["blockedShotsAgainst"])
-        row["gf"] = '%.2f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
-        row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
-        row["ff"] = '%.2f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
-        row["hit"] = '%.2f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
-        row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
-        row["scf"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
-        row["hscf"] = '%.2f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
-        row['gf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["goalsFor"])
-        row['a60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"])
-        row['a160'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"])
-        row['p60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["points"])
-        row['scf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"])
-        row['cf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["corsiFor"])
-        row['ff60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["fenwickFor"])
-        row['hscf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"])
-        if row["neutralZoneStarts"] is not None:
-            row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
-        else:
-            row["zso"] = "0.0"
-        stats.append(row)
+
+    if (not startDate and not endDate and (not teams or len(teams) == numTeams) and not venues):
+        players = PlayersPrecalc.objects.raw(playerqueries.precalc_players, [seasons, scoresituation, teamstrength, period])
+        players = [p for p in players]
+        for p in players:
+            row = p.__dict__
+            row.pop("_state")
+            row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            stats.append(row)
+
+    elif (startDate is not None and endDate is not None):
+        players = PlayerGameFilterStats.objects.raw(playerqueries.playersquery_historical_daterange, [startDate, endDate, scoresituation, teamstrength, period])
+        players = [p for p in players]
+        for playerid in players:
+            row = playerid.__dict__
+            row.pop("_state")
+            toiSeconds = row["toi"]
+            row["team"] = teamnames[row["team_id"]]
+            row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
+            row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
+            row["msf"] = '%.2f' % corsi.corsi_percent(row["missedShotsFor"],
+                row["missedShotsAgainst"])
+            row["bsf"] = '%.2f' % corsi.corsi_percent(row["blockedShotsFor"],
+                row["blockedShotsAgainst"])
+            row["gf"] = '%.2f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
+            row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
+            row["ff"] = '%.2f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
+            row["hit"] = '%.2f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
+            row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
+            row["scf"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
+            row["hscf"] = '%.2f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
+            row['gf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["goalsFor"])
+            row['a60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"])
+            row['a160'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"])
+            row['p60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["points"])
+            row['scf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"])
+            row['cf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["corsiFor"])
+            row['ff60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["fenwickFor"])
+            row['hscf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"])
+            if row["neutralZoneStarts"] is not None:
+                row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
+            else:
+                row["zso"] = "0.0"
+            stats.append(row)
+
+    else:
+        pgs = PlayerGameFilterStats.objects.raw(playerqueries.playersquery_historical, [seasons, gameids, scoresituation, teamstrength, period])
+
+        for playerid in pgs:
+            row = playerid.__dict__
+            row.pop("_state")
+            toiSeconds = row["toi"]
+            row["team"] = teamnames[row["team_id"]]
+            row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            row["fo"] = '%.2f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
+            row["sf"] = '%.2f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
+            row["msf"] = '%.2f' % corsi.corsi_percent(row["missedShotsFor"],
+                row["missedShotsAgainst"])
+            row["bsf"] = '%.2f' % corsi.corsi_percent(row["blockedShotsFor"],
+                row["blockedShotsAgainst"])
+            row["gf"] = '%.2f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
+            row["cf"] = '%.2f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
+            row["ff"] = '%.2f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
+            row["hit"] = '%.2f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
+            row["pn"] = '%.2f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
+            row["scf"] = '%.2f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
+            row["hscf"] = '%.2f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
+            row['gf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["goalsFor"])
+            row['a60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"])
+            row['a160'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["assists1"])
+            row['p60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["points"])
+            row['scf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"])
+            row['cf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["corsiFor"])
+            row['ff60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["fenwickFor"])
+            row['hscf60'] = '%.2f' % corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"])
+            if row["neutralZoneStarts"] is not None:
+                row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
+            else:
+                row["zso"] = "0.0"
+            stats.append(row)
 
     context = {}
     context["stats"] = stats
