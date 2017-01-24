@@ -106,7 +106,7 @@ def players(request):
             stats.append(row)
 
     else:
-        pgs = PlayerGameFilterStats.objects.raw(playerqueries.playersquery_historical, [seasons, gameids, scoresituation, teamstrength, period])
+        pgs = PlayerGameFilterStats.objects.raw(playerqueries.newplayersquery, [seasons, gameids, scoresituation, teamstrength, period])
 
         for playerid in pgs:
             row = playerid.__dict__
