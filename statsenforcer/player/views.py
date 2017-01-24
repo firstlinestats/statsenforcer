@@ -67,6 +67,7 @@ def players(request):
             row = p.__dict__
             row.pop("_state")
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            row["player_id"] = row["player"]
             stats.append(row)
 
     elif (startDate is not None and endDate is not None):
@@ -103,10 +104,11 @@ def players(request):
                 row["zso"] = '%.2f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["neutralZoneStarts"] + row["defensiveZoneStarts"])
             else:
                 row["zso"] = "0.0"
+            row["player_id"] = row["player"]
             stats.append(row)
 
     else:
-        pgs = PlayerGameFilterStats.objects.raw(playerqueries.newplayersquery, [seasons, gameids, scoresituation, teamstrength, period])
+        pgs = PlayerGameFilterStats.objects.raw(playerqueries.newplayersquery   , [seasons, gameids, scoresituation, teamstrength, period])
 
         for playerid in pgs:
             row = playerid.__dict__
