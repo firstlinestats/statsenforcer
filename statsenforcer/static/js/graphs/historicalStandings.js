@@ -67,7 +67,7 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
 
   y.domain([minPoints, maxPoints]);
 
-  
+
   // x-axis
   svg.append("g")
       .attr("class", "x axis")
@@ -147,7 +147,7 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
           return "toggleLine(\"" + d.replace(" ", "") + "\");";
       })
       .style('stroke', function(d) { return get_color(d, false); });
-   
+
   legend.append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing + (legendRectSize / 2))
@@ -168,7 +168,7 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
     .attr("text-anchor", "right")
     .style("font-size", "14px")
     .style("fill", "grey")
-    .text("firstlinestats.com")
+    .text("waronice.com")
 
 };
 

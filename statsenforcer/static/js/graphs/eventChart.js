@@ -75,7 +75,6 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr("y", 0 - (margin.top / 4))
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
-        .style("text-decoration", "underline")
         .text(header);
     var line = d3.svg.line()
         .interpolate("step-after")
@@ -104,7 +103,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
     svg.append("rect")
         .attr("x", 115)
         .attr("y", 4)
-        .attr("width", 150)
+        .attr("width", 80)
         .attr("height", 20)
         .style("fill", "white")
         .style("stroke", "none")
@@ -112,9 +111,13 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr("x", margin.left + 75)
         .attr("y", margin.top)
         .attr("text-anchor", "left")
-        .style("font-size", "20px")
-        .style("fill", "grey")
-        .text("firstlinestats.com")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-size", "10px")
+        .style("font-weight", "bold")
+        .text("waronice.com")
 
     svg.append("g")
       .append("text")
@@ -123,6 +126,9 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr("y", height - 12)
         .attr("dy", ".71em")
         .style("text-anchor", "middle")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-size", "10px")
         .text(formstate);
     createLegend(hometeam, awayteam);
 
@@ -136,6 +142,9 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .attr("x", width - margin.right)
         .attr("y", -6)
         .style("text-anchor", "end")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-size", "10px")
         .text("Time");
     // y-axis
     if (valtype == "Shots")

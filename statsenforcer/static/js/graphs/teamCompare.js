@@ -270,7 +270,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("y", height - margin.bottom)
         .attr("text-anchor", "left")
         .style("font-size", "12px")
-        .text("firstlinestats.com")
+        .text("waronice.com")
 
     svg.selectAll(".axis path")
       .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})

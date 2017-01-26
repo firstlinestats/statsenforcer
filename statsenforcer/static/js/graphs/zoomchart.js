@@ -162,7 +162,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .attr("text-anchor", "left")
         .style("font-size", "12px")
         .style("fill", "black")
-        .text("firstlinestats.com")
+        .text("waronice.com")
 
     d3.selectAll('g.tick text')
       .style('fill', "black");
@@ -209,7 +209,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
     }
 
     function transformText(d) {
-        return "translate(" + x(d[xCat]) + "," + (y(d[yCat]) - 6 * Math.sqrt(d[rCat] / Math.PI) - 5) + ")";        
+        return "translate(" + x(d[xCat]) + "," + (y(d[yCat]) - 6 * Math.sqrt(d[rCat] / Math.PI) - 5) + ")";
     }
 
     function circleClicked(d) {

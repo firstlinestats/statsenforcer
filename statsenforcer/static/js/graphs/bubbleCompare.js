@@ -197,7 +197,7 @@ function bubbleCompare(divId, containerId, xLabel, yLabel, data) {
         .attr("y", height - margin.bottom)
         .attr("text-anchor", "left")
         .style("font-size", "12px")
-        .text("firstlinestats.com")
+        .text("waronice.com")
 
     function circleClicked(d) {
         var name = svg.select("#name-" + d["playerId"] + d["season"]);
