@@ -269,7 +269,11 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .attr("x", margin.left)
         .attr("y", height - margin.bottom)
         .attr("text-anchor", "left")
-        .style("font-size", "12px")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-weight", "bold")
         .text("waronice.com")
 
     svg.selectAll(".axis path")

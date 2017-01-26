@@ -145,7 +145,6 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .style("fill", "black")
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
-        .style("font-size", "10px")
         .style("font-weight", "bold")
         .text("waronice.com")
     svg.append("text")
@@ -157,7 +156,6 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .style("font-size", "10px")
         .style("fill", "black")
         .style("text-transform", "uppercase")
-        .style("font-size", "10px")
         .style("font-weight", "bold")
         .text(teamname + " On-Ice Shot Attempts For/Against");
 

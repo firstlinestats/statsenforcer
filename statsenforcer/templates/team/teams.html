@@ -358,7 +358,7 @@ rect {
                     data[team][season].team = data[team][season].abbreviation;
                     data[team][season].fullName = data[team][season].teamName;
                     data[team][season].toi = Math.floor(data[team][season].toiSeconds / 60);
-                    teamData.push(data[team][season]); 
+                    teamData.push(data[team][season]);
                 };
             };
 
@@ -368,7 +368,7 @@ rect {
             var xText = $('#xaxis').find(":selected").text(),
                 yText = $('#yaxis').find(":selected").text(),
                 rText = $('#raxis').find(":selected").text();
-            zoomchart('#teamComparison', "#teamsTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
+            zoomchart('#teamComparison', "#teamsTabContent", teamData, xCat, yCat, rCat, xText, yText, rText, "Team", "id");
             savePNG("#teamComparisonButton", "#teamComparison");
 
             $('#refreshGraph').click(function(e) {
@@ -379,8 +379,8 @@ rect {
                 var xText = $('#xaxis').find(":selected").text(),
                     yText = $('#yaxis').find(":selected").text(),
                     rText = $('#raxis').find(":selected").text();
-                zoomchart('#teamComparison', "#teamsTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
-               
+                zoomchart('#teamComparison', "#teamsTabContent", teamData, xCat, yCat, rCat, xText, yText, rText, "Team", "id");
+
             });
 
         });

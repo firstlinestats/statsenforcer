@@ -415,7 +415,7 @@ rect {
         var xText = $('#xaxis').find(":selected").text(),
             yText = $('#yaxis').find(":selected").text(),
             rText = $('#raxis').find(":selected").text();
-        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText);
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText, "Player", "player_id");
         savePNG("#playerComparisonButton", "#playerComparison");
     });
 
@@ -427,7 +427,7 @@ rect {
         var xText = $('#xaxis').find(":selected").text(),
             yText = $('#yaxis').find(":selected").text(),
             rText = $('#raxis').find(":selected").text();
-        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText);
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText, "Player", "player_id");
     });
 </script>
 {% endblock %}

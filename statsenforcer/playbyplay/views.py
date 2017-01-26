@@ -147,6 +147,7 @@ def game(request, game_pk):
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation
+            context["teamstats"][ts]["shortName"] = team.shortName
             if ts == context["game"]["homeTeam_id"]:
                 context["game"]["homeTeam_name"] = team.name
                 context["game"]["homeTeam_abbreviation"] = team.abbreviation
