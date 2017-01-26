@@ -9,16 +9,15 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
   }
 
   var margin = {top: 20, right: 80, bottom: 30, left: 50},
-      width = $(tableid).width() - margin.left - margin.right,
-      height = $(tableid).height() - margin.top - margin.bottom;
+      width = 800 - margin.left - margin.right,
+      height = 800 - margin.top - margin.bottom;
 
-  width = height * 2;
-
+  $(divid).width($(tableid).width()).height($(tableid).width());
   var x = d3.time.scale()
-      .range([0, width]);
+      .range([0, width - 20]);
 
   var y = d3.scale.linear()
-      .range([height, 0]);
+      .range([height - 30, 0]);
 
   var color = d3.scale.category10();
 
@@ -39,16 +38,15 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
       .y(function(d) { return y(d.points); });
 
   var svg = d3.select(divid).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  svg.append("rect")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .attr("transform", "translate(-" + margin.left + ",-" + margin.top + ")")
-      .attr("fill", "white");
+        .attr("width", $(divid).width())
+        .attr("height", $(divid).height())
+        .attr("viewBox", "0 0 " + width + " " + height)
+      .append("g")
+        .attr("transform", "translate(" + 0 + "," + 0 + ")")
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "white");
 
   var minDate = maxDate = null;
   var minPoints = 0;
@@ -71,11 +69,11 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
   // x-axis
   svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", "translate(0," + (height - 30) + ")")
       .call(xAxis)
     .append("text")
       .attr("class", "label")
-      .attr("x", width)
+      .attr("x", width - 20)
       .attr("y", -6)
       .style("text-anchor", "end")
       .text("Date");
@@ -163,11 +161,14 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
 
 
   svg.append("text")
-    .attr("x", width - margin.right - 50)
-    .attr("y", height - margin.bottom)
+    .attr("x", width / 2)
+    .attr("y", height - 80)
     .attr("text-anchor", "right")
-    .style("font-size", "14px")
-    .style("fill", "grey")
+    .style("font-size", "10px")
+    .style("fill", "black")
+    .style("border-radius", "10px")
+    .style("text-transform", "uppercase")
+    .style("font-weight", "bold")
     .text("waronice.com")
 
 };
