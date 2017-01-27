@@ -358,7 +358,7 @@ def games(request):
     games = Game.objects.values("gamePk", "dateTime", "homeTeam__abbreviation", "gameType",
         "homeTeam__teamName", "awayTeam__abbreviation", "awayTeam__teamName", "homeScore",
         "awayScore", "homeShots", "awayShots", "awayBlocked", "homeMissed", "homeBlocked",
-        "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7]).order_by('-gamePk')
+        "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7], gameType__in=["R", "P"]).order_by('-gamePk')
     if cd['startDate'] is not None:
         games = games.filter(dateTime__date__gte=cd['startDate'])
     if cd['endDate'] is not None:
