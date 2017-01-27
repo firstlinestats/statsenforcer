@@ -37,12 +37,12 @@ def standings(request):
         'active_page': 'standings',
         'teams': standings
     }
-    historical = SeasonStats.objects.values("team__teamName",
+    historical = SeasonStats.objects.values("team__shortName",
         "points", "date", "team__division").filter(season=max_date[1]).order_by("date")
     hstand = {}
     for h in historical:
         sdate = str(h["date"])
-        teamName = h["team__teamName"]
+        teamName = h["team__shortName"]
         division = h["team__division"]
         points = h["points"]
         if division not in hstand:

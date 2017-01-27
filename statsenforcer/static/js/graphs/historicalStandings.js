@@ -10,9 +10,9 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
 
   var margin = {top: 20, right: 80, bottom: 30, left: 50},
       width = 800 - margin.left - margin.right,
-      height = 800 - margin.top - margin.bottom;
+      height = 500 - margin.top - margin.bottom;
 
-  $(divid).width($(tableid).width()).height($(tableid).width());
+  $(divid).width($(tableid).width()).height($(tableid).height());
   var x = d3.time.scale()
       .range([0, width - 20]);
 
