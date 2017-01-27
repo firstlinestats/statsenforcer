@@ -356,7 +356,7 @@ def games(request):
                 form = forms.GamesForm()
 
     games = Game.objects.values("gamePk", "dateTime", "homeTeam__abbreviation", "gameType",
-        "homeTeam__teamName", "awayTeam__abbreviation", "awayTeam__teamName", "homeScore",
+        "homeTeam__shortName", "awayTeam__abbreviation", "awayTeam__shortName", "homeScore",
         "awayScore", "homeShots", "awayShots", "awayBlocked", "homeMissed", "homeBlocked",
         "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7], gameType__in=["R", "P"]).order_by('-gamePk')
     if cd['startDate'] is not None:
