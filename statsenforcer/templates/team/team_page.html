@@ -321,7 +321,7 @@ rect {
                                         {% for player in players %}
                                             {% if player.rosterStatus == 'Y' %}
                                               <tr>
-                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td><a href="/players/skaters/{{ player.id }}">{{ player.fullName }}</a></td>
                                                 <td>{{ player.primaryNumber }}</td>
                                                 <td>{{ player.primaryPositionCode|player_position }}</td>
                                                 <td>{{ player.age }}</td>
@@ -352,7 +352,7 @@ rect {
                                         {% for player in players %}
                                             {% if player.rosterStatus == 'I' %}
                                               <tr>
-                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td><a href="/players/skaters/{{ player.id }}">{{ player.fullName }}</a></td>
                                                 <td>{{ player.primaryNumber }}</td>
                                                 <td>{{ player.primaryPositionCode|player_position }}</td>
                                                 <td>{{ player.age }}</td>
@@ -417,7 +417,7 @@ rect {
                 className: 'btn-sm btn-primary',
             }]
         });
-        
+
         var teamData = [];
         for (team in data) {
             for (season in data[team]) {
@@ -426,7 +426,7 @@ rect {
                 data[team][season].team = data[team][season].abbreviation;
                 data[team][season].fullName = season;//using season here for display
                 data[team][season].toi = Math.floor(data[team][season].toiSeconds / 60);
-                teamData.push(data[team][season]); 
+                teamData.push(data[team][season]);
             };
         };
 

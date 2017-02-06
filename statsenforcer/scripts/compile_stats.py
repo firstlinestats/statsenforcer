@@ -159,7 +159,7 @@ def point_inside_polygon( x, y, poly):
                 p2 = poly[i]
             if p1[1] == p2[1] and p1[1] == y and x > min(p1[0], p2[0]) and x < max(p1[0], p2[0]):
                 return True
-          
+
         n = len(poly)
         inside = False
 

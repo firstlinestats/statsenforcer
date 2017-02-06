@@ -4,7 +4,7 @@ from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
-from player.models import Player, PlayerGameFilterStats, PlayersPrecalc
+from player.models import Player, PlayerGameFilterStats, PlayersPrecalc, CompiledGoalieGameStats
 from playbyplay.models import Game
 from datetime import date, datetime
 import json
@@ -14,6 +14,66 @@ from playbyplay.forms import GameFilterForm, GameForm
 import playerqueries
 
 from fancystats import toi, corsi
+
+
+def goalies(request):
+    teamstrength = "even"
+    scoresituation = "all"
+    period = "all"
+    currentSeason = Game.objects.latest("endDateTime").season
+    seasons = [currentSeason, ]
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
+    if request.method == 'GET':
+        form = GameFilterForm(request.GET)
+        if form.is_valid():
+            cd = form.cleaned_data
+            teamstrength = cd["teamstrengths"]
+            scoresituation = cd["scoresituation"]
+            period = cd["period"]
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+            seasons = [cd["season"], ]
+            if len(seasons) == 0:
+                seasons = [currentSeason, ]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
+
+    teamnames = {}
+    teams = Team.objects.all()
+    for team in teams:
+        teamnames[team.id] = team.abbreviation
+    numTeams = len(teamnames)
+
+    stats = {}
+
+    goalies = CompiledGoalieGameStats.objects.raw(playerqueries.goaliesquery, [seasons, gameids, scoresituation, teamstrength, period])
+    goalies = [g for g in goalies]
+
+    for goalie in goalies:
+        row = goalie.__dict__
+        row.pop('_state')
+        for val in row:
+            print val
+        break
+
+    context = {}
+
+    return render(request, 'players/goalies.html', context)
+
 
 
 def players(request):

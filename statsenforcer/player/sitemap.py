@@ -14,4 +14,4 @@ class PlayerSitemap(Sitemap):
         return arrow.now()
 
     def location(self, obj):
-        return "/players/{}".format(obj.id)
+        return "/players/skaters/{}".format(obj.id)

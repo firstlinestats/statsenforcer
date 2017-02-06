@@ -23,7 +23,7 @@ from team.sitemap import TeamSitemap
 from website.sitemap import StaticSitemap
 from django.views.decorators.cache import cache_page
 
-sitemaps = {"players": PlayerSitemap, "games": GameSitemap, "teams": TeamSitemap, "static" : StaticSitemap}
+sitemaps = {"skaters": PlayerSitemap, "games": GameSitemap, "teams": TeamSitemap, "static" : StaticSitemap}
 
 urlpatterns = [
     url(r'^', include('website.urls')),
