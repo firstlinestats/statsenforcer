@@ -24,6 +24,8 @@ import json
 from fancystats import constants, team, player
 import sendemail
 
+from update_games import reset_game
+
 
 def compile_info(game):
     # DELETE OLD
@@ -305,19 +307,22 @@ def main():
         try:
             print game
             compile_goalie_info(game)
-        except Exception as e:
-            if emailssent < 5:
-                exc_type, exc_obj, tb = sys.exc_info()
-                f = tb.tb_frame
-                lineno = tb.tb_lineno
-                filename = f.f_code.co_filename
-                linecache.checkcache(filename)
-                line = linecache.getline(filename, lineno, f.f_globals)
-                message = 'GAME: {}, EXCEPTION IN ({}, LINE {} "{}"): {}'.format(game, filename, lineno, line.strip(), exc_obj)
-                sendemail.send_error_email(message)
-                emailssent += 1
-            else:
-                raise Exception(e)
+        except:
+            try:
+                reset_game(game)
+            except Exception as e:
+                if emailssent < 5:
+                    exc_type, exc_obj, tb = sys.exc_info()
+                    f = tb.tb_frame
+                    lineno = tb.tb_lineno
+                    filename = f.f_code.co_filename
+                    linecache.checkcache(filename)
+                    line = linecache.getline(filename, lineno, f.f_globals)
+                    message = 'GAME: {}, EXCEPTION IN ({}, LINE {} "{}"): {}'.format(game, filename, lineno, line.strip(), exc_obj)
+                    sendemail.send_error_email(message)
+                    emailssent += 1
+                else:
+                    raise Exception(e)
 
 
 if __name__ == "__main__":

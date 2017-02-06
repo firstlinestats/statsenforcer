@@ -788,7 +788,7 @@ def check_rosters():
 
 
 def reset_games():
-    game_list = [2015020926, 2015021045, 2015021058, 2015021198, 2015021214]
+    game_list = [2015020994, 2015021001, 2015021018, 2015021021]
     players = get_players()
     for game in game_list:
         print "Fixing {}...".format(game)
@@ -796,7 +796,7 @@ def reset_games():
 
 
 if __name__ == "__main__":
-    #reset_game(2015021214)
+    #reset_game(2015020961)
     #reset_games()
     try:
         main()
