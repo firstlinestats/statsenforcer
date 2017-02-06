@@ -4,7 +4,7 @@ from django.http import Http404, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
-from player.models import Player, PlayerGameFilterStats, PlayersPrecalc, CompiledGoalieGameStats
+from player.models import Player, PlayerGameFilterStats, PlayersPrecalc, GoalieGameFilterStats
 from playbyplay.models import Game
 from datetime import date, datetime
 import json
@@ -60,17 +60,27 @@ def goalies(request):
 
     stats = {}
 
-    goalies = CompiledGoalieGameStats.objects.raw(playerqueries.goaliesquery, [seasons, gameids, scoresituation, teamstrength, period])
+    goalies = GoalieGameFilterStats.objects.raw(playerqueries.goaliesquery, [seasons, gameids, scoresituation, teamstrength, period])
     goalies = [g for g in goalies]
 
     for goalie in goalies:
         row = goalie.__dict__
         row.pop('_state')
-        for val in row:
-            print val
-        break
+        if row['player_id'] not in stats:
+            stats[row['player_id']] = row
+        else:
+            for key in row:
+                if key not in ['player_id', 'game_id', 'team_id', 'season', 'fullName']:
+                    val = row[key]
+                    stats[key] += val
+    for pid in stats:
+        goalie = stats[pid]
+        goalie['saves'] = goalie['savesLow'] + goalie['savesMedium'] + goalie['savesHigh'] + goalie['savesUnknown']
+        goalie['goals'] = goalie['goalsLow'] + goalie['goalsMedium'] + goalie['goalsHigh'] + goalie['goalsUnknown']
 
     context = {}
+    context['form'] = form
+    context['stats'] = stats.values()
 
     return render(request, 'players/goalies.html', context)
 

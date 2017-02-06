@@ -3,6 +3,7 @@
 {% load pbp_extras %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% block title %}Skaters | WAR-On-Ice{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -177,7 +178,7 @@ rect {
                     <div class="tab-pane active" id="statview">
                         <div class="row text-center">
                             <div class="col-md-12">
-                                <h3>Player Stats</h3>
+                                <h3>Skater Stats</h3>
                                 <p>{{ form|format_form_state }}</p>
                             </div>
                         </div>

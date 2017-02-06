@@ -3,6 +3,7 @@
 {% load pbp_extras %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% block title %}Goalies | WAR-On-Ice{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
@@ -124,7 +125,7 @@
                     <div class="tab-pane active" id="statview">
                         <div class="row text-center">
                             <div class="col-md-12">
-                                <h3>Player Stats</h3>
+                                <h3>Goalie Stats</h3>
                                 <p>{{ form|format_form_state }}</p>
                             </div>
                         </div>
@@ -134,13 +135,35 @@
                                     <table id="teamstats" class="table full-width table-condensed table-hover table-striped">
                                         <thead>
                                             <tr>
-
+                                                <th>Player</th>
+                                                <th>Season</th>
+                                                <th>Goals Allowed</th>
+                                                <th>Saves</th>
+                                                <th>SU</th>
+                                                <th>GU</th>
+                                                <th>SL</th>
+                                                <th>GL</th>
+                                                <th>SM</th>
+                                                <th>GM</th>
+                                                <th>SH</th>
+                                                <th>GH</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for player in stats %}
                                                 <tr>
-
+                                                    <td>{{ player.fullName }}</td>
+                                                    <td>{{ player.season }}</td>
+                                                    <td>{{ player.goals }}</td>
+                                                    <td>{{ player.saves }}</td>
+                                                    <td>{{ player.savesUnknown }}</td>
+                                                    <td>{{ player.goalsUnknown }}</td>
+                                                    <td>{{ player.savesLow }}</td>
+                                                    <td>{{ player.goalsLow }}</td>
+                                                    <td>{{ player.savesMedium }}</td>
+                                                    <td>{{ player.goalsMedium }}</td>
+                                                    <td>{{ player.savesHigh }}</td>
+                                                    <td>{{ player.goalsHigh }}</td>
                                                 </tr>
                                             {% endfor %}
 
@@ -222,6 +245,33 @@
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
+    $(document).ready(function() {
 
+        $('#teamstats').DataTable({
+            "bPaginate": true,
+            "order": [
+                [2, "desc"]
+            ],
+            "pageLength": 25,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
+        });
+    });
 </script>
 {% endblock %}
