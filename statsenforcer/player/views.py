@@ -291,7 +291,7 @@ def goalie_page(request, player_id):
         else:
             stats[playerid][season]["games"] += 1
             for key in stats[playerid][season]:
-                if key not in ["abbreviation", "teamName", "shortName", "displayName", "fullName"]:
+                if key not in ["abbreviation", "teamName", "shortName", "displayName", "fullName", "season"]:
                     try:
                         stats[playerid][season][key] += row.__dict__[key]
                     except:
@@ -307,9 +307,16 @@ def goalie_page(request, player_id):
                         stats[playerid][season][key] += u", {}".format(row.__dict__[key])
     for playerid in stats:
         for season in stats[playerid]:
-            row = stats[playerid][season]
-            row["toiSeconds"] = row["toi"] / row["games"]
-            row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            goalie = stats[playerid][season]
+            goalie["toiSeconds"] = goalie["toi"] / goalie["games"]
+            goalie["toi"] = toi.format_minutes(goalie["toi"] / goalie["games"])
+            goalie['saves'] = goalie['savesLow'] + goalie['savesMedium'] + goalie['savesHigh'] + goalie['savesUnknown']
+            goalie['goals'] = goalie['goalsLow'] + goalie['goalsMedium'] + goalie['goalsHigh'] + goalie['goalsUnknown']
+            goalie['save_percent'] = '%.1f' % corsi.corsi_percent(goalie['saves'], goalie['goals'])
+            goalie['low_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesLow'], goalie['goalsLow'])
+            goalie['medium_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesMedium'], goalie['goalsMedium'])
+            goalie['high_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesHigh'], goalie['goalsHigh'])
+            goalie['unknown_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesUnknown'], goalie['goalsUnknown'])
 
     context = {}
     context["player"] = player

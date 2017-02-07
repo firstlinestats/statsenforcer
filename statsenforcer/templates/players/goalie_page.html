@@ -120,18 +120,46 @@
                                     <table id="teamstats" class="table full-width">
                                         <thead>
                                             <tr>
-                                                <th title="Season">Season</th>
-                                                <th title="Team(s)">Team(s)</th>
-                                                <th title="Games Played">Games</th>
+                                                <th>Season</th>
+                                                <th>Games</th>
+                                                <th>Goals Allowed</th>
+                                                <th>Saves</th>
+                                                <th title="Save Percentage">Sv%</th>
+                                                <th title="Unknown-Danger Goals">GU</th>
+                                                <th title="Unknown-Danger Saves">SU</th>
+                                                <th title="Unknown-Danger Save Percentage">USv%</th>
+                                                <th title="Low-Danger Goals">GL</th>
+                                                <th title="Low-Danger Saves">SL</th>
+                                                <th title="Low-Danger Save Percentage">LSv%</th>
+                                                <th title="Medium-Danger Goals">GM</th>
+                                                <th title="Medium-Danger Saves">SM</th>
+                                                <th title="Medium-Danger Save Percentage">MSv%</th>
+                                                <th title="High-Danger Goals">GH</th>
+                                                <th title="High-Danger Saves">SH</th>
+                                                <th title="High-Danger Save Percentage">HSv%</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for playerid, seasons in stats.items %}
                                                 {% for season, player in seasons.items %}
                                             <tr>
-                                                <td>{{ season }}</td>
-                                                <td>{{ player.teamName }}</td>
+                                                <td>{{ player.season }}</td>
                                                 <td>{{ player.games }}</td>
+                                                <td>{{ player.goals }}</td>
+                                                <td>{{ player.saves }}</td>
+                                                <td>{{ player.save_percent }}</td>
+                                                <td>{{ player.goalsUnknown }}</td>
+                                                <td>{{ player.savesUnknown }}</td>
+                                                <td>{{ player.unknown_save_percent }}</td>
+                                                <td>{{ player.goalsLow }}</td>
+                                                <td>{{ player.savesLow }}</td>
+                                                <td>{{ player.low_save_percent }}</td>
+                                                <td>{{ player.goalsMedium }}</td>
+                                                <td>{{ player.savesMedium }}</td>
+                                                <td>{{ player.medium_save_percent }}</td>
+                                                <td>{{ player.goalsHigh }}</td>
+                                                <td>{{ player.savesHigh }}</td>
+                                                <td>{{ player.high_save_percent }}</td>
                                             </tr>
                                                 {% endfor %}
                                             {% endfor %}
