@@ -1,3 +1,4 @@
+from __future__ import division
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse
@@ -68,19 +69,34 @@ def goalies(request):
         row.pop('_state')
         if row['player_id'] not in stats:
             stats[row['player_id']] = row
+            stats[row['player_id']]['games'] = 1
+            stats[row['player_id']]['game_ids'] = [row['game_id'], ]
         else:
+            player_id = row['player_id']
+            stats[player_id]['games'] += 1
+            stats[player_id]['game_ids'].append(row['game_id'])
             for key in row:
                 if key not in ['player_id', 'game_id', 'team_id', 'season', 'fullName']:
                     val = row[key]
-                    stats[key] += val
+                    stats[player_id][key] += val
+
     for pid in stats:
         goalie = stats[pid]
         goalie['saves'] = goalie['savesLow'] + goalie['savesMedium'] + goalie['savesHigh'] + goalie['savesUnknown']
         goalie['goals'] = goalie['goalsLow'] + goalie['goalsMedium'] + goalie['goalsHigh'] + goalie['goalsUnknown']
+        goalie['save_percent'] = '%.1f' % corsi.corsi_percent(goalie['saves'], goalie['goals'])
+        goalie['low_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesLow'], goalie['goalsLow'])
+        goalie['medium_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesMedium'], goalie['goalsMedium'])
+        goalie['high_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesHigh'], goalie['goalsHigh'])
+        goalie['unknown_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesUnknown'], goalie['goalsUnknown'])
 
     context = {}
-    context['form'] = form
     context['stats'] = stats.values()
+
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        return JsonResponse(context)
+
+    context['form'] = form
 
     return render(request, 'players/goalies.html', context)
 
@@ -220,6 +236,92 @@ def players(request):
     context["form"] = form
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
     return render(request, 'players/players.html', context)
+
+
+def goalie_page(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+    player.age = int((arrow.now() - arrow.get(player.birthDate)).days / 365.25)
+    teamstrength = "even"
+    scoresituation = "all"
+    period = "all"
+    currentSeason = Game.objects.latest("endDateTime").season
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
+    if request.method == 'GET':
+        form = GameFilterForm(request.GET)
+        if form.is_valid():
+            cd = form.cleaned_data
+            teamstrength = cd["teamstrengths"]
+            scoresituation = cd["scoresituation"]
+            period = cd["period"]
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
+    pgs = GoalieGameFilterStats.objects.raw(playerqueries.goaliequery, [gameids, scoresituation, teamstrength, period, player.id])
+    print pgs
+    stats = {}
+    for row in pgs:
+        season = row.season
+        playerid = player.id
+        if playerid not in stats:
+            stats[playerid] = {}
+        if season not in stats[playerid]:
+            stats[playerid][season] = row.__dict__
+            stats[playerid][season]["games"] = 1
+            stats[playerid][season].pop("_state", None)
+            stats[playerid][season].pop("game_id", None)
+            stats[playerid][season].pop("period", None)
+            stats[playerid][season].pop("teamstrength", None)
+            stats[playerid][season].pop("scoresituation", None)
+            stats[playerid][season].pop("player_id", None)
+        else:
+            stats[playerid][season]["games"] += 1
+            for key in stats[playerid][season]:
+                if key not in ["abbreviation", "teamName", "shortName", "displayName", "fullName"]:
+                    try:
+                        stats[playerid][season][key] += row.__dict__[key]
+                    except:
+                        pass
+                elif key == "abbreviation":
+                    if stats[playerid][season][key] != row.__dict__[key]:
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
+                elif key == "teamName":
+                    if stats[playerid][season][key] != row.__dict__[key]:
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
+                elif key == "shortName":
+                    if stats[playerid][season][key] != row.__dict__[key]:
+                        stats[playerid][season][key] += u", {}".format(row.__dict__[key])
+    for playerid in stats:
+        for season in stats[playerid]:
+            row = stats[playerid][season]
+            row["toiSeconds"] = row["toi"] / row["games"]
+            row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+
+    context = {}
+    context["player"] = player
+    context["stats"] = stats
+    if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        context["player"] = context["player"].__dict__
+        context["player"].pop("_state", None)
+        return JsonResponse(context)
+    context["form"] = form
+    context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
+    return render(request, 'players/goalie_page.html', context)
+
 
 def player_page(request, player_id):
     player = get_object_or_404(Player, id=player_id)

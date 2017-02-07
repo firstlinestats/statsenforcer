@@ -24,8 +24,6 @@ import json
 from fancystats import constants, team, player
 import sendemail
 
-from update_games import reset_game
-
 
 def compile_info(game):
     # DELETE OLD
@@ -143,8 +141,47 @@ def compile_goalie_info(game):
     if len(pbp) > 0:
         homeTeam = pbp[0]["homeTeam_id"]
         awayTeam = pbp[0]["awayTeam_id"]
+        playerteams = list(PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game))
         goalieteams = GoalieGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game)
+        missing = PlayerOnIce.objects.filter(game_id=game).exclude(player_id__in=[x["player_id"] for x in playerteams]).exclude(player_id__in=[x["player_id"] for x in goalieteams])
+        if missing.count() > 0:
+            j = json.loads(api_calls.get_game(game))
+            home_id = j["liveData"]["boxscore"]["teams"]["home"]["team"]["id"]
+            homeTeamModel = Team.objects.get(id=home_id)
+            away_id = j["liveData"]["boxscore"]["teams"]["away"]["team"]["id"]
+            awayTeamModel = Team.objects.get(id=away_id)
+            homeScratches = j["liveData"]["boxscore"]["teams"]["home"]["scratches"]
+            awayScratches = j["liveData"]["boxscore"]["teams"]["away"]["scratches"]
+        found = set()
+        for miss in missing:
+            # player was on ice, but NHL lists them as scratched and gives them no end of game stats. lovely.
+            if miss.player_id in found:
+                continue
+            found.add(miss.player_id)
+            pdata = {}
+            if miss.player_id in homeScratches:
+                pteam_id = homeTeamModel.id
+                pteam_abbreviation = homeTeamModel.abbreviation
+            elif miss.player_id in awayScratches:
+                pteam_id = awayTeamModel.id
+                pteam_abbreviation = awayTeamModel.abbreviation
+            else:
+                raise Exception("This player does not exist {}".format(miss.player_id))
+            pgs = PlayerGameStats()
+            pgs.team_id = pteam_id
+            pgs.game_id = game
+            # "team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode"
+            pgs.player_id = miss.player_id
+            pgs.save()
+            pdata["team__abbreviation"] = pteam_abbreviation
+            pdata["team_id"] = pteam_id
+            pdata["player_id"] = miss.player_id
+            pdata["player__fullName"] = miss.player.fullName
+            pdata["player__primaryPositionCode"] = miss.player.primaryPositionCode
+            playerteams.append(pdata)
         p2t = {}
+        for p in playerteams:
+            p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 0, p["player__fullName"], p["player__primaryPositionCode"]]
         for p in goalieteams:
             p2t[p["player_id"]] = [p["team__abbreviation"], p["team_id"], 1, p["player__fullName"], p["player__primaryPositionCode"]]
         pip_data = PlayerInPlay.objects.values("player_type", "play_id", "player__fullName", "player__primaryPositionCode", "player_id").filter(play_id__in=[x["id"] for x in pbp])
@@ -309,8 +346,11 @@ def main():
             compile_goalie_info(game)
         except:
             try:
+                from update_games import reset_game
                 reset_game(game)
             except Exception as e:
+                print e
+                return
                 if emailssent < 5:
                     exc_type, exc_obj, tb = sys.exc_info()
                     f = tb.tb_frame
@@ -319,7 +359,7 @@ def main():
                     linecache.checkcache(filename)
                     line = linecache.getline(filename, lineno, f.f_globals)
                     message = 'GAME: {}, EXCEPTION IN ({}, LINE {} "{}"): {}'.format(game, filename, lineno, line.strip(), exc_obj)
-                    sendemail.send_error_email(message)
+                    #sendemail.send_error_email(message)
                     emailssent += 1
                 else:
                     raise Exception(e)
