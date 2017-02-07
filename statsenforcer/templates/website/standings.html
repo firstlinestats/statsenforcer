@@ -10,36 +10,115 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="content">
-                        <h2 class="text-center">Division Standings</h2>
-                        <div class="row">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <h3 class="text-center">Eastern</h3>
+        <div class="card card-nav-tabs">
+            <div class="header header-primary">
+                <div class="nav-tabs-navigation">
+                    <div class="nav-tabs-wrapper">
+                        <ul class="nav nav-tabs" data-tabs="tabs">
+                            <li class="active">
+                                <a href="#league" data-toggle="tab" aria-expanded="true">
+                                    League View
+                                <div class="ripple-container"></div></a>
+                            </li>
+                            <li class="">
+                                <a href="#conference" data-toggle="tab" aria-expanded="false">
+                                    Conference View
+                                <div class="ripple-container"></div></a>
+                            </li>
+                            <li class="">
+                                <a href="#division" data-toggle="tab" aria-expanded="false">
+                                    Division View
+                                <div class="ripple-container"></div></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="league">
+                    <div class="card">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="text-center">League</h4>
+                                    <table id="AMCP-table" class="table full-width">
+                                        <thead>
+                                          <tr>
+                                            <th>Team Name</th>
+                                            <th>Games Played</th>
+                                            <th>Wins</th>
+                                            <th>Losses</th>
+                                            <th>Points</th>
+                                            <th>Goals For</th>
+                                            <th>Goals Against</th>
+                                            <th>Streak</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for team in teams %}
+                                              <tr>
+                                                <td style="white-space:nowrap;"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
+                                                <td>{{ team.gamesPlayed }}</td>
+                                                <td>{{ team.wins }}</td>
+                                                <td>{{ team.losses }}</td>
+                                                <td>{{ team.points }}</td>
+                                                <td>{{ team.goalsScored }}</td>
+                                                <td>{{ team.goalsAgainst }}</td>
+                                                <td style="color:{{ team.streakCode|streakColor }}">{{ team.streakCode }}</td>
+                                              </tr>
+                                          {% endfor %}
+                                        </tbody>
+                                      </table>
+                                </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
-                          </div>
                         </div>
-                        <div class="row">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <h3 class="text-center">Western</h3>
+                    </div>
+                </div>
+                <div class="tab-pane" id="conference">
+                    <div class="card">
+                        <div class="content">
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <h3>Conference Standings</h3>
+                                    <p>{{ formstate }}</p>
+                                </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Central" divisionVal="C" %}
-                          </div>
-                          <div class="col-md-6">
-                            {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
-                          </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Western" divisionVal="CP" %}
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Eastern" divisionVal="AM" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="division">
+                    <div class="card">
+                        <div class="content">
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <h3>Division Standings</h3>
+                                    <p>{{ formstate }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Central" divisionVal="C" %}
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Metropolitan" divisionVal="M" %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Pacific" divisionVal="P" %}
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    {% include "website/division_table.html" with division="Atlantic" divisionVal="A" %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,14 +143,32 @@
     $(document).ready(function() {
 
         var data = {{ divisions|safe }};
-        CreateHistorical("#Ahistorical", data["A"], "#currentA");
-        CreateHistorical("#Mhistorical", data["M"], "#currentM");
-        CreateHistorical("#Chistorical", data["C"], "#currentC");
-        CreateHistorical("#Phistorical", data["P"], "#currentP");
+        var twidth = $("#AMCP-table").width() - 10,
+            theight = $("#AMCP-table").height() - 10;
+        var AM = data["A"];
+        for (var key in data["M"]) {
+            AM[key] = data["M"][key];
+        }
+        var CP = data["C"];
+        for (var key in data["P"]) {
+            CP[key] = data["P"][key];
+        }
+        var AMCP = AM;
+        for (var key in CP) {
+            AMCP[key] = CP[key];
+        }
+        CreateHistorical("#Ahistorical", data["A"], twidth / 2, theight / 2);
+        CreateHistorical("#Mhistorical", data["M"], twidth / 2, theight / 2);
+        CreateHistorical("#Chistorical", data["C"], twidth / 2, theight / 2);
+        CreateHistorical("#Phistorical", data["P"], twidth / 2, theight / 2);
         savePNG("#AhistoricalButton", "#Ahistorical");
         savePNG("#MhistoricalButton", "#Mhistorical");
         savePNG("#ChistoricalButton", "#Chistorical");
         savePNG("#PhistoricalButton", "#Phistorical");
+        CreateHistorical("#AMhistorical", AM, twidth / 2, theight / 2);
+        CreateHistorical("#CPhistorical", CP, twidth / 2, theight / 2);
+        savePNG("#AMhistoricalButton", "#AMhistorical");
+        savePNG("#CPhistoricalButton", "#CPhistorical");
 
         $('#A-table').DataTable({
             "bPaginate": false,

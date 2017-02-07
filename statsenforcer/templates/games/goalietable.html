@@ -22,7 +22,7 @@
             {% for pid in goaliestats %}
             {% with player=goaliestats|get_item:pid %}
             <tr>
-                <td title="Player">{{ player.name }}</td>
+                <td title="Player"><a href="/players/goalies/{{ pid }}">{{ player.name }}</a></td>
                 <td title="Team">{{ player.teamname }}</td>
                 <td title="Goals Unknown-Danger">{{ player.gu }}</td>
                 <td title="Goals Low-Danger">{{ player.gl }}</td>

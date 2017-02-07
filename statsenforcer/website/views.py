@@ -49,7 +49,7 @@ def standings(request):
             hstand[division] = {}
         if teamName not in hstand[division]:
             hstand[division][teamName] = []
-        hstand[division][teamName].append({"date": sdate, "points": points})
+        hstand[division][teamName].append({"dateString": sdate, "points": points})
 
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
         context["teams"] = [x.__dict__ for x in context["teams"]]

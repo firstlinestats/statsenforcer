@@ -31,7 +31,7 @@
             </thead>
             <tbody>
               {% for team in teams %}
-                {% if team.team_division == divisionVal %}
+                {% if team.team_division == divisionVal or team.team_division in divisionVal %}
                   <tr>
                     <td style="white-space:nowrap;"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
                     <td>{{ team.gamesPlayed }}</td>

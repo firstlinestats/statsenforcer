@@ -1,10 +1,10 @@
-var CreateHistorical = function createHistorical(divid, data, tableid) {
+var CreateHistorical = function createHistorical(divid, data, twidth, theight) {
 
   var parseDate = d3.time.format("%Y-%m-%d").parse;
 
   for (d in data) {
     data[d].forEach(function(d) {
-      d.date = parseDate(d.date);
+      d.date = parseDate(d.dateString);
     });
   }
 
@@ -12,7 +12,7 @@ var CreateHistorical = function createHistorical(divid, data, tableid) {
       width = 800 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-  $(divid).width($(tableid).width()).height($(tableid).height());
+  $(divid).width(twidth).height(theight);
   var x = d3.time.scale()
       .range([0, width - 20]);
 
