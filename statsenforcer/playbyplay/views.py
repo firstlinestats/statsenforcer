@@ -37,7 +37,7 @@ def game(request, game_pk):
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
     context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
-    if game_pk > 2015000000:
+    if game_pk > 2016000000:
         try:
             context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
             context["period"].pop("_state", None)
