@@ -308,6 +308,7 @@ def goalie_page(request, player_id):
         if season not in stats[playerid]:
             stats[playerid][season] = row.__dict__
             stats[playerid][season]["games"] = 1
+            stats[playerid][season]['game_ids'] = [row.__dict__['game_id'], ]
             stats[playerid][season].pop("_state", None)
             stats[playerid][season].pop("game_id", None)
             stats[playerid][season].pop("period", None)
@@ -316,6 +317,7 @@ def goalie_page(request, player_id):
             stats[playerid][season].pop("player_id", None)
         else:
             stats[playerid][season]["games"] += 1
+            stats[playerid][season]['game_ids'].append(row.__dict__['game_id'])
             for key in stats[playerid][season]:
                 if key not in ["abbreviation", "teamName", "shortName", "displayName", "fullName", "season"]:
                     try:
