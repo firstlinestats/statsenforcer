@@ -15,6 +15,7 @@ from playbyplay.forms import GameFilterForm, GameForm
 import playerqueries
 
 from fancystats import toi, corsi
+from fancystats.goalie import adj_save_percent
 
 
 def goalies(request):
@@ -62,11 +63,20 @@ def goalies(request):
     stats = {}
 
     goalies = GoalieGameFilterStats.objects.raw(playerqueries.goaliesquery, [seasons, gameids, scoresituation, teamstrength, period])
+    print goalies
     goalies = [g for g in goalies]
+
+    low_shots = 0
+    medium_shots = 0
+    high_shots = 0
 
     for goalie in goalies:
         row = goalie.__dict__
         row.pop('_state')
+        low_shots += row['savesLow'] + row['goalsLow']
+        medium_shots += row['savesMedium'] + row['goalsMedium']
+        high_shots += row['savesHigh'] + row['goalsHigh']
+        print low_shots, medium_shots, high_shots
         if row['player_id'] not in stats:
             stats[row['player_id']] = row
             stats[row['player_id']]['games'] = 1
@@ -89,6 +99,15 @@ def goalies(request):
         goalie['medium_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesMedium'], goalie['goalsMedium'])
         goalie['high_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesHigh'], goalie['goalsHigh'])
         goalie['unknown_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesUnknown'], goalie['goalsUnknown'])
+        goalie['adj_save_percent'] = adj_save_percent(goalie['savesLow'],
+                                                      goalie['savesMedium'],
+                                                      goalie['savesHigh'],
+                                                      goalie['goalsLow'],
+                                                      goalie['goalsMedium'],
+                                                      goalie['goalsHigh'],
+                                                      low_shots,
+                                                      medium_shots,
+                                                      high_shots)
 
     context = {}
     context['stats'] = stats.values()
@@ -272,7 +291,14 @@ def goalie_page(request, player_id):
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
     gameids = [x for x in gameids]
     pgs = GoalieGameFilterStats.objects.raw(playerqueries.goaliequery, [gameids, scoresituation, teamstrength, period, player.id])
-    print pgs
+    sdata = GoalieGameFilterStats.objects.raw(playerqueries.goalieshotsquery, [gameids, scoresituation, teamstrength, period])
+    low_shots = 0
+    medium_shots = 0
+    high_shots = 0
+    for s in sdata:
+        low_shots += s.savesLow + s.goalsLow
+        medium_shots += s.savesMedium + s.goalsMedium
+        high_shots += s.savesHigh + s.goalsHigh
     stats = {}
     for row in pgs:
         season = row.season
@@ -317,6 +343,15 @@ def goalie_page(request, player_id):
             goalie['medium_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesMedium'], goalie['goalsMedium'])
             goalie['high_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesHigh'], goalie['goalsHigh'])
             goalie['unknown_save_percent'] = '%.1f' % corsi.corsi_percent(goalie['savesUnknown'], goalie['goalsUnknown'])
+            goalie['adj_save_percent'] = adj_save_percent(goalie['savesLow'],
+                                                          goalie['savesMedium'],
+                                                          goalie['savesHigh'],
+                                                          goalie['goalsLow'],
+                                                          goalie['goalsMedium'],
+                                                          goalie['goalsHigh'],
+                                                          low_shots,
+                                                          medium_shots,
+                                                          high_shots)
 
     context = {}
     context["player"] = player
