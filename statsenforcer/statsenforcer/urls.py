@@ -17,13 +17,13 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.sitemaps import views
 
-from player.sitemap import PlayerSitemap
+from player.sitemap import PlayerSitemap, GoalieSitemap
 from playbyplay.sitemap import GameSitemap
 from team.sitemap import TeamSitemap
 from website.sitemap import StaticSitemap
 from django.views.decorators.cache import cache_page
 
-sitemaps = {"skaters": PlayerSitemap, "games": GameSitemap, "teams": TeamSitemap, "static" : StaticSitemap}
+sitemaps = {"skaters": PlayerSitemap, "goalies": GoalieSitemap, "games": GameSitemap, "teams": TeamSitemap, "static" : StaticSitemap}
 
 urlpatterns = [
     url(r'^', include('website.urls')),
