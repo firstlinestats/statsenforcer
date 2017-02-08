@@ -283,6 +283,22 @@ def players(request):
     context = {}
     context["stats"] = stats
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+        pgidlist = PlayerGameFilterStats.objects.raw(playerqueries.playeridquery, [gameids, scoresituation, teamstrength, period])
+        pgids = {}
+        for pgid in pgidlist:
+            if pgid.player_id not in pgids:
+                pgids[pgid.player_id] = {}
+            season = int(str(pgid.game_id)[:4] + str(int(str(pgid.game_id)[:4]) + 1))
+            if season not in pgids[pgid.player_id]:
+                pgids[pgid.player_id][season] = []
+            pgids[pgid.player_id][season].append(pgid.game_id)
+        for player in stats:
+            season = player['season']
+            playerid = player['player_id']
+            if playerid in pgids and season in pgids[playerid]:
+                player['game_ids'] = pgids[playerid][season]
+            else:
+                player['game_ids'] = []
         return JsonResponse(context)
     context["form"] = form
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
