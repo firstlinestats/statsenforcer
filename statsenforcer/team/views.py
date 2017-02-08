@@ -62,6 +62,7 @@ def teams(request):
             stats[teamid] = {}
         if season not in stats[teamid]:
             stats[teamid][season] = row.__dict__
+            stats[teamid][season]['game_ids'] = [row.game_id, ]
             stats[teamid][season]["games"] = 1
             stats[teamid][season].pop("_state", None)
             stats[teamid][season].pop("game_id", None)
@@ -71,6 +72,7 @@ def teams(request):
             stats[teamid][season].pop("team_id", None)
         else:
             stats[teamid][season]["games"] += 1
+            stats[teamid][season]['game_ids'].append(row.game_id)
             for key in stats[teamid][season]:
                 if key not in ["abbreviation", "shortName", "teamName"]:
                     try:
@@ -160,6 +162,7 @@ def team_page(request, team_name):
             if season not in stats[teamid]:
                 stats[teamid][season] = row.__dict__
                 stats[teamid][season]["games"] = 1
+                stats[teamid][season]['game_ids'] = [row.game_id, ]
                 stats[teamid][season].pop("_state", None)
                 stats[teamid][season].pop("game_id", None)
                 stats[teamid][season].pop("period", None)
@@ -168,6 +171,7 @@ def team_page(request, team_name):
                 stats[teamid][season].pop("team_id", None)
             else:
                 stats[teamid][season]["games"] += 1
+                stats[teamid][season]['game_ids'].append(row.game_id)
                 for key in stats[teamid][season]:
                     try:
                         stats[teamid][season][key] += row.__dict__[key]

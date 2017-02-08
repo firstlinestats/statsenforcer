@@ -203,7 +203,7 @@ rect {
                                                 {% for teamid, seasons in stats.items %}
                                                     {% for season, team in seasons.items %}
                                                     <tr>
-                                                        <td title="Team"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
+                                                        <td title="Team"><a href='/teams/{{ team.shortName.split|join:"-" }}'>{{ team.shortName }}</a></td>
                                                         <td title="Season">{{ season }}</td>
                                                         <td title="Games">{{ team.games }}</td>
                                                         <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
