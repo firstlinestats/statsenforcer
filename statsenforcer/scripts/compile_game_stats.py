@@ -366,4 +366,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    game_ids = set(PlayerGameFilterStats.objects.values_list("game_id", flat=True).distinct())
+    bad_games = set()
+    for game in game_ids:
+        try:
+            compile_info(game)
+        except:
+            bad_games.add(game)
+    if bad_games:
+        sendemail.send_error_email("BAD GAMES: {}".format(", ".join(bad_games)))
