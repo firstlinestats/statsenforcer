@@ -100,7 +100,24 @@ def teams(request):
             row["gf"] = '%.1f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
             row["pn"] = '%.1f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
             row["cf"] = '%.1f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
+            row['cf60'] = '%.1f' % corsi.corsi_for_60(row['toiSeconds'], row['corsiFor'])
+            row['ca60'] = '%.1f' % corsi.corsi_against_60(row['toiSeconds'], row['corsiAgainst'])
             row["hit"] = '%.1f' % corsi.corsi_percent(row["hitsFor"], row["hitsAgainst"])
+            row['fenwickFor'] = row['missedShotsFor'] + row['shotsFor']
+            row['fenwickAgainst'] = row['missedShotsAgainst'] + row['shotsAgainst']
+            row['ff'] = '%.1f' % corsi.corsi_percent(row['fenwickFor'], row['fenwickAgainst'])
+            row['ff60'] = '%.1f' % corsi.corsi_for_60(row['toiSeconds'], row['fenwickFor'])
+            row['fa60'] = '%.1f' % corsi.corsi_against_60(row['toiSeconds'], row['fenwickAgainst'])
+            save_percent = corsi.corsi_percent(row['shotsAgainst'], row['goalsAgainst'])
+            shot_percent = corsi.corsi_percent(row['goalsFor'], row['shotsAgainst'])
+            row['pdo'] = '%.1f' % (save_percent + shot_percent)
+            row['save_percent'] = '%.1f' % save_percent
+            row['shot_percent'] = '%.1f' % shot_percent
+            row['csh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['corsiFor'])
+            row['csa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['corsiAgainst']))
+            row['fsh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['fenwickFor'])
+            row['fsa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['fenwickAgainst']))
+
     # print datetime.now() - start
     context["stats"] = stats
     context["form"] = form
