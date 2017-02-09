@@ -175,15 +175,25 @@
                                             <tr>
                                                 <th class="text-center" title="Season">Season</th>
                                                 <th class="text-center" title="Games Played">GP</th>
+                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
                                                 <th class="text-center" title="Goals">Goals</th>
+                                                <th class="text-center" title="Goals For per 60 minutes">GF60</th>
                                                 <th class="text-center" title="Primary Assists">A1</th>
+                                                <th class="text-center" title="Assist1 per 60 minutes">A160</th>
                                                 <th class="text-center" title="Secondary Assists">A2</th>
+                                                <th class="text-center" title="Assists per 60 minutes">A60</th>
                                                 <th class="text-center" title="Points">P</th>
-                                                <th class="text-center" title="Individual Shots">iSF</th>
-                                                <th class="text-center" title="Individual Missed Shots">iMSF</th>
-                                                <th class="text-center" title="Individual Blocked Shots">iBSF</th>
+                                                <th class="text-center" title="Points For per 60 minutes">PF60</th>
                                                 <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                <th class="text-center" title="Corsi For per 60">CF60</th>
+                                                <th class="text-center" title="Corsi Against per 60">CA60</th>
+                                                <th class="text-center" title="Corsi Shooting Percentage">CSh%</th>
+                                                <th class="text-center" title="Corsi Save Percentage">CSv%</th>
                                                 <th class="text-center" title="Fenwick For Percentage">FF%</th>
+                                                <th class="text-center" title="Fenwick For per 60">FF60</th>
+                                                <th class="text-center" title="Fenwick Against per 60">FA60</th>
+                                                <th class="text-center" title="Fenwick Shooting Percentage">FSh%</th>
+                                                <th class="text-center" title="Fenwick Save Percentage">FSv%</th>
                                                 <th class="text-center" title="Goals For Percentage">GF%</th>
                                                 <th class="text-center" title="Scoring Chance Percentage">SCF%</th>
                                                 <th class="text-center" title="High Danger Scoring Chance Percentage">HSCF%</th>
@@ -191,7 +201,6 @@
                                                 <th class="text-center" title="Offensive Zone Start Percentage">ZSO%</th>
                                                 <th class="text-center" title="Hit Percentage">Hit%</th>
                                                 <th class="text-center" title="Penalty Percentage">Pen%</th>
-                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -200,23 +209,32 @@
                                             <tr>
                                                 <td title="">{{ season }}</td>
                                                 <td title="">{{ player.games }}</td>
-                                                <td title="">{{ player.goals }}</td>
-                                                <td title="">{{ player.assists1 }}</td>
-                                                <td title="">{{ player.assists2 }}</td>
-                                                <td title="">{{ player.points }}</td>
-                                                <td title="">{{ player.individualShots }}</td>
-                                                <td title="">{{ player.individualMissedShots }}</td>
-                                                <td title="">{{ player.individualBlockedShots }}</td>
-                                                <td title="">{{ player.cf }}</td>
-                                                <td title="">{{ player.ff }}</td>
-                                                <td title="">{{ player.gf }}</td>
-                                                <td title="">{{ player.scf }}</td>
-                                                <td title="">{{ player.hscf }}</td>
-                                                <td title="">{{ player.fo }}</td>
-                                                <td title="">{{ player.zso }}</td>
-                                                <td title="">{{ player.hit }}</td>
-                                                <td title="">{{ player.pn }}</td>
                                                 <td title="">{{ player.toi }}</td>
+                                                <td title="">{{ player.goals }}</td>
+                                                <td title="">{{ player.gf60 }}</td>
+                                                <td title="">{{ player.assists1 }}</td>
+                                                <td title="">{{ player.a160 }}</td>
+                                                <td title="">{{ player.assists2 }}</td>
+                                                <td title="">{{ player.a60 }}</td>
+                                                <td title="">{{ player.points }}</td>
+                                                <td title="">{{ player.p60 }}</td>
+                                                <td title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
+                                                <td title="CF: {{ player.corsiFor }} toi: {{ player.toiSeconds }}">{{ player.cf60 }}</td>
+                                                <td title="CA: {{ player.corsiAgainst }} toi: {{ player.toiSeconds }}">{{ player.ca60 }}</td>
+                                                <td title="">{{ player.csh }}</td>
+                                                <td title="">{{ player.csa }}</td>
+                                                <td title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
+                                                <td title="FF: {{ player.fenwickFor }} toi: {{ player.toiSeconds }}">{{ player.ff60 }}</td>
+                                                <td title="FA: {{ player.fenwickAgainst }} toi: {{ player.toiSeconds }}">{{ player.fa60 }}</td>
+                                                <td title="">{{ player.fsh }}</td>
+                                                <td title="">{{ player.fsa }}</td>
+                                                <td title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
+                                                <td title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
+                                                <td title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
+                                                <td title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
+                                                <td title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
+                                                <td title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
+                                                <td title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
                                             </tr>
                                                 {% endfor %}
                                             {% endfor %}
@@ -378,14 +396,14 @@
             }]
         });
         var data = JSON.parse("{{ statsJson | escapejs }}");
-        
+
         var xCat = $('#xaxis').find(":selected").val(),
             yCat = $('#yaxis').find(":selected").val(),
             rCat = $('#raxis').find(":selected").val();
         var xText = $('#xaxis').find(":selected").text(),
             yText = $('#yaxis').find(":selected").text(),
             rText = $('#raxis').find(":selected").text();
-        
+
         var playerData = [];
         for (key in data) {
             for (season in data[key]) {
@@ -406,9 +424,9 @@
             var xText = $('#xaxis').find(":selected").text(),
                 yText = $('#yaxis').find(":selected").text(),
                 rText = $('#raxis').find(":selected").text();
-            
+
             zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
-            
+
         });
 
 
