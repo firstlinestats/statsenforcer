@@ -75,7 +75,7 @@ def game(request, game_pk):
         for m in media:
             mdata = m
             mdata["url"] = "https://www.nhl.com/video/c-{}".format(m["external_id"])
-            mdata["preview"] = "http://static.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
+            mdata["preview"] = "http://staticwoi.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
             context["playmedia"][m["play"]] = mdata
 
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
