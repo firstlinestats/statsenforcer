@@ -183,10 +183,21 @@ rect {
                                                     <th title="On-Ice Shots-On-Goal For Percentage">SF%</th>
                                                     <th title="Missed Shots For Percentage">MSF%</th>
                                                     <th title="Blocked Shots Percentage">BSF%</th>
+                                                    <th title="PDO">PDO</th>
                                                     <th title="Corsi For Percentage">CF%</th>
+                                                    <th title="Corsi For per 60">CF60</th>
+                                                    <th title="Corsi Against per 60">CA60</th>
+                                                    <th title="Corsi Shooting Percentage">CSh%</th>
+                                                    <th title="Corsi Save Percentage">CSv%</th>
+                                                    <th title="Fenwick For Percentage">FF%</th>
+                                                    <th title="Fenwick For per 60">FF60</th>
+                                                    <th title="Fenwick Against per 60">FA60</th>
+                                                    <th title="Fenwick Shooting Percentage">FSh%</th>
+                                                    <th title="Fenwick Save Percentage">FSv%</th>
                                                     <th title="On-Ice Scoring Chances For Percentage">SCF%</th>
                                                     <th title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
                                                     <th title="Offensive Zone Starts Percentage">ZSO%</th>
+                                                    <th title="Penalties Percentage">PN%</th>
                                                     <th title="Faceoffs Won Percentage">FO_W%</th>
                                                     <th title="Hit Percentage">Hit%</th>
                                                     <th title="Time On Ice">TOI/Gm</th>
@@ -198,17 +209,28 @@ rect {
                                                     <tr>
                                                         <td title="Season">{{ season }}</td>
                                                         <td title="Games">{{ team.games }}</td>
-                                                        <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
-                                                        <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
-                                                        <td title="Missed Shots For Percentage">{{ team.msf }}</td>
-                                                        <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
-                                                        <td title="Corsi For Percentage">{{ team.cf }}</td>
-                                                        <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
-                                                        <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
-                                                        <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
-                                                        <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
-                                                        <td title="Hit Percentage">{{ team.hit }}</td>
-                                                        <td title="Time On Ice">{{ team.toi }}</td>
+                                                        <td title="GF: {{ team.goalsFor }} GA: {{ team.goalsAgainst }}">{{ team.gf }}</td>
+                                                        <td title="SF: {{ team.shotsFor }} SA: {{ team.shotsAgainst }}">{{ team.sf }}</td>
+                                                        <td title="MSF: {{ team.missedShotsFor }} MSA: {{ team.missedShotsAgainst }}">{{ team.msf }}</td>
+                                                        <td title="BSF: {{ team.blockedShotsFor }} BSA: {{ team.blockedShotsAgainst }}">{{ team.bsf }}</td>
+                                                        <td title="Sv%: {{ team.save_percent }} + Sh%: {{ team.shot_percent }}">{{ team.pdo }}</td>
+                                                        <td title="CF: {{ team.corsiFor }} CA: {{ team.corsiAgainst }}">{{ team.cf }}</td>
+                                                        <td title="CF: {{ team.corsiFor }} toi: {{ team.toiSeconds }}">{{ team.cf60 }}</td>
+                                                        <td title="CA: {{ team.corsiAgainst }} toi: {{ team.toiSeconds }}">{{ team.ca60 }}</td>
+                                                        <td title="">{{ team.csh }}</td>
+                                                        <td title="">{{ team.csa }}</td>
+                                                        <td title="FF: {{ team.fenwickFor }} FA: {{ team.fenwickAgainst }}">{{ team.ff }}</td>
+                                                        <td title="FF: {{ team.fenwickFor }} toi: {{ team.toiSeconds }}">{{ team.ff60 }}</td>
+                                                        <td title="FA: {{ team.fenwickAgainst }} toi: {{ team.toiSeconds }}">{{ team.fa60 }}</td>
+                                                        <td title="">{{ team.fsh }}</td>
+                                                        <td title="">{{ team.fsa }}</td>
+                                                        <td title="SCF: {{ team.scoringChancesFor }} SCA: {{ team.scoringChancesAgainst }}">{{ team.sc }}</td>
+                                                        <td title="HSCF: {{ team.highDangerScoringChancesFor }} HSCA: {{ team.highDangerScoringChancesAgainst }}">{{ team.hsc }}</td>
+                                                        <td title="ZSO: {{ team.offensiveZoneStartsFor }} ZSA: {{ team.offensiveZoneStartsAgainst }}">{{ team.zso }}</td>
+                                                        <td title="PenFor: {{ team.penaltyFor }} PenAgainst: {{ team.penaltyAgainst }}">{{ team.pn }}</td>
+                                                        <td title="FOW: {{ team.faceoffWins }} FOL: {{ team.faceoffLosses }}">{{ team.fo_w }}</td>
+                                                        <td title="HitFor: {{ team.hitFor }} HitAgainst: {{ team.hitAgainst }}">{{ team.hit }}</td>
+                                                        <td title="Seconds: {{ team.toiSeconds }}">{{ team.toi }}</td>
                                                     </tr>
                                                     {% endfor %}
                                                 {% endfor %}
