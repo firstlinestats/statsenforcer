@@ -141,54 +141,56 @@ def checkGoalies(players, gamePk, team, period):
 
 
 def ingest_player(jinfo, team=None, player=None):
-    try:
-        if player is None:
-            player = pmodels.Player()
-        if "id" in jinfo:
-            player.id = jinfo["id"]
-        else:
-            raise Exception
-        if "fullName" in jinfo:
-            player.fullName = jinfo["fullName"]
-        if "link" in jinfo:
-            player.link = jinfo["link"]
-        if "firstName" in jinfo:
-            player.firstName = jinfo["firstName"]
-        if "lastName" in jinfo:
-            player.lastName = jinfo["lastName"]
-        if "primaryNumber" in jinfo:
-            player.primaryNumber = jinfo["primaryNumber"]
-        if "primaryPosition" in jinfo and "code" in jinfo["primaryPosition"]:
-            player.primaryPositionCode = jinfo["primaryPosition"]["code"]
-        if "birthDate" in jinfo:
-            player.birthDate = jinfo["birthDate"]
-        if "birthCity" in jinfo:
-            player.birthCity = jinfo["birthCity"]
-        if "birthCountry" in jinfo:
-            player.birthCountry = jinfo["birthCountry"]
-        if "height" in jinfo:
-            player.height = jinfo["height"]
-        if "weight" in jinfo:
-            player.weight = jinfo["weight"]
-        if "active" in jinfo:
-            player.active = jinfo["active"]
-        if "rookie" in jinfo:
-            player.rookie = jinfo["rookie"]
-        if "shootsCatches" in jinfo:
-            player.shootsCatches = jinfo["shootsCatches"]
-        if team is not None:
-            player.currentTeam_id = team
-        else:
-            try:
-                player.currentTeam = tmodels.Team.objects.get(id=jinfo["currentTeam"]["id"])
-            except:
-                pass
-        player.rosterStatus = jinfo["rosterStatus"]
-        player.save()
-        return player
-    except Exception as e:
-        print e
-        print jinfo
+    notcomplete = True
+    while notcomplete:
+        try:
+            if player is None:
+                player = pmodels.Player()
+            if "id" in jinfo:
+                player.id = jinfo["id"]
+            else:
+                raise Exception
+            if "fullName" in jinfo:
+                player.fullName = jinfo["fullName"]
+            if "link" in jinfo:
+                player.link = jinfo["link"]
+            if "firstName" in jinfo:
+                player.firstName = jinfo["firstName"]
+            if "lastName" in jinfo:
+                player.lastName = jinfo["lastName"]
+            if "primaryNumber" in jinfo:
+                player.primaryNumber = jinfo["primaryNumber"]
+            if "primaryPosition" in jinfo and "code" in jinfo["primaryPosition"]:
+                player.primaryPositionCode = jinfo["primaryPosition"]["code"]
+            if "birthDate" in jinfo:
+                player.birthDate = jinfo["birthDate"]
+            if "birthCity" in jinfo:
+                player.birthCity = jinfo["birthCity"]
+            if "birthCountry" in jinfo:
+                player.birthCountry = jinfo["birthCountry"]
+            if "height" in jinfo:
+                player.height = jinfo["height"]
+            if "weight" in jinfo:
+                player.weight = jinfo["weight"]
+            if "active" in jinfo:
+                player.active = jinfo["active"]
+            if "rookie" in jinfo:
+                player.rookie = jinfo["rookie"]
+            if "shootsCatches" in jinfo:
+                player.shootsCatches = jinfo["shootsCatches"]
+            if team is not None:
+                player.currentTeam_id = team
+            else:
+                try:
+                    player.currentTeam = tmodels.Team.objects.get(id=jinfo["currentTeam"]["id"])
+                except:
+                    pass
+            player.rosterStatus = jinfo["rosterStatus"]
+            player.save()
+            notcomplete = True
+        except Exception as e:
+            pass
+    return player
 
 
 def set_player_stats(pd, team, game, players, period):
