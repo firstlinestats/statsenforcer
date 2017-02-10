@@ -142,6 +142,7 @@ def checkGoalies(players, gamePk, team, period):
 
 def ingest_player(jinfo, team=None, player=None):
     notcomplete = True
+    tplayer = player
     while notcomplete:
         try:
             if player is None:
@@ -189,7 +190,8 @@ def ingest_player(jinfo, team=None, player=None):
             player.save()
             notcomplete = True
         except Exception as e:
-            pass
+            if tplayer is not None:
+                return tplayer
     return player
 
 
