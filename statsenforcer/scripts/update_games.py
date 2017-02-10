@@ -816,9 +816,9 @@ def reset_games():
 
 if __name__ == "__main__":
     #reset_games()
-    #try:
-    main()
-    #except:
-    #    sendemail.send_error_email("Too many issues, cancelling...")
+    try:
+        main()
+    except:
+        sendemail.send_error_email("Too many issues, cancelling...")
     #check_rosters()
     #fix_missing()
