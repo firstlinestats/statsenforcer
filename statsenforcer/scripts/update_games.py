@@ -90,6 +90,7 @@ def checkGoalies(players, gamePk, team, period):
             try:
                 goalie.player = pmodels.Player.objects.get(id=player.replace("ID", ""))
             except:
+                print "API CALL"
                 gplayer = ingest_player(json.loads(api_calls.get_player(player.replace("ID", "")))["people"][0])
                 goalie.player = gplayer
             goalie.game_id = gamePk
@@ -142,8 +143,8 @@ def checkGoalies(players, gamePk, team, period):
 
 def ingest_player(jinfo, team=None, player=None):
     notcomplete = True
-    tplayer = player
     while notcomplete:
+        tplayer = player
         try:
             if player is None:
                 player = pmodels.Player()
@@ -188,25 +189,32 @@ def ingest_player(jinfo, team=None, player=None):
                     pass
             player.rosterStatus = jinfo["rosterStatus"]
             player.save()
+            return player
             notcomplete = True
         except Exception as e:
+            print e
             if tplayer is not None:
                 return tplayer
     return player
 
 
-def set_player_stats(pd, team, game, players, period):
+def set_player_stats(pd, team, game, players, period, new_game=False):
     pgss = []
     for sid in pd: # I swear that's not a Crosby reference
         iid = int(sid.replace("ID", ""))
         if "skaterStats" in pd[sid]["stats"]:
             jp = pd[sid]["stats"]["skaterStats"]
             if iid not in players:
+                print "API CALL"
                 player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0])
                 players[player.id] = player
             else:
                 temp = pmodels.Player.objects.get(id=iid)
-                player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0], player=temp)
+                if new_game:
+                    print "API CALL"
+                    player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0], player=temp)
+                else:
+                    player = temp
                 players[player.id] = player
             pgs = pbpmodels.PlayerGameStats()
             pgs.player = player
@@ -349,6 +357,10 @@ def update_game(game, players):
     game.dateTime = gd["datetime"]["dateTime"]
     if "endDateTime" in gd["datetime"]:
         game.endDateTime = gd["datetime"]["endDateTime"]
+    if game.gameState == 1 and gd["status"]["codedGameState"] != 1:
+        new_game = True
+    else:
+        new_game = False
     game.gameState = gd["status"]["codedGameState"]
     # Get linescore information
     game.homeScore = lineScore["teams"]["home"]["goals"]
@@ -491,6 +503,7 @@ def update_game(game, players):
             except:
                 try:
                     if pp["player"]["id"] not in missing_players:
+                        print "API CALL"
                         playerdata = json.loads(api_calls.get_player(pp["player"]["id"]))
                         if len(playerdata.keys()) > 0:
                             playerfound = ingest_player(playerdata)
@@ -529,8 +542,8 @@ def update_game(game, players):
     goaliestats = []
     goaliestats.extend(checkGoalies(homegoalies, game.gamePk, hometeam, cperiod))
     goaliestats.extend(checkGoalies(awaygoalies, game.gamePk, awayteam, cperiod))
-    allpgss.extend(set_player_stats(hp, game.homeTeam, game, players, cperiod))
-    allpgss.extend(set_player_stats(ap, game.awayTeam, game, players, cperiod))
+    allpgss.extend(set_player_stats(hp, game.homeTeam, game, players, cperiod, new_game))
+    allpgss.extend(set_player_stats(ap, game.awayTeam, game, players, cperiod, new_game))
     pbpmodels.PlayerGameStats.objects.bulk_create(allpgss)
 
     # Find any existing POI data and delete
@@ -680,6 +693,7 @@ def main():
                     with transaction.atomic():
                         compile_info(game.gamePk)
                         findStandings(game.season)
+                print "finished looking at {}".format(game.gamePk)
             except Exception as e:
                 sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
                 emailssent += 1
@@ -802,9 +816,9 @@ def reset_games():
 
 if __name__ == "__main__":
     #reset_games()
-    try:
-        main()
-    except:
-        sendemail.send_error_email("Too many issues, cancelling...")
+    #try:
+    main()
+    #except:
+    #    sendemail.send_error_email("Too many issues, cancelling...")
     #check_rosters()
     #fix_missing()
