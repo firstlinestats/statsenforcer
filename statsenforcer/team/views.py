@@ -109,7 +109,7 @@ def teams(request):
             row['ff60'] = '%.1f' % corsi.corsi_for_60(row['toiSeconds'], row['fenwickFor'])
             row['fa60'] = '%.1f' % corsi.corsi_against_60(row['toiSeconds'], row['fenwickAgainst'])
             save_percent = corsi.corsi_percent(row['shotsAgainst'], row['goalsAgainst'])
-            shot_percent = corsi.corsi_percent(row['goalsFor'], row['shotsAgainst'])
+            shot_percent = corsi.corsi_percent(row['goalsFor'], row['shotsFor'])
             row['pdo'] = '%.1f' % (save_percent + shot_percent)
             row['save_percent'] = '%.1f' % save_percent
             row['shot_percent'] = '%.1f' % shot_percent
