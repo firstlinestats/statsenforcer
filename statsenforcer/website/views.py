@@ -139,7 +139,6 @@ def standings(request):
             teams[team] = last
 
     context["divisions"] = json.dumps(teamStandings, ensure_ascii=True)
-    print context["divisions"]
     context["teams"] = teams
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
         return JsonResponse(context)
