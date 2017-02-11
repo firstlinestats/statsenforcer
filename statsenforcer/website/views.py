@@ -1,3 +1,4 @@
+from __future__ import division
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -105,6 +106,7 @@ def configure_standing(teamPlace, antiPlace, teamStandings, game):
                 goalsAgainst -= 1
     if shootout:
         pointstie += 1
+    pointsper = '%.1f' % (points / (gamesPlayed * 2) * 100)
 
     teamStandings[teamDivision][teamName].append({"dateString": sdate,
                                                   "gamesPlayed": gamesPlayed,
@@ -117,7 +119,8 @@ def configure_standing(teamPlace, antiPlace, teamStandings, game):
                                                   "goalsFor": goalsFor,
                                                   "goalsAgainst": goalsAgainst,
                                                   "abbreviation": teamAbbreviation,
-                                                  "streakCode": streakCode})
+                                                  "streakCode": streakCode,
+                                                  "pointsper": pointsper})
 
 
 def standings(request):
