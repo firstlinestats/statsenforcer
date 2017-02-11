@@ -117,45 +117,45 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive">
-                                    <table id="teamstats" class="table full-width">
+                                    <table id="teamstats" class="table full-width table-condensed table-hover table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Season</th>
-                                                <th>Games</th>
-                                                <th>Goals Allowed</th>
-                                                <th>Saves</th>
-                                                <th title="Save Percentage">Sv%</th>
-                                                <th title="Adjusted Save Percentage">AdjSv%</th>
-                                                <th title="Low-Danger Goals">GL</th>
-                                                <th title="Low-Danger Saves">SL</th>
-                                                <th title="Low-Danger Save Percentage">LSv%</th>
-                                                <th title="Medium-Danger Goals">GM</th>
-                                                <th title="Medium-Danger Saves">SM</th>
-                                                <th title="Medium-Danger Save Percentage">MSv%</th>
-                                                <th title="High-Danger Goals">GH</th>
-                                                <th title="High-Danger Saves">SH</th>
-                                                <th title="High-Danger Save Percentage">HSv%</th>
+                                                <th class="text-center">Season</th>
+                                                <th class="text-center">Games</th>
+                                                <th class="text-center">Goals Allowed</th>
+                                                <th class="text-center">Saves</th>
+                                                <th class="text-center" title="Save Percentage">Sv%</th>
+                                                <th class="text-center" title="Adjusted Save Percentage">AdjSv%</th>
+                                                <th class="text-center" title="Low-Danger Goals">GL</th>
+                                                <th class="text-center" title="Low-Danger Saves">SL</th>
+                                                <th class="text-center" title="Low-Danger Save Percentage">LSv%</th>
+                                                <th class="text-center" title="Medium-Danger Goals">GM</th>
+                                                <th class="text-center" title="Medium-Danger Saves">SM</th>
+                                                <th class="text-center" title="Medium-Danger Save Percentage">MSv%</th>
+                                                <th class="text-center" title="High-Danger Goals">GH</th>
+                                                <th class="text-center" title="High-Danger Saves">SH</th>
+                                                <th class="text-center" title="High-Danger Save Percentage">HSv%</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for playerid, seasons in stats.items %}
                                                 {% for season, player in seasons.items %}
                                             <tr>
-                                                <td>{{ player.season }}</td>
-                                                <td>{{ player.games }}</td>
-                                                <td>{{ player.goals }}</td>
-                                                <td>{{ player.saves }}</td>
-                                                <td>{{ player.save_percent }}</td>
-                                                <td>{{ player.adj_save_percent }}</td>
-                                                <td>{{ player.goalsLow }}</td>
-                                                <td>{{ player.savesLow }}</td>
-                                                <td>{{ player.low_save_percent }}</td>
-                                                <td>{{ player.goalsMedium }}</td>
-                                                <td>{{ player.savesMedium }}</td>
-                                                <td>{{ player.medium_save_percent }}</td>
-                                                <td>{{ player.goalsHigh }}</td>
-                                                <td>{{ player.savesHigh }}</td>
-                                                <td>{{ player.high_save_percent }}</td>
+                                                <td class="text-center">{{ player.season }}</td>
+                                                <td class="text-center">{{ player.games }}</td>
+                                                <td class="text-center">{{ player.goals }}</td>
+                                                <td class="text-center">{{ player.saves }}</td>
+                                                <td class="text-center">{{ player.save_percent }}</td>
+                                                <td class="text-center">{{ player.adj_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsLow }}</td>
+                                                <td class="text-center">{{ player.savesLow }}</td>
+                                                <td class="text-center">{{ player.low_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsMedium }}</td>
+                                                <td class="text-center">{{ player.savesMedium }}</td>
+                                                <td class="text-center">{{ player.medium_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsHigh }}</td>
+                                                <td class="text-center">{{ player.savesHigh }}</td>
+                                                <td class="text-center">{{ player.high_save_percent }}</td>
                                             </tr>
                                                 {% endfor %}
                                             {% endfor %}

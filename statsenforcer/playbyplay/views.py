@@ -294,7 +294,7 @@ def game(request, game_pk):
                     pend = penalties["starts"][penalty] + penalties["lengths"][penalty]
                     if pend < periodSeconds:
                         eventChart[penalties["eChart"]].append((penalties["starts"][penalty], penalties["lengths"][penalty]))
-                        deletes.insert(0, pindex)
+                        deletes.insert(0, penalty)
                 for delete in deletes:
                     del penalties["starts"][delete]
                     del penalties["lengths"][delete]

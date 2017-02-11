@@ -16,32 +16,32 @@
                     <div class="content">
                         <h3>Recent and Upcoming Games</h3>
                         <div class="table-responsive">
-                            <table id="games" class="table full-width">
+                            <table id="games" class="table full-width table-condensed table-hover table-striped">
                                 <thead>
-                                    <th>Game Date</th>
-                                    <th>Session</th>
+                                    <th class="text-center">Game Date</th>
+                                    <th class="text-center">Session</th>
                                     <th class="text-right">&nbsp;&nbsp;&nbsp;&nbsp;Away</th>
                                     <th class="text-center">Score</th>
                                     <th class="text-left">Home&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                                    <th>Corsi</th>
-                                    <th>Status</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th></th>
+                                    <th class="text-center">Corsi</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Start Time</th>
+                                    <th class="text-center">End Time</th>
+                                    <th class="text-center"></th>
                                 </thead>
 
                                 <tbody>
                                 {% for game in games %}
                                   <tr>
-                                    <td>{{ game.dateTime|date }}</td>
-                                    <td>{{ game.gameType|gameType }}</td>
+                                    <td class="text-center">{{ game.dateTime|date }}</td>
+                                    <td class="text-center">{{ game.gameType|gameType }}</td>
                                     <td class="text-right"><a href='/teams/{{ game.awayTeamName.split|join:"-" }}'>{{ game.awayTeamName }}&nbsp;&nbsp;<img height="17" width="17" src="{% static "/img/team/"|add:game.awayAbbreviation|add:".png" %}" /></a></td>
                                     <td class="text-center">{{ game.awayScore }} - {{ game.homeScore }}</td>
                                     <td class="text-left"><a href='/teams/{{ game.homeTeamName.split|join:"-" }}'><img height="17" width="17" src="{% static "/img/team/"|add:game.homeAbbreviation|add:".png" %}" />&nbsp;&nbsp;{{ game.homeTeamName }}</a></td>
-                                    <td>{% if game.homeShots != None %}{{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }} / {{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }}{% endif %}</td>
-                                    <td>{{ game.gameState|gameStatus }}{{ game.gameOT }}</td>
-                                    <td>{{ game.dateTime|time }}</td>
-                                    <td>{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
+                                    <td class="text-center">{% if game.homeShots != None %}{{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }} / {{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }}{% endif %}</td>
+                                    <td class="text-center">{{ game.gameState|gameStatus }}{{ game.gameOT }}</td>
+                                    <td class="text-center">{{ game.dateTime|time }}</td>
+                                    <td class="text-center">{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
                                     <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
                                   </tr>
                                 {% endfor %}

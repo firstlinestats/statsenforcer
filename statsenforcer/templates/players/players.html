@@ -185,7 +185,7 @@ rect {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive">
-                                    <table id="teamstats" class="table full-width table-condensed table-hover table-striped">
+                                    <table id="teamstats" class="table full-width table-condensed table-hover table-striped table-bordered">
                                         <thead>
                                             <tr>
                                                 <th class="text-center" title="Name">Name</th>
@@ -223,36 +223,36 @@ rect {
                                         <tbody>
                                             {% for player in stats %}
                                                 <tr>
-                                                    <td title=""><a href="/players/skaters/{{ player.player_id }}/">{{ player.fullName }}</a></td>
-                                                    <td title="">{{ player.team }}</td>
-                                                    <td title="">{{ player.season }}</td>
-                                                    <td title="">{{ player.games }}</td>
-                                                    <td title="">{{ player.toi }}</td>
-                                                    <td title="">{{ player.goals }}</td>
-                                                    <td title="">{{ player.gf60 }}</td>
-                                                    <td title="">{{ player.assists1 }}</td>
-                                                    <td title="">{{ player.a160 }}</td>
-                                                    <td title="">{{ player.assists2 }}</td>
-                                                    <td title="">{{ player.a60 }}</td>
-                                                    <td title="">{{ player.points }}</td>
-                                                    <td title="">{{ player.p60 }}</td>
-                                                    <td title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
-                                                    <td title="CF: {{ player.corsiFor }} toi: {{ player.toiSeconds }}">{{ player.cf60 }}</td>
-                                                    <td title="CA: {{ player.corsiAgainst }} toi: {{ player.toiSeconds }}">{{ player.ca60 }}</td>
-                                                    <td title="">{{ player.csh }}</td>
-                                                    <td title="">{{ player.csa }}</td>
-                                                    <td title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
-                                                    <td title="FF: {{ player.fenwickFor }} toi: {{ player.toiSeconds }}">{{ player.ff60 }}</td>
-                                                    <td title="FA: {{ player.fenwickAgainst }} toi: {{ player.toiSeconds }}">{{ player.fa60 }}</td>
-                                                    <td title="">{{ player.fsh }}</td>
-                                                    <td title="">{{ player.fsa }}</td>
-                                                    <td title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
-                                                    <td title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
-                                                    <td title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
-                                                    <td title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
-                                                    <td title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
-                                                    <td title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
-                                                    <td title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
+                                                    <td class="text-center" title=""><a href="/players/skaters/{{ player.player_id }}/">{{ player.fullName }}</a></td>
+                                                    <td class="text-center" title="">{{ player.team }}</td>
+                                                    <td class="text-center" title="">{{ player.season }}</td>
+                                                    <td class="text-center" title="">{{ player.games }}</td>
+                                                    <td class="text-center" title="">{{ player.toi }}</td>
+                                                    <td class="text-center" title="">{{ player.goals }}</td>
+                                                    <td class="text-center" title="">{{ player.gf60 }}</td>
+                                                    <td class="text-center" title="">{{ player.assists1 }}</td>
+                                                    <td class="text-center" title="">{{ player.a160 }}</td>
+                                                    <td class="text-center" title="">{{ player.assists2 }}</td>
+                                                    <td class="text-center" title="">{{ player.a60 }}</td>
+                                                    <td class="text-center" title="">{{ player.points }}</td>
+                                                    <td class="text-center" title="">{{ player.p60 }}</td>
+                                                    <td class="text-center" title="{{ player.corsiFor }} / {{ player.corsiAgainst }}">{{ player.cf }}</td>
+                                                    <td class="text-center" title="CF: {{ player.corsiFor }} toi: {{ player.toiSeconds }}">{{ player.cf60 }}</td>
+                                                    <td class="text-center" title="CA: {{ player.corsiAgainst }} toi: {{ player.toiSeconds }}">{{ player.ca60 }}</td>
+                                                    <td class="text-center" title="">{{ player.csh }}</td>
+                                                    <td class="text-center" title="">{{ player.csa }}</td>
+                                                    <td class="text-center" title="{{ player.fenwickFor }} / {{ player.fenwickAgainst }}">{{ player.ff }}</td>
+                                                    <td class="text-center" title="FF: {{ player.fenwickFor }} toi: {{ player.toiSeconds }}">{{ player.ff60 }}</td>
+                                                    <td class="text-center" title="FA: {{ player.fenwickAgainst }} toi: {{ player.toiSeconds }}">{{ player.fa60 }}</td>
+                                                    <td class="text-center" title="">{{ player.fsh }}</td>
+                                                    <td class="text-center" title="">{{ player.fsa }}</td>
+                                                    <td class="text-center" title="{{ player.goalsFor }} / {{ player.goalsAgainst }}">{{ player.gf }}</td>
+                                                    <td class="text-center" title="{{ player.scoringChancesFor }} / {{ player.scoringChancesAgainst }}">{{ player.scf }}</td>
+                                                    <td class="text-center" title="{{ player.highDangerScoringChancesFor }} / {{ player.highDangerScoringChancesAgainst }}">{{ player.hscf }}</td>
+                                                    <td class="text-center" title="{{ player.fo_w }} / {{ player.fo_l }}">{{ player.fo }}</td>
+                                                    <td class="text-center" title="ZSO:{{ player.offensiveZoneStarts }} ZSN:{{ player.neutralZoneStarts }} ZSD: {{ player.defensiveZoneStarts }}">{{ player.zso }}</td>
+                                                    <td class="text-center" title="{{ player.hitFor }} / {{ player.hitAgainst }}">{{ player.hit }}</td>
+                                                    <td class="text-center" title="{{ player.penaltyFor }} / {{ player.penaltyAgainst }}">{{ player.pn }}</td>
                                                 </tr>
                                             {% endfor %}
 
