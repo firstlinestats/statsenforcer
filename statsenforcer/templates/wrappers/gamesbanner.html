@@ -3,7 +3,7 @@
 
 <div style="width:80%;margin:auto;">
     <div id="gamesCarousel" class="autoplay">
-      
+
     </div>
 </div>
 
@@ -26,8 +26,8 @@
                         var gameText = "";
                         var gameData = {};
                         gameData["gameId"] = game["gameId"];
-                        var awayTeam = game["awayTeamAbbreviation"];
-                        var homeTeam = game["homeTeamAbbreviation"];
+                        var awayTeam = "<img class=\"pull-left\" height=\"17\" width=\"17\" src='/static/img/team/" + game["awayTeamAbbreviation"] + ".png'>" + game["awayTeamAbbreviation"];
+                        var homeTeam = "<img class=\"pull-right\" height=\"17\" width=\"17\" src='/static/img/team/" + game["homeTeamAbbreviation"] + ".png'>" + game["homeTeamAbbreviation"];
                         gameText = game["dateTime"] + "<br /><div style=\"width:80%;margin:auto;\"><div class=\"clearfix\">" + awayTeam + " " + game["awayScore"] + " - " + game["homeScore"] + " " + homeTeam + "</div></div>";
                         if (game["live"]) {
                             gameText += "<span class=\"label label-danger\">Live</span>";
