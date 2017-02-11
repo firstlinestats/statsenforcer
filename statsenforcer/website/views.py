@@ -27,41 +27,128 @@ def rink(request):
 def utc_to_local(utc_dt):
     local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_tz.normalize(local_dt) # .normalize might be unnecessary
-# Create your views here.
+
+
+def configure_standing(teamPlace, antiPlace, teamStandings, game):
+    """
+        ("PNow", "Points, Under Current System"),
+        ("P3", "Points, 3-2-1-0 System"),
+        ("PTie", "Points, Tie After Overtime Ends"),
+        ("PNL", "Points, No Tie or Loser Points")
+    """
+    teamName = game["{}TeamName".format(teamPlace)]
+    teamAbbreviation = game["{}Abbreviation".format(teamPlace)]
+    teamDivision = game["{}Division".format(teamPlace)]
+    team_id = game["{}Team_id".format(teamPlace)]
+    teamScore = game["{}Score".format(teamPlace)]
+    otherScore = game["{}Score".format(antiPlace)]
+    sdate = game["startDate"].strftime("%Y-%m-%d")
+    OT = game["gameOT"] == 1
+    shootout = game["gameShootout"] == 1
+    if teamDivision not in teamStandings:
+        teamStandings[teamDivision] = {}
+    if teamName not in teamStandings[teamDivision]:
+        teamStandings[teamDivision][teamName] = []
+        points = 0
+        points3 = 0
+        pointstie = 0
+        pointsnl = 0
+        gamesPlayed = 1
+        wins = 0
+        losses = 0
+        goalsFor = 0
+        goalsAgainst = 0
+        streakCode = "W0"
+    else:
+        points = teamStandings[teamDivision][teamName][-1]["points"]
+        points3 = teamStandings[teamDivision][teamName][-1]["points3"]
+        pointstie = teamStandings[teamDivision][teamName][-1]["pointstie"]
+        pointsnl = teamStandings[teamDivision][teamName][-1]["pointsnl"]
+        gamesPlayed = teamStandings[teamDivision][teamName][-1]["gamesPlayed"] + 1
+        wins = teamStandings[teamDivision][teamName][-1]["wins"]
+        losses = teamStandings[teamDivision][teamName][-1]["losses"]
+        goalsFor = teamStandings[teamDivision][teamName][-1]["goalsFor"]
+        goalsAgainst = teamStandings[teamDivision][teamName][-1]["goalsAgainst"]
+        streakCode = teamStandings[teamDivision][teamName][-1]["streakCode"]
+    winner = teamScore > otherScore
+    goalsFor += teamScore
+    goalsAgainst += otherScore
+    if winner:
+        if "W" in streakCode:
+            streakCode = "W{}".format(int(streakCode.replace("W", "")) + 1)
+        else:
+            streakCode = "W1"
+        pointsnl += 1
+        wins += 1
+        points += 2
+        if OT:
+            points3 += 2
+            if not shootout:
+                pointstie += 2
+            else:
+                goalsFor -= 1
+        else:
+            points3 += 3
+            pointstie += 2
+    else:
+        if "L" in streakCode:
+            streakCode = "L{}".format(int(streakCode.replace("L", "")) + 1)
+        else:
+            streakCode = "L1"
+        losses += 1
+        if OT:
+            points += 1
+            points3 += 1
+            if not shootout:
+                pointstie += 1
+            else:
+                goalsAgainst -= 1
+    if shootout:
+        pointstie += 1
+
+    teamStandings[teamDivision][teamName].append({"dateString": sdate,
+                                                  "gamesPlayed": gamesPlayed,
+                                                  "points": points,
+                                                  "points3": points3,
+                                                  "pointstie": pointstie,
+                                                  "pointsnl": pointsnl,
+                                                  "wins": wins,
+                                                  "losses": losses,
+                                                  "goalsFor": goalsFor,
+                                                  "goalsAgainst": goalsAgainst,
+                                                  "abbreviation": teamAbbreviation,
+                                                  "streakCode": streakCode})
+
 
 def standings(request):
     context = {}
-    max_date = SeasonStats.objects.values_list("date", "season").latest("date")
-    standings = SeasonStats.objects.raw(indexqueries.standingsquery, [max_date[0], ])
-    context = {
-        'active_page': 'standings',
-        'teams': standings
-    }
-    historical = SeasonStats.objects.values("team__shortName",
-        "points", "date", "team__division").filter(season=max_date[1]).order_by("date")
-    hstand = {}
-    for h in historical:
-        sdate = str(h["date"])
-        teamName = h["team__shortName"]
-        division = h["team__division"]
-        points = h["points"]
-        if division not in hstand:
-            hstand[division] = {}
-        if teamName not in hstand[division]:
-            hstand[division][teamName] = []
-        hstand[division][teamName].append({"dateString": sdate, "points": points})
 
+    currentSeason = Game.objects.latest("endDateTime").season
+    games = Game.objects.raw(indexqueries.standingsquery, [currentSeason, ])
+    teamStandings = {}
+    for game in games:
+        game = game.__dict__
+        configure_standing("home", "away", teamStandings, game)
+        configure_standing("away", "home", teamStandings, game)
+
+    teams = {}
+    for div in teamStandings:
+        for team in teamStandings[div]:
+            last = teamStandings[div][team][-1]
+            last["team_division"] = div
+            teams[team] = last
+
+    context["divisions"] = json.dumps(teamStandings, ensure_ascii=True)
+    print context["divisions"]
+    context["teams"] = teams
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
-        context["teams"] = [x.__dict__ for x in context["teams"]]
-        [x.pop("_state") for x in context["teams"]]
         return JsonResponse(context)
-    else:
-        context["divisions"] = json.dumps(hstand, ensure_ascii=True)
     return render(request, 'website/standings.html', context)
 
 
 def index(request):
-    games = Game.objects.raw(indexqueries.gamesquery, [20162017, arrow.now().datetime + datetime.timedelta(1)])
+    currentSeason = Game.objects.latest("endDateTime").season
+    games = Game.objects.raw(indexqueries.gamesquery, [currentSeason, arrow.now().datetime + datetime.timedelta(1)])
     context = {
         'games': games,
     }

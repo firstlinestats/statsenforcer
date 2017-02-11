@@ -19,28 +19,34 @@
           <table id="{{ divisionVal }}-table" class="table full-width">
             <thead>
               <tr>
-                <th>Team Name</th>
-                <th>Games Played</th>
-                <th>Wins</th>
-                <th>Losses</th>
-                <th>Points</th>
-                <th>Goals For</th>
-                <th>Goals Against</th>
-                <th>Streak</th>
+                <th class="text-center">Team Name</th>
+                <th class="text-center">Games Played</th>
+                <th class="text-center">Wins</th>
+                <th class="text-center">Losses</th>
+                <th class="text-center">Points</th>
+                <th class="text-center">Points3</th>
+                <th class="text-center">PointsTie</th>
+                <th class="text-center">PointsNL</th>
+                <th class="text-center">Goals For</th>
+                <th class="text-center">Goals Against</th>
+                <th class="text-center">Streak</th>
               </tr>
             </thead>
             <tbody>
-              {% for team in teams %}
+              {% for teamName, team in teams.items %}
                 {% if team.team_division == divisionVal or team.team_division in divisionVal %}
                   <tr>
-                    <td style="white-space:nowrap;"><a href='/teams/{{ team.teamName.split|join:"-" }}'>{{ team.teamName }}</a></td>
-                    <td>{{ team.gamesPlayed }}</td>
-                    <td>{{ team.wins }}</td>
-                    <td>{{ team.losses }}</td>
-                    <td>{{ team.points }}</td>
-                    <td>{{ team.goalsScored }}</td>
-                    <td>{{ team.goalsAgainst }}</td>
-                    <td style="color:{{ team.streakCode|streakColor }}">{{ team.streakCode }}</td>
+                    <td class="text-left" style="white-space:nowrap;"><a href='/teams/{{ teamName.split|join:"-" }}'><img height="17" width="17" src="{% static "/img/team/"|add:team.abbreviation|add:".png" %}" />&nbsp;&nbsp;{{ teamName }}</a></td>
+                    <td class="text-center">{{ team.gamesPlayed }}</td>
+                    <td class="text-center">{{ team.wins }}</td>
+                    <td class="text-center">{{ team.losses }}</td>
+                    <td class="text-center">{{ team.points }}</td>
+                    <td class="text-center">{{ team.points3 }}</td>
+                    <td class="text-center">{{ team.pointstie }}</td>
+                    <td class="text-center">{{ team.pointsnl }}</td>
+                    <td class="text-center">{{ team.goalsFor }}</td>
+                    <td class="text-center">{{ team.goalsAgainst }}</td>
+                    <td class="text-center" style="color:{{ team.streakCode|streakColor }}">{{ team.streakCode }}</td>
                   </tr>
                 {% endif %}
               {% endfor %}

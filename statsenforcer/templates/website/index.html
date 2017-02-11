@@ -39,7 +39,7 @@
                                     <td class="text-center">{{ game.awayScore }} - {{ game.homeScore }}</td>
                                     <td class="text-left"><a href='/teams/{{ game.homeTeamName.split|join:"-" }}'><img height="17" width="17" src="{% static "/img/team/"|add:game.homeAbbreviation|add:".png" %}" />&nbsp;&nbsp;{{ game.homeTeamName }}</a></td>
                                     <td>{% if game.homeShots != None %}{{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }} / {{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }}{% endif %}</td>
-                                    <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
+                                    <td>{{ game.gameState|gameStatus }}{{ game.gameOT }}</td>
                                     <td>{{ game.dateTime|time }}</td>
                                     <td>{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
                                     <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
