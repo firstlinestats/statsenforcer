@@ -1,0 +1,19 @@
+{% extends "wrappers/wrapper.html" %}
+{% block title %}403 | WAR On Ice{% endblock %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content text-center">
+                    <h1>Can't do that!</h1>
+                    <img src="{% static "/gifs/badrequest.gif" %}" />
+                    <h4>If you think we actually have an issue, <i class="fa fa-twitter"></i><a target="_blank" href="http://twitter.com/war_on_ice">tweet at us here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

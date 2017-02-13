@@ -20,6 +20,22 @@ import indexqueries
 local_tz = pytz.timezone('US/Eastern')
 
 
+def custom404(request):
+    return render(request, 'error_views/404.html')
+
+
+def custom500(request):
+    return render(request, 'error_views/500.html')
+
+
+def custom403(request):
+    return render(request, 'error_views/403.html')
+
+
+def custom400(request):
+    return render(request, 'error_views/400.html')
+
+
 def rink(request):
     image_data = open("static/svg/rink.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
