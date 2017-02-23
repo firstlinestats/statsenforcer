@@ -221,6 +221,10 @@ def game(request, game_pk):
                 team = play["team_id"]
                 play_type = play["playType"]
                 homeinclude, awayinclude = fancystats.team.check_play(play, teamStrengths, scoreSituation, period, hsc, asc, context["game"]["homeTeam_id"], context["game"]["awayTeam_id"], p2t)
+                if team == home_id and play["playType"] == "GOAL":
+                    eventChart["homeGoals"].append(periodSeconds)
+                elif team == away_id and play["playType"] == "GOAL":
+                    eventChart["awayGoals"].append(periodSeconds)
                 if team == home_id and homeinclude:
                     xcoord = play["xcoord"]
                     ycoord = play["ycoord"]
@@ -231,7 +235,6 @@ def game(request, game_pk):
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
                     if play["playType"] == "GOAL":
-                        eventChart["homeGoals"].append(periodSeconds)
                         homeShotCount += 1
                         eventChart["homeShots"].append((periodSeconds, homeShotCount))
                     elif play["playType"] == "SHOT":
@@ -250,7 +253,6 @@ def game(request, game_pk):
                         "y": ycoord, "type": play_type, "danger": danger, "description": play["playDescription"],
                         "scoring_chance": sc, "time": str(play["periodTimeString"]), "period": play["period"]})
                     if play["playType"] == "GOAL":
-                        eventChart["awayGoals"].append(periodSeconds)
                         awayShotCount += 1
                         eventChart["awayShots"].append((periodSeconds, awayShotCount))
                     elif play["playType"] == "SHOT":
