@@ -49,12 +49,12 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
 
     // Add team logos
     svg.append("svg:image")
-        .attr("xlink:href", "/static/img/team/" + homeabbr + ".png")
+        .attr("xlink:href", "/team/" + homeabbr + ".png")
         .attr("width", (width / 3) - margin.left)
         .attr("height", (height / 3) - margin.top)
         .attr("transform", "translate(" + (width - margin.left - width / 2.75) + "," + ((height - margin.top) / 3) + ")");
     svg.append("svg:image")
-        .attr("xlink:href", "/static/img/team/" + awayabbr + ".png")
+        .attr("xlink:href", "/team/" + awayabbr + ".png")
         .attr("width", (width / 3) - margin.left)
         .attr("height", (height / 3) - margin.top)
         .attr("opacity", 0.6)

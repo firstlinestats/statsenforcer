@@ -1,4 +1,5 @@
 from __future__ import division
+from django.http import Http404
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -40,6 +41,15 @@ def rink(request):
     image_data = open("static/svg/rink.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
 
+def team_logo(request, team_abbreviation):
+    try:
+        if "/" not in team_abbreviation:
+            image_data = open("static/img/team/{}.png".format(team_abbreviation), "rb").read()
+            return HttpResponse(image_data, content_type="image/png")
+        else:
+            raise Exception
+    except:
+        raise Http404("Team logo does not exist")
 
 def utc_to_local(utc_dt):
     local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
