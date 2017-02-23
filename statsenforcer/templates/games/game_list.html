@@ -85,32 +85,32 @@
                 <div class="card">
                     <div class="content">
                         <div class="table-responsive">
-                        <table id="games" class="table full-width">
+                        <table id="games" class="table full-width table-condensed table-hover table-striped">
                             <thead>
-                                <th>Game Date</th>
-                                <th>Session</th>
-                                <th>Home</th>
+                                <th class="text-center">Game Date</th>
+                                <th class="text-center">Session</th>
+                                <th class="text-right">&nbsp;&nbsp;&nbsp;&nbsp;Away</th>
                                 <th class="text-center">Score</th>
-                                <th>Away</th>
-                                <th>Corsi</th>
-                                <th>Status</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th></th>
+                                <th class="text-left">Home&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                <th class="text-center">Corsi</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Start Time</th>
+                                <th class="text-center">End Time</th>
+                                <th class="text-center"></th>
                             </thead>
 
                             <tbody>
                             {% for game in games %}
                               <tr>
-                                <td>{{ game.dateTime|date }}</td>
-                                <td>{{ game.gameType|gameType }}</td>
-                                <td>{{ game.homeTeam__teamName }}</a></td>
+                                <td class="text-center">{{ game.dateTime|date }}</td>
+                                <td class="text-center">{{ game.gameType|gameType }}</td>
+                                <td class="text-right"><a href='/teams/{{ game.awayTeam__shortName.split|join:"-" }}'>{{ game.awayTeam__shortName }}&nbsp;&nbsp;<img height="17" width="17" src="{% static "/img/team/"|add:game.awayTeam__abbreviation|add:".png" %}" /></a></td>
                                 <td class="text-center">{{ game.homeScore }} - {{ game.awayScore }}</td>
-                                <td>{{ game.awayTeam__teamName }}</a></td>
-                                <td>{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
-                                <td>{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
-                                <td>{{ game.dateTime|time }} EST</td>
-                                <td>{% if game.endDateTime != None %}{{ game.endDateTime|time }} EST{% endif %}</td>
+                                <td class="text-left"><a href='/teams/{{ game.homeTeam__shortName.split|join:"-" }}'><img height="17" width="17" src="{% static "/img/team/"|add:game.homeTeam__abbreviation|add:".png" %}" />&nbsp;&nbsp;{{ game.homeTeam__shortName }}</a></td>
+                                <td class="text-center">{% if game.homeShots != None %}{{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }} / {{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }}{% endif %}</td>
+                                <td class="text-center">{{ game.gameState|gameStatus }}{{ game|checkOT }}</td>
+                                <td class="text-center">{{ game.dateTime|time }} EST</td>
+                                <td class="text-center">{% if game.endDateTime != None %}{{ game.endDateTime|time }} EST{% endif %}</td>
                                 <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
                               </tr>
                             {% endfor %}

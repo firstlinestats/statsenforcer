@@ -174,41 +174,63 @@ rect {
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="table-responsive">
-                                        <table id="teamstats" class="table full-width">
+                                        <table id="teamstats" class="table full-width table-condensed table-hover table-striped table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th title="Season">Season</th>
-                                                    <th title="Games">Games</th>
-                                                    <th title="On-Ice Goals For Percentage">GF%</th>
-                                                    <th title="On-Ice Shots-On-Goal For Percentage">SF%</th>
-                                                    <th title="Missed Shots For Percentage">MSF%</th>
-                                                    <th title="Blocked Shots Percentage">BSF%</th>
-                                                    <th title="Corsi For Percentage">CF%</th>
-                                                    <th title="On-Ice Scoring Chances For Percentage">SCF%</th>
-                                                    <th title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
-                                                    <th title="Offensive Zone Starts Percentage">ZSO%</th>
-                                                    <th title="Faceoffs Won Percentage">FO_W%</th>
-                                                    <th title="Hit Percentage">Hit%</th>
-                                                    <th title="Time On Ice">TOI/Gm</th>
+                                                    <th class="text-center" title="Season">Season</th>
+                                                    <th class="text-center" title="Games">Games</th>
+                                                    <th class="text-center" title="On-Ice Goals For Percentage">GF%</th>
+                                                    <th class="text-center" title="On-Ice Shots-On-Goal For Percentage">SF%</th>
+                                                    <th class="text-center" title="Missed Shots For Percentage">MSF%</th>
+                                                    <th class="text-center" title="Blocked Shots Percentage">BSF%</th>
+                                                    <th class="text-center" title="PDO">PDO</th>
+                                                    <th class="text-center" title="Corsi For Percentage">CF%</th>
+                                                    <th class="text-center" title="Corsi For per 60">CF60</th>
+                                                    <th class="text-center" title="Corsi Against per 60">CA60</th>
+                                                    <th class="text-center" title="Corsi Shooting Percentage">CSh%</th>
+                                                    <th class="text-center" title="Corsi Save Percentage">CSv%</th>
+                                                    <th class="text-center" title="Fenwick For Percentage">FF%</th>
+                                                    <th class="text-center" title="Fenwick For per 60">FF60</th>
+                                                    <th class="text-center" title="Fenwick Against per 60">FA60</th>
+                                                    <th class="text-center" title="Fenwick Shooting Percentage">FSh%</th>
+                                                    <th class="text-center" title="Fenwick Save Percentage">FSv%</th>
+                                                    <th class="text-center" title="On-Ice Scoring Chances For Percentage">SCF%</th>
+                                                    <th class="text-center" title="On-Ice High-Danger Scoring Chances For Percentage">HSCF%</th>
+                                                    <th class="text-center" title="Offensive Zone Starts Percentage">ZSO%</th>
+                                                    <th class="text-center" title="Penalties Percentage">PN%</th>
+                                                    <th class="text-center" title="Faceoffs Won Percentage">FO_W%</th>
+                                                    <th class="text-center" title="Hit Percentage">Hit%</th>
+                                                    <th class="text-center" title="Time On Ice">TOI/Gm</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for teamid, seasons in stats.items %}
                                                     {% for season, team in seasons.items %}
                                                     <tr>
-                                                        <td title="Season">{{ season }}</td>
-                                                        <td title="Games">{{ team.games }}</td>
-                                                        <td title="On-Ice Goals For Percentage">{{ team.gf }}</td>
-                                                        <td title="On-Ice Shots-On-Goal For Percentage">{{ team.sf }}</td>
-                                                        <td title="Missed Shots For Percentage">{{ team.msf }}</td>
-                                                        <td title="Blocked Shots Percentage">{{ team.bsf }}</td>
-                                                        <td title="Corsi For Percentage">{{ team.cf }}</td>
-                                                        <td title="On-Ice Scoring Chances For Percentage">{{ team.sc }}</td>
-                                                        <td title="On-Ice High-Danger Scoring Chances For Percentage">{{ team.hsc }}</td>
-                                                        <td title="Offensive Zone Starts Percentage">{{ team.zso }}</td>
-                                                        <td title="Faceoffs Won Percentage">{{ team.fo_w }}</td>
-                                                        <td title="Hit Percentage">{{ team.hit }}</td>
-                                                        <td title="Time On Ice">{{ team.toi }}</td>
+                                                        <td class="text-center" title="Season">{{ season }}</td>
+                                                        <td class="text-center" title="Games">{{ team.games }}</td>
+                                                        <td class="text-center" title="GF: {{ team.goalsFor }} GA: {{ team.goalsAgainst }}">{{ team.gf }}</td>
+                                                        <td class="text-center" title="SF: {{ team.shotsFor }} SA: {{ team.shotsAgainst }}">{{ team.sf }}</td>
+                                                        <td class="text-center" title="MSF: {{ team.missedShotsFor }} MSA: {{ team.missedShotsAgainst }}">{{ team.msf }}</td>
+                                                        <td class="text-center" title="BSF: {{ team.blockedShotsFor }} BSA: {{ team.blockedShotsAgainst }}">{{ team.bsf }}</td>
+                                                        <td class="text-center" title="Sv%: {{ team.save_percent }} + Sh%: {{ team.shot_percent }}">{{ team.pdo }}</td>
+                                                        <td class="text-center" title="CF: {{ team.corsiFor }} CA: {{ team.corsiAgainst }}">{{ team.cf }}</td>
+                                                        <td class="text-center" title="CF: {{ team.corsiFor }} toi: {{ team.toiSeconds }}">{{ team.cf60 }}</td>
+                                                        <td class="text-center" title="CA: {{ team.corsiAgainst }} toi: {{ team.toiSeconds }}">{{ team.ca60 }}</td>
+                                                        <td class="text-center" title="">{{ team.csh }}</td>
+                                                        <td class="text-center" title="">{{ team.csa }}</td>
+                                                        <td class="text-center" title="FF: {{ team.fenwickFor }} FA: {{ team.fenwickAgainst }}">{{ team.ff }}</td>
+                                                        <td class="text-center" title="FF: {{ team.fenwickFor }} toi: {{ team.toiSeconds }}">{{ team.ff60 }}</td>
+                                                        <td class="text-center" title="FA: {{ team.fenwickAgainst }} toi: {{ team.toiSeconds }}">{{ team.fa60 }}</td>
+                                                        <td class="text-center" title="">{{ team.fsh }}</td>
+                                                        <td class="text-center" title="">{{ team.fsa }}</td>
+                                                        <td class="text-center" title="SCF: {{ team.scoringChancesFor }} SCA: {{ team.scoringChancesAgainst }}">{{ team.sc }}</td>
+                                                        <td class="text-center" title="HSCF: {{ team.highDangerScoringChancesFor }} HSCA: {{ team.highDangerScoringChancesAgainst }}">{{ team.hsc }}</td>
+                                                        <td class="text-center" title="ZSO: {{ team.offensiveZoneStartsFor }} ZSA: {{ team.offensiveZoneStartsAgainst }}">{{ team.zso }}</td>
+                                                        <td class="text-center" title="PenFor: {{ team.penaltyFor }} PenAgainst: {{ team.penaltyAgainst }}">{{ team.pn }}</td>
+                                                        <td class="text-center" title="FOW: {{ team.faceoffWins }} FOL: {{ team.faceoffLosses }}">{{ team.fo_w }}</td>
+                                                        <td class="text-center" title="HitFor: {{ team.hitFor }} HitAgainst: {{ team.hitAgainst }}">{{ team.hit }}</td>
+                                                        <td class="text-center" title="Seconds: {{ team.toiSeconds }}">{{ team.toi }}</td>
                                                     </tr>
                                                     {% endfor %}
                                                 {% endfor %}
@@ -321,7 +343,7 @@ rect {
                                         {% for player in players %}
                                             {% if player.rosterStatus == 'Y' %}
                                               <tr>
-                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td><a href="/players/skaters/{{ player.id }}">{{ player.fullName }}</a></td>
                                                 <td>{{ player.primaryNumber }}</td>
                                                 <td>{{ player.primaryPositionCode|player_position }}</td>
                                                 <td>{{ player.age }}</td>
@@ -352,7 +374,7 @@ rect {
                                         {% for player in players %}
                                             {% if player.rosterStatus == 'I' %}
                                               <tr>
-                                                <td><a href="/players/{{ player.id }}">{{ player.fullName }}</a></td>
+                                                <td><a href="/players/skaters/{{ player.id }}">{{ player.fullName }}</a></td>
                                                 <td>{{ player.primaryNumber }}</td>
                                                 <td>{{ player.primaryPositionCode|player_position }}</td>
                                                 <td>{{ player.age }}</td>
@@ -417,7 +439,7 @@ rect {
                 className: 'btn-sm btn-primary',
             }]
         });
-        
+
         var teamData = [];
         for (team in data) {
             for (season in data[team]) {
@@ -426,7 +448,7 @@ rect {
                 data[team][season].team = data[team][season].abbreviation;
                 data[team][season].fullName = season;//using season here for display
                 data[team][season].toi = Math.floor(data[team][season].toiSeconds / 60);
-                teamData.push(data[team][season]); 
+                teamData.push(data[team][season]);
             };
         };
 

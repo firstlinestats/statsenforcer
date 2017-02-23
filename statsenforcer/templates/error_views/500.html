@@ -1,0 +1,19 @@
+{% extends "wrappers/wrapper.html" %}
+{% block title %}500 | WAR On Ice{% endblock %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content text-center">
+                    <h1>Our bad, we're looking into it</h1>
+                    <img src="{% static "/gifs/ourbad.gif" %}" />
+                    <h4>If you think we actually haven't found out about this yet, <i class="fa fa-twitter"></i><a target="_blank" href="http://twitter.com/war_on_ice">tweet at us here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

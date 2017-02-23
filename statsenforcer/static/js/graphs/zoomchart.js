@@ -1,6 +1,6 @@
 
 
-function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rText) {
+function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rText, tText, dataId) {
     $(divId).html("");
     var margin = { top: 50, right: 20, bottom: 30, left: 30 },
         outerWidth = $(containerId).width(),
@@ -148,37 +148,14 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .on("mouseover", tip.show)
         .on("mouseout", tip.hide);
 
-    svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 4))
-        .attr("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("fill", "black")
-        .text("Player Comparisons, sized by " + rText)
-
-    svg.append("text")
-        .attr("x", margin.left)
-        .attr("y", height - margin.bottom)
-        .attr("text-anchor", "left")
-        .style("font-size", "12px")
-        .style("fill", "black")
-        .text("firstlinestats.com")
-
-    d3.selectAll('g.tick text')
-      .style('fill', "black");
-    d3.selectAll('g.tick')
-        .style('fill', "black");
-
-    var texts = svg.selectAll("text")
+    objects.selectAll("text")
         .data(data)
-        .enter();
-
-    texts.append("text")
+      .enter().append("text")
         .html(function(d) {
             return d["fullName"];
         })
         .attr("id", function(d) {
-            return "name-" + d["player_id"];
+            return "name-" + d[dataId];
         })
         .attr("class", "text")
         .attr("transform", transformText)
@@ -189,6 +166,30 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .style("visibility", "hidden")
         .attr("active", false)
         .style("text-anchor", "middle");
+
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 4))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("fill", "black")
+        .text(tText + " Comparisons, sized by " + rText)
+
+    svg.append("text")
+        .attr("x", margin.left)
+        .attr("y", height - margin.bottom)
+        .attr("text-anchor", "left")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-weight", "bold")
+        .text("waronice.com")
+
+    d3.selectAll('g.tick text')
+      .style('fill', "black");
+    d3.selectAll('g.tick')
+        .style('fill', "black");
 
     function zoom() {
         svg.select(".x.axis").call(xAxis);
@@ -209,11 +210,11 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
     }
 
     function transformText(d) {
-        return "translate(" + x(d[xCat]) + "," + (y(d[yCat]) - 6 * Math.sqrt(d[rCat] / Math.PI) - 5) + ")";        
+        return "translate(" + x(d[xCat]) + "," + (y(d[yCat]) - 6 * Math.sqrt(d[rCat] / Math.PI) - 5) + ")";
     }
 
     function circleClicked(d) {
-        var name = svg.select("#name-" + d["player_id"]);
+        var name = svg.select("#name-" + d[dataId]);
         var active = name.attr("active");
         if (active === "false") {
             name.style("visibility", "visible");

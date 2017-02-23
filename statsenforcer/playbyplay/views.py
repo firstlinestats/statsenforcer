@@ -37,7 +37,7 @@ def game(request, game_pk):
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
     context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
-    if game_pk > 2015000000:
+    if game_pk > 2016000000:
         try:
             context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
             context["period"].pop("_state", None)
@@ -75,7 +75,7 @@ def game(request, game_pk):
         for m in media:
             mdata = m
             mdata["url"] = "https://www.nhl.com/video/c-{}".format(m["external_id"])
-            mdata["preview"] = "http://static.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
+            mdata["preview"] = "http://staticwoi.firstlinestats.com.s3.amazonaws.com/preview/{}/{}/{}.jpeg".format(year, game, m["external_id"])
             context["playmedia"][m["play"]] = mdata
 
         playerteams = models.PlayerGameStats.objects.values("team__abbreviation", "team_id", "player_id", "player__fullName", "player__primaryPositionCode").filter(game_id=game_pk)
@@ -147,6 +147,7 @@ def game(request, game_pk):
         for ts in context["teamstats"]:
             team = get_object_or_404(tmodels.Team, id=ts)
             context["teamstats"][ts]["team"] = team.abbreviation
+            context["teamstats"][ts]["shortName"] = team.shortName
             if ts == context["game"]["homeTeam_id"]:
                 context["game"]["homeTeam_name"] = team.name
                 context["game"]["homeTeam_abbreviation"] = team.abbreviation
@@ -293,7 +294,7 @@ def game(request, game_pk):
                     pend = penalties["starts"][penalty] + penalties["lengths"][penalty]
                     if pend < periodSeconds:
                         eventChart[penalties["eChart"]].append((penalties["starts"][penalty], penalties["lengths"][penalty]))
-                        deletes.insert(0, pindex)
+                        deletes.insert(0, penalty)
                 for delete in deletes:
                     del penalties["starts"][delete]
                     del penalties["lengths"][delete]
@@ -355,9 +356,9 @@ def games(request):
                 form = forms.GamesForm()
 
     games = Game.objects.values("gamePk", "dateTime", "homeTeam__abbreviation", "gameType",
-        "homeTeam__teamName", "awayTeam__abbreviation", "awayTeam__teamName", "homeScore",
+        "homeTeam__shortName", "awayTeam__abbreviation", "awayTeam__shortName", "homeScore",
         "awayScore", "homeShots", "awayShots", "awayBlocked", "homeMissed", "homeBlocked",
-        "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7]).order_by('-gamePk')
+        "awayMissed", "gameState", "endDateTime").filter(gameState__in=[5, 6, 7], gameType__in=["R", "P"]).order_by('-gamePk')
     if cd['startDate'] is not None:
         games = games.filter(dateTime__date__gte=cd['startDate'])
     if cd['endDate'] is not None:

@@ -90,6 +90,7 @@ def checkGoalies(players, gamePk, team, period):
             try:
                 goalie.player = pmodels.Player.objects.get(id=player.replace("ID", ""))
             except:
+                print "API CALL"
                 gplayer = ingest_player(json.loads(api_calls.get_player(player.replace("ID", "")))["people"][0])
                 goalie.player = gplayer
             goalie.game_id = gamePk
@@ -141,68 +142,79 @@ def checkGoalies(players, gamePk, team, period):
 
 
 def ingest_player(jinfo, team=None, player=None):
-    try:
-        if player is None:
-            player = pmodels.Player()
-        if "id" in jinfo:
-            player.id = jinfo["id"]
-        else:
-            raise Exception
-        if "fullName" in jinfo:
-            player.fullName = jinfo["fullName"]
-        if "link" in jinfo:
-            player.link = jinfo["link"]
-        if "firstName" in jinfo:
-            player.firstName = jinfo["firstName"]
-        if "lastName" in jinfo:
-            player.lastName = jinfo["lastName"]
-        if "primaryNumber" in jinfo:
-            player.primaryNumber = jinfo["primaryNumber"]
-        if "primaryPosition" in jinfo and "code" in jinfo["primaryPosition"]:
-            player.primaryPositionCode = jinfo["primaryPosition"]["code"]
-        if "birthDate" in jinfo:
-            player.birthDate = jinfo["birthDate"]
-        if "birthCity" in jinfo:
-            player.birthCity = jinfo["birthCity"]
-        if "birthCountry" in jinfo:
-            player.birthCountry = jinfo["birthCountry"]
-        if "height" in jinfo:
-            player.height = jinfo["height"]
-        if "weight" in jinfo:
-            player.weight = jinfo["weight"]
-        if "active" in jinfo:
-            player.active = jinfo["active"]
-        if "rookie" in jinfo:
-            player.rookie = jinfo["rookie"]
-        if "shootsCatches" in jinfo:
-            player.shootsCatches = jinfo["shootsCatches"]
-        if team is not None:
-            player.currentTeam_id = team
-        else:
-            try:
-                player.currentTeam = tmodels.Team.objects.get(id=jinfo["currentTeam"]["id"])
-            except:
-                pass
-        player.rosterStatus = jinfo["rosterStatus"]
-        player.save()
-        return player
-    except Exception as e:
-        print e
-        print jinfo
+    notcomplete = True
+    while notcomplete:
+        tplayer = player
+        try:
+            if player is None:
+                player = pmodels.Player()
+            if "id" in jinfo:
+                player.id = jinfo["id"]
+            else:
+                raise Exception
+            if "fullName" in jinfo:
+                player.fullName = jinfo["fullName"]
+            if "link" in jinfo:
+                player.link = jinfo["link"]
+            if "firstName" in jinfo:
+                player.firstName = jinfo["firstName"]
+            if "lastName" in jinfo:
+                player.lastName = jinfo["lastName"]
+            if "primaryNumber" in jinfo:
+                player.primaryNumber = jinfo["primaryNumber"]
+            if "primaryPosition" in jinfo and "code" in jinfo["primaryPosition"]:
+                player.primaryPositionCode = jinfo["primaryPosition"]["code"]
+            if "birthDate" in jinfo:
+                player.birthDate = jinfo["birthDate"]
+            if "birthCity" in jinfo:
+                player.birthCity = jinfo["birthCity"]
+            if "birthCountry" in jinfo:
+                player.birthCountry = jinfo["birthCountry"]
+            if "height" in jinfo:
+                player.height = jinfo["height"]
+            if "weight" in jinfo:
+                player.weight = jinfo["weight"]
+            if "active" in jinfo:
+                player.active = jinfo["active"]
+            if "rookie" in jinfo:
+                player.rookie = jinfo["rookie"]
+            if "shootsCatches" in jinfo:
+                player.shootsCatches = jinfo["shootsCatches"]
+            if team is not None:
+                player.currentTeam_id = team
+            else:
+                try:
+                    player.currentTeam = tmodels.Team.objects.get(id=jinfo["currentTeam"]["id"])
+                except:
+                    pass
+            player.rosterStatus = jinfo["rosterStatus"]
+            player.save()
+            return player
+            notcomplete = True
+        except Exception as e:
+            print e
+            if tplayer is not None:
+                return tplayer
+    return player
 
 
-def set_player_stats(pd, team, game, players, period):
+def set_player_stats(pd, team, game, players, period, new_game=False):
     pgss = []
     for sid in pd: # I swear that's not a Crosby reference
         iid = int(sid.replace("ID", ""))
         if "skaterStats" in pd[sid]["stats"]:
             jp = pd[sid]["stats"]["skaterStats"]
             if iid not in players:
+                print "API CALL"
                 player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0])
                 players[player.id] = player
             else:
                 temp = pmodels.Player.objects.get(id=iid)
-                player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0], player=temp)
+                if new_game:
+                    print "API CALL"
+                    player = ingest_player(json.loads(api_calls.get_player(sid.replace("ID", "")))["people"][0], player=temp)
+                else:
+                    player = temp
                 players[player.id] = player
             pgs = pbpmodels.PlayerGameStats()
             pgs.player = player
@@ -345,6 +357,10 @@ def update_game(game, players):
     game.dateTime = gd["datetime"]["dateTime"]
     if "endDateTime" in gd["datetime"]:
         game.endDateTime = gd["datetime"]["endDateTime"]
+    if game.gameState == 1 and gd["status"]["codedGameState"] != 1:
+        new_game = True
+    else:
+        new_game = False
     game.gameState = gd["status"]["codedGameState"]
     # Get linescore information
     game.homeScore = lineScore["teams"]["home"]["goals"]
@@ -487,6 +503,7 @@ def update_game(game, players):
             except:
                 try:
                     if pp["player"]["id"] not in missing_players:
+                        print "API CALL"
                         playerdata = json.loads(api_calls.get_player(pp["player"]["id"]))
                         if len(playerdata.keys()) > 0:
                             playerfound = ingest_player(playerdata)
@@ -525,8 +542,8 @@ def update_game(game, players):
     goaliestats = []
     goaliestats.extend(checkGoalies(homegoalies, game.gamePk, hometeam, cperiod))
     goaliestats.extend(checkGoalies(awaygoalies, game.gamePk, awayteam, cperiod))
-    allpgss.extend(set_player_stats(hp, game.homeTeam, game, players, cperiod))
-    allpgss.extend(set_player_stats(ap, game.awayTeam, game, players, cperiod))
+    allpgss.extend(set_player_stats(hp, game.homeTeam, game, players, cperiod, new_game))
+    allpgss.extend(set_player_stats(ap, game.awayTeam, game, players, cperiod, new_game))
     pbpmodels.PlayerGameStats.objects.bulk_create(allpgss)
 
     # Find any existing POI data and delete
@@ -660,6 +677,7 @@ def main():
         # Loop through current_games
         for game in current_games:
             try:
+                print game.gamePk
                 # Call function that will handle most of the work, return True if the game has finished
                 finished = update_game(game, players)
                 try:
@@ -675,6 +693,7 @@ def main():
                     with transaction.atomic():
                         compile_info(game.gamePk)
                         findStandings(game.season)
+                print "finished looking at {}".format(game.gamePk)
             except Exception as e:
                 sendemail.send_error_email("Exception: {}, Game: {}, ".format(e, game.gamePk))
                 emailssent += 1
@@ -788,7 +807,7 @@ def check_rosters():
 
 
 def reset_games():
-    game_list = [2015020926, 2015021045, 2015021058, 2015021198, 2015021214]
+    game_list = [2015020994, 2015021001, 2015021018, 2015021021]
     players = get_players()
     for game in game_list:
         print "Fixing {}...".format(game)
@@ -796,7 +815,6 @@ def reset_games():
 
 
 if __name__ == "__main__":
-    #reset_game(2015021214)
     #reset_games()
     try:
         main()

@@ -96,31 +96,32 @@ function create_corsi_events(alldata, divid, teamname, situations) {
       .attr("height", height + margin.top + margin.bottom)
       .attr("transform", "translate(-" + margin.left + ",-" + margin.top + ")")
       .attr("fill", "white");
-  // x-axis
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("Corsi For Plus Corsi Against");
-  // y-axis
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Corsi For Minus Corsi Against");
 
    svg.selectAll(".axis path")
       .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})
+
+    // Draw Lines
+    svg.append("line")          // attach a line
+        .style("stroke", "red")  // colour the line
+        .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
+        .attr("y1", yScale(0))      // y position of the first end of the line
+        .attr("x2", xScale(d3.max(data, xValue)+1))     // x position of the second end of the line
+        .attr("y2", yScale(0));    // y position of the second end of the line
+    var guideLines = [0.5, 1, 2, 4];
+    for (var i = 0; i<guideLines.length; i++) {
+        svg.append("line")          // attach a line
+            .style("stroke", "grey")  // colour the line
+            .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
+            .attr("y1", yScale(0))      // y position of the first end of the line
+            .attr("x2", xScale(guideLines[i] * d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })))     // x position of the second end of the line
+            .attr("y2", yScale(-d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })));    // y position of the second end of the line
+        svg.append("line")          // attach a line
+            .style("stroke", "grey")  // colour the line
+            .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
+            .attr("y1", yScale(0))      // y position of the first end of the line
+            .attr("x2", xScale(guideLines[i] * d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })))     // x position of the second end of the line
+            .attr("y2", yScale(d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })));    // y position of the second end of the line
+    }
 
   svg.append("g")
     .append("text")
@@ -140,28 +141,70 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .attr("x", margin.left + 50)
         .attr("y", height - margin.bottom)
         .attr("text-anchor", "middle")
-        .style("font-size", "20px")
-        .style("fill", "grey")
-        .text("firstlinestats.com")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-weight", "bold")
+        .text("waronice.com")
     svg.append("text")
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 4))
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("text-transform", "uppercase")
+        .style("font-weight", "bold")
         .text(teamname + " On-Ice Shot Attempts For/Against");
 
-  // draw dots
-  svg.selectAll(".dot")
-      .data(data)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 5)
-      .attr("cx", xMap)
-      .attr("cy", yMap)
-      .style("fill", function(d) { return get_color(teamname, true); })
-      .style("stroke", function(d) { return get_color(teamname, false); })
-      .on("click", mouseover)
+    // x-axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-size", "10px")
+        .style("font-weight", "bold")
+        .text("Corsi For Plus Corsi Against");
+    // y-axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .style("font-size", "10px")
+        .style("fill", "black")
+        .style("border-radius", "10px")
+        .style("text-transform", "uppercase")
+        .style("font-size", "10px")
+        .style("font-weight", "bold")
+        .text("Corsi For Minus Corsi Against");
+
+    // draw dots
+    svg.selectAll(".dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 5)
+        .attr("cx", xMap)
+        .attr("cy", yMap)
+        .style("fill", function(d) { return get_color(teamname, true); })
+        .style("stroke", function(d) { return get_color(teamname, false); })
+        .on("click", mouseover);
 
     function mouseover(p) {
         var nameid = p.name
@@ -205,27 +248,5 @@ function create_corsi_events(alldata, divid, teamname, situations) {
     function mouseout() {
         d3.selectAll("text").classed("active", false);
         tooltip.style("visibility", "hidden");
-    }
-    // Draw Lines
-    svg.append("line")          // attach a line
-        .style("stroke", "red")  // colour the line
-        .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
-        .attr("y1", yScale(0))      // y position of the first end of the line
-        .attr("x2", xScale(d3.max(data, xValue)+1))     // x position of the second end of the line
-        .attr("y2", yScale(0));    // y position of the second end of the line
-    var guideLines = [0.5, 1, 2, 4];
-    for (var i = 0; i<guideLines.length; i++) {
-        svg.append("line")          // attach a line
-            .style("stroke", "grey")  // colour the line
-            .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
-            .attr("y1", yScale(0))      // y position of the first end of the line
-            .attr("x2", xScale(guideLines[i] * d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })))     // x position of the second end of the line
-            .attr("y2", yScale(-d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })));    // y position of the second end of the line
-        svg.append("line")          // attach a line
-            .style("stroke", "grey")  // colour the line
-            .attr("x1", xScale(d3.min([0, d3.min(data, xValue)-1])))     // x position of the first end of the line
-            .attr("y1", yScale(0))      // y position of the first end of the line
-            .attr("x2", xScale(guideLines[i] * d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })))     // x position of the second end of the line
-            .attr("y2", yScale(d3.max(data, function(d) { return Math.abs(d.cf - d.ca) + 1; })));    // y position of the second end of the line
     }
 }

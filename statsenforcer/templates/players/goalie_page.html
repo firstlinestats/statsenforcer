@@ -1,0 +1,267 @@
+{% extends "wrappers/wrapper.html" %}
+{% load website_extras %}
+{% load pbp_extras %}
+{% load staticfiles %}
+{% block title %}{{ player.fullName }}{% endblock %}
+{% block page_css %}
+<link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+<link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
+<link href="{% static "css/fixedColumns.bootstrap.min.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                 <div class="col-md-12">
+                                    <h2>{{ player.fullName }}</h2>
+                                    <h4>{{ player.primaryPositionCode|player_position }}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5>Age: {{ player.age }} Height: {{ player.height }} Weight: {{ player.weight }}</h5>
+                                </div>
+                                <div class="col-md-4">
+                                     <h5></h5>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="card">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well bs-component">
+                    <h4 class="filter-options" data-toggle="collapse" data-target="#gameFilter">
+                    Filter Options
+                    <img class="filter-collapsed" height="20" width="20" style="float: right"src="{% with 'img/arrow.svg' as image_static %}{% static image_static %} {% endwith %}">
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="gameFilter" class="collapse" action="" method="GET">
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.teamstrengths.label }}
+                                            {{ form.teamstrengths }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.scoresituation.label }}
+                                            {{ form.scoresituation }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            {{ form.period.label }}
+                                            {{ form.period }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" type="submit">Submit<div class="ripple-container"></div></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-nav-tabs">
+        <div class="header header-primary">
+            <div class="nav-tabs-navigation">
+                <div class="nav-tabs-wrapper">
+                    <ul class="nav nav-tabs" data-tabs="tabs">
+                        <li class="active">
+                            <a href="#statview" data-toggle="tab" aria-expanded="false">
+                                Stats By Season
+                            <div class="ripple-container"></div></a>
+                        </li>
+                        <li class="">
+                            <a href="#graphview" data-toggle="tab" aria-expanded="false">
+                                Graph View
+                            <div class="ripple-container"></div></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="teamTabContent" class="content">
+            <div class="content">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="statview">
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <h3>Player Stats</h3>
+                                <p>{{ form|format_form_state }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table id="teamstats" class="table full-width table-condensed table-hover table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Season</th>
+                                                <th class="text-center">Games</th>
+                                                <th class="text-center">Goals Allowed</th>
+                                                <th class="text-center">Saves</th>
+                                                <th class="text-center" title="Save Percentage">Sv%</th>
+                                                <th class="text-center" title="Adjusted Save Percentage">AdjSv%</th>
+                                                <th class="text-center" title="Low-Danger Goals">GL</th>
+                                                <th class="text-center" title="Low-Danger Saves">SL</th>
+                                                <th class="text-center" title="Low-Danger Save Percentage">LSv%</th>
+                                                <th class="text-center" title="Medium-Danger Goals">GM</th>
+                                                <th class="text-center" title="Medium-Danger Saves">SM</th>
+                                                <th class="text-center" title="Medium-Danger Save Percentage">MSv%</th>
+                                                <th class="text-center" title="High-Danger Goals">GH</th>
+                                                <th class="text-center" title="High-Danger Saves">SH</th>
+                                                <th class="text-center" title="High-Danger Save Percentage">HSv%</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for playerid, seasons in stats.items %}
+                                                {% for season, player in seasons.items %}
+                                            <tr>
+                                                <td class="text-center">{{ player.season }}</td>
+                                                <td class="text-center">{{ player.games }}</td>
+                                                <td class="text-center">{{ player.goals }}</td>
+                                                <td class="text-center">{{ player.saves }}</td>
+                                                <td class="text-center">{{ player.save_percent }}</td>
+                                                <td class="text-center">{{ player.adj_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsLow }}</td>
+                                                <td class="text-center">{{ player.savesLow }}</td>
+                                                <td class="text-center">{{ player.low_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsMedium }}</td>
+                                                <td class="text-center">{{ player.savesMedium }}</td>
+                                                <td class="text-center">{{ player.medium_save_percent }}</td>
+                                                <td class="text-center">{{ player.goalsHigh }}</td>
+                                                <td class="text-center">{{ player.savesHigh }}</td>
+                                                <td class="text-center">{{ player.high_save_percent }}</td>
+                                            </tr>
+                                                {% endfor %}
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane text-center" id="graphview">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Graph View</h3>
+                                <p>{{ form|format_form_state }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                X-Axis
+                                                <select class="form-control input-md" id="xaxis">
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                Y-Axis
+                                                <select class="form-control input-md" id="yaxis">
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                Radius
+                                                <select class="form-control input-md" id="raxis">
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
+                                            <div class="form-group">
+                                                <button id="refreshGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-xs btn-primary" id="playerComparisonButton"><i class="fa fa-floppy-o"></i> Save</button>
+                                <div id="playerComparison"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="canvasArea">
+    <canvas style="display:none;" id="canvas" width="1000px" height="700px"></canvas>
+</div>
+{% endblock %}
+{% block page_js %}
+<script src="{% static "js/datatables.min.js" %}"></script>
+<script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/d3.tip.js" %}"></script>
+<script src="{% static "js/teamColors.js" %}"></script>
+<script src="{% static "js/graphs/zoomchart.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
+<script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
+<script src="{% static "js/graphs/savePNG.js" %}"></script>
+<script>
+    $(document).ready(function() {
+
+        $('#teamstats').DataTable({
+            "bPaginate": true,
+            "order": [
+                [0, "desc"]
+            ],
+            "pageLength": 50,
+            scrollX: true,
+            "fixedColumns": {
+                leftColumns: 1,
+            },
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>" +
+                "<'col-sm-12'B>",
+            buttons: [{
+                extend: 'copy',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'csv',
+                className: 'btn-sm btn-primary',
+            }, {
+                extend: 'excel',
+                className: 'btn-sm btn-primary',
+            }]
+        });
+
+    });
+</script>
+{% endblock %}

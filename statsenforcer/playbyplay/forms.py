@@ -38,9 +38,9 @@ class GamesForm(forms.Form):
         queryset=tmodels.Venue.objects.order_by('name').all())
     gameTypes = forms.MultipleChoiceField(
         required=False,
-        choices=constants.gameTypes,
+        choices=[x for x in constants.gameTypes if x[0] not in ["PR", "A"]],
         widget=forms.CheckboxSelectMultiple,
-        initial=[x[0] for x in constants.gameTypes])
+        initial=[x[0] for x in constants.gameTypes if x[0] != "PR" and x[0] != "A"])
 
 
 class GameFilterForm(forms.Form):
@@ -72,6 +72,6 @@ class GameFilterForm(forms.Form):
         widget=forms.SelectMultiple(attrs={'class': 'form-control input-md'}))
     gameTypes = forms.MultipleChoiceField(
         required=False,
-        choices=[x for x in constants.gameTypes if x[0] != "PR"],
+        choices=[x for x in constants.gameTypes if x[0] not in ["PR", "A"]],
         widget=forms.Select(attrs={'class': 'form-control input-md'}),
         initial=[x[0] for x in constants.gameTypes if x[0] != "PR" and x[0] != "A"])

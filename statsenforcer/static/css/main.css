@@ -32,10 +32,15 @@ a {
     margin: 0 auto;
 }
 
-.fls-logo {
+.woi-logo {
     height: 60px;
     margin-top: -15px;
 }
+
+.navbar .navbar-brand {
+    /*font-weight:bold;*/
+}
+
 .navbar-brand>img {
     display: -webkit-inline-box;
 }

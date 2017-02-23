@@ -31,6 +31,24 @@ class Player(models.Model):
         return self.fullName
 
 
+class GoalieGameFilterStats(models.Model):
+    player = models.ForeignKey(Player)
+    game = models.ForeignKey('playbyplay.Game')
+    team = models.ForeignKey('team.Team')
+    period = models.CharField(max_length=4, choices=fconstants.PERIOD_CHOICES, db_index=True)
+    teamstrength = models.CharField(max_length=6, choices=fconstants.TEAMSTRENGTHS_CHOICES, db_index=True)
+    scoresituation = models.CharField(max_length=6, choices=fconstants.SCORESITUATION_CHOICES, db_index=True)
+    toi = models.IntegerField(blank=True, null=True)
+    savesUnknown = models.IntegerField(blank=True, null=True)
+    goalsUnknown = models.IntegerField(blank=True, null=True)
+    savesLow = models.IntegerField(blank=True, null=True)
+    goalsLow = models.IntegerField(blank=True, null=True)
+    savesMedium = models.IntegerField(blank=True, null=True)
+    goalsMedium = models.IntegerField(blank=True, null=True)
+    savesHigh = models.IntegerField(blank=True, null=True)
+    goalsHigh = models.IntegerField(blank=True, null=True)
+
+
 class PlayerGameFilterStats(models.Model):
     player = models.ForeignKey(Player)
     game = models.ForeignKey('playbyplay.Game')
