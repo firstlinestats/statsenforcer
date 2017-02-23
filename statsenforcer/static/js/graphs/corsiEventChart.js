@@ -213,7 +213,6 @@ function create_corsi_events(alldata, divid, teamname, situations) {
     }
 
     function mouseover(p) {
-        console.log(d);
         var nameid = p.name;
         var names = nameid.split(", ");
         for (i=0; i<nameid.length; i++) {

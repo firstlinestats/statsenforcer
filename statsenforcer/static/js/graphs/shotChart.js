@@ -47,23 +47,18 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
         .attr("width", width - margin.left)
         .attr("height", height - margin.top);
 
-    // Add team names
-    svg.append("text")
+    // Add team logos
+    svg.append("svg:image")
+        .attr("xlink:href", "/static/img/team/" + homeabbr + ".png")
         .attr("width", (width / 3) - margin.left)
         .attr("height", (height / 3) - margin.top)
-        .attr("opacity", 0.5)
-        .attr("transform", "translate(" + (width - margin.left - width * 0.25) + "," + (height / 1.8) + ")")
-        .attr("text-anchor", "middle")
-        .style("font-size", "55px")
-        .text(homeabbr);
-    svg.append("text")
+        .attr("transform", "translate(" + (width - margin.left - width / 2.75) + "," + ((height - margin.top) / 3) + ")");
+    svg.append("svg:image")
+        .attr("xlink:href", "/static/img/team/" + awayabbr + ".png")
         .attr("width", (width / 3) - margin.left)
         .attr("height", (height / 3) - margin.top)
-        .attr("opacity", 0.5)
-        .attr("transform", "translate(" + (width - margin.left - width * 0.75) + "," + (height / 1.8) + ")")
-        .attr("text-anchor", "middle")
-        .style("font-size", "50px")
-        .text(awayabbr);
+        .attr("opacity", 0.6)
+        .attr("transform", "translate(" + (width / 20) + "," + ((height - margin.top) / 3) + ")");
 
     var dangerZoneHome = [{x: 89, y: -9},
         {x: 69, y: -22}, {x: 54, y: -22},
