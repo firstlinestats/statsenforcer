@@ -169,7 +169,7 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .attr("x", width)
         .attr("y", -6)
         .style("text-anchor", "end")
-        .style("font-size", "10px")
+        .style("font-size", "5px")
         .style("fill", "black")
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
@@ -186,13 +186,15 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .style("font-size", "10px")
+        .style("font-size", "5px")
         .style("fill", "black")
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
         .style("font-size", "10px")
         .style("font-weight", "bold")
         .text("Corsi For Minus Corsi Against");
+
+    svg.selectAll(".tick text").style("font-size", "8px").style("font-weight", "bold");
 
     // draw dots
     svg.selectAll(".dot")
@@ -206,20 +208,33 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .style("stroke", function(d) { return get_color(teamname, false); })
         .on("click", mouseover);
 
+    for (d in data) {
+      mouseover(data[d]);
+    }
+
     function mouseover(p) {
-        var nameid = p.name
+        console.log(d);
+        var nameid = p.name;
+        var names = nameid.split(", ");
         for (i=0; i<nameid.length; i++) {
           nameid = nameid.replace(" ", "-").replace(",", "")
         }
-        var existing = d3.select("#" + nameid + "-" + p.cf + "-" + p.ca + "-name");
+        var existing = d3.select("#name-0-" + p.cf + "-" + p.ca);
         if (existing[0][0] == null) {
-          svg.append("text")
-            .attr("id", nameid + "-" + p.cf + "-" + p.ca + "-name")
-            .attr("x", xMap(p))
-            .attr("y", yMap(p) - 5)
-            .attr("text-anchor", "middle")
-            .attr("font-size", "10px")
-            .text(p.name);
+          for (name in names) {
+            svg.append("text")
+              .attr("id", "name-" + name + "-" + p.cf + "-" + p.ca)
+              .attr("x", xMap(p))
+              .attr("y", yMap(p) - 5)
+              .attr("dy", "-" + name + "em")
+              .attr("text-anchor", "middle")
+              .attr("font-size", "6px")
+              .html(names[name]);
+          }
+        } else {
+          for (name in names) {
+            svg.select("#name-" + name + "-" + p.cf + "-" + p.ca).remove()
+          }
         }
     }
     function mouseoverName(p) {
@@ -228,6 +243,7 @@ function create_corsi_events(alldata, divid, teamname, situations) {
           newOpacity = active ? 0 : 1;
         tooltip.html(p["name"] + "<br />SF:" + p.cf + "<br />SA:" + p.ca + "<br />TOI:" + p.toi);
         tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        console.log(active)
         if (active == "false") {
           tooltip.style("visibility", "visible")
           tooltip.attr("active", "true")
