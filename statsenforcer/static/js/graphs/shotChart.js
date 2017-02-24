@@ -52,6 +52,7 @@ function shotChart(data, homeabbr, awayabbr, situations, formstate) {
         .attr("xlink:href", "/team/" + homeabbr + ".png")
         .attr("width", (width / 3) - margin.left)
         .attr("height", (height / 3) - margin.top)
+        .attr("opacity", 0.6)
         .attr("transform", "translate(" + (width - margin.left - width / 2.75) + "," + ((height - margin.top) / 3) + ")");
     svg.append("svg:image")
         .attr("xlink:href", "/team/" + awayabbr + ".png")
