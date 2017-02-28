@@ -59,6 +59,19 @@
       top: 100%;
       left: 0;
     }
+
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 100px;
+        height: 30px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -274,7 +287,7 @@
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
-                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                     <option value="pn">Penalty Percentage</option>
@@ -299,7 +312,7 @@
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
-                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                     <option value="pn">Penalty Percentage</option>
@@ -324,7 +337,7 @@
                                                     <option value="gf">Goals For Percentage</option>
                                                     <option value="scf">Scoring Chance Percentage</option>
                                                     <option value="hscf">High Danger Scoring Chance Percentage</option>
-                                                    <option value="fo">Face Of Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
                                                     <option value="zso">Offensive Zone Start Percentage</option>
                                                     <option value="hit">Hit Percentage</option>
                                                     <option value="pn">Penalty Percentage</option>
@@ -347,6 +360,66 @@
                                 <div id="playerComparison"></div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                Averaged Value
+                                                <select class="form-control input-md" id="averageoptions">
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals">Goals</option>
+                                                    <option value="gf60">GF60</option>
+                                                    <option value="assists1">Primary Assists</option>
+                                                    <option value="a160">A160</option>
+                                                    <option value="assists2">Secondary Assists</option>
+                                                    <option value="a260">A260</option>
+                                                    <option value="assists">Assists</option>
+                                                    <option value="a60">A60</option>
+                                                    <option value="points">Points</option>
+                                                    <option value="p60">P60</option>
+                                                    <option value="individualShots">Individual Shots</option>
+                                                    <option value="individualMissedShots">Individual Missed Shots</option>
+                                                    <option value="individualBlockedShots">Individual Blocked Shots</option>
+                                                    <option value="cf">Corsi For Percentage</option>
+                                                    <option value="cf60" selected>CF60</option>
+                                                    <option value="ca60">CA60</option>
+                                                    <option value="ff">Fenwick For Percentage</option>
+                                                    <option value="ff60">FF60</option>
+                                                    <option value="fa60">FA60</option>
+                                                    <option value="gf">Goals For Percentage</option>
+                                                    <option value="scf">Scoring Chance Percentage</option>
+                                                    <option value="hscf">High Danger Scoring Chance Percentage</option>
+                                                    <option value="fo">Face Off Percentage</option>
+                                                    <option value="zso">Offensive Zone Start Percentage</option>
+                                                    <option value="hit">Hit Percentage</option>
+                                                    <option value="pn">Penalty Percentage</option>
+                                                    <option value="toiSeconds">Average Time On Ice</option>
+                                                </select>
+                                            <span class="material-input"></span></div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                Day Range
+                                                <input class="form-control input-md" id="dayrange" type="number" value="20" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="form-group">
+                                                <button id="refreshAverageGraph" class="btn btn-primary">Refresh<div class="ripple-container"></div></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-xs btn-primary" id="playerAverageButton"><i class="fa fa-floppy-o"></i> Save</button>
+                                <div id="playerAverages"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -363,6 +436,7 @@
 <script src="{% static "js/d3.tip.js" %}"></script>
 <script src="{% static "js/teamColors.js" %}"></script>
 <script src="{% static "js/graphs/zoomchart.js" %}"></script>
+<script src="{% static "js/graphs/rolling_average.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/rgbcolor.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/StackBlur.js" %}"></script>
 <script type="text/javascript" src="{% static "js/graphs/canvg/canvg.js" %}"></script>
@@ -370,6 +444,7 @@
 <script>
     $(document).ready(function() {
 
+        $('#playerAverages').html('<i class="fa fa-refresh fa-spin fa-3x fa-fw" aria-hidden="true"></i><span class="sr-only">Loading...</span>');
         $('#teamstats').DataTable({
             "bPaginate": true,
             "order": [
@@ -428,10 +503,54 @@
             zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
 
         });
+        var urlParams;
+        (window.onpopstate = function () {
+            var match,
+                pl     = /\+/g,  // Regex for replacing addition symbol with a space
+                search = /([^&=]+)=?([^&]*)/g,
+                decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+                query  = window.location.search.substring(1);
 
+            urlParams = {};
+            while (match = search.exec(query))
+               urlParams[decode(match[1])] = decode(match[2]);
+        })();
+        console.log(urlParams);
 
-        savePNG("#playerComparisonButton", "#playerComparison");
+        var stats = null;
+        var raw_stats = null;
+        var day_range = 20;
+        var url = "/players/skaters/{{ player_id }}/averages?day_range=" + day_range;
+        for (param in urlParams) {
+            url += "&" + param + "=" + urlParams[param];
+        }
+        $('#refreshAverageGraph').click(function(e) {
+            e.preventDefault();
+            var aVal = $('#averageoptions').find(":selected").val();
+            var new_day_range = $('#dayrange').val();
+            if (new_day_range != day_range) {
+                url = url.replace("?day_range=" + day_range, "?day_range=" + new_day_range);
+                day_range = new_day_range;
+                $('#playerAverages').html('<i class="fa fa-refresh fa-spin fa-3x fa-fw" aria-hidden="true"></i><span class="sr-only">Loading...</span>');
+                $.ajax({url: url  + day_range, success: function(result) {
+                    stats = result["days"];
+                    raw_stats = result["raw_data"];
+                    rollingAverage("#playerAverages", "#teamTabContent", aVal, stats, raw_stats, day_range, "{{ team.abbreviation }}", "{{ player.fullName }}");
+                }})
+            } else {
+                rollingAverage("#playerAverages", "#teamTabContent", aVal, stats, raw_stats, day_range, "{{ team.abbreviation }}", "{{ player.fullName }}");
+            }
+
+        });
+
+        $.ajax({url: url, success: function(result) {
+            stats = result["days"];
+            raw_stats = result["raw_data"];
+            rollingAverage("#playerAverages", "#teamTabContent", "cf60", stats, raw_stats, day_range, "{{ team.abbreviation }}", "{{ player.fullName }}");
+        }})
+        savePNG("#playerAverageButton", "#playerAverages");
 
     });
+
 </script>
 {% endblock %}

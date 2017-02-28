@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from team.models import Team
 from player.models import Player, PlayerGameFilterStats, PlayersPrecalc, GoalieGameFilterStats
 from playbyplay.models import Game
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import json
 import arrow
 from playbyplay.forms import GameFilterForm, GameForm
@@ -116,7 +116,6 @@ def goalies(request):
     context['form'] = form
 
     return render(request, 'players/goalies.html', context)
-
 
 
 def players(request):
@@ -413,6 +412,168 @@ def goalie_page(request, player_id):
     return render(request, 'players/goalie_page.html', context)
 
 
+def player_averages(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+    try:
+        day_range = int(request.GET["day_range"])
+    except KeyError:
+        day_range = 20
+    try:
+        season = request.GET["season"]
+    except KeyError:
+        season = Game.objects.latest("endDateTime").season
+    teamstrength = "even"
+    scoresituation = "all"
+    period = "all"
+    currentSeason = Game.objects.latest("endDateTime").season
+    form = GameFilterForm()
+    startDate = None
+    endDate = None
+    venues = []
+    teams = []
+    if request.method == 'GET':
+        form = GameFilterForm(request.GET)
+        if form.is_valid():
+            cd = form.cleaned_data
+            teamstrength = cd["teamstrengths"]
+            scoresituation = cd["scoresituation"]
+            period = cd["period"]
+            startDate = cd["startDate"]
+            endDate = cd["endDate"]
+            venues = cd["venues"]
+            teams = cd["teams"]
+    gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
+    if startDate is not None:
+        gameids = gameids.filter(dateTime__date__gte=startDate)
+    if endDate is not None:
+        gameids = gameids.filter(dateTime__date__lte=endDate)
+    if len(venues) > 0:
+        gameids = gameids.filter(venue__in=venues)
+    if len(teams) > 0:
+        gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    gameids = [x for x in gameids]
+    pgs = PlayerGameFilterStats.objects.raw(playerqueries.playeravgquery, [gameids, season, scoresituation, teamstrength, period, player.id])
+    stats = {}
+    first = True
+    drange = int(day_range / 2)
+    ld = None
+    valid_days = set([x.dateTime.strftime("%Y-%m-%d") for x in pgs])
+    raw_stats = {}
+    for row in pgs:
+        row = row.__dict__
+        row.pop("_state", None)
+        d = row["dateTime"].date()
+        if not first:
+            days = xrange(-drange, drange + 1)
+        else:
+            days = xrange(0, drange + 1)
+            first = False
+        for i in days:
+            dt = (d + timedelta(days=i)).strftime("%Y-%m-%d")
+            if dt in valid_days:
+                if dt not in stats:
+                    stats[dt] = {"games": 0, "dateString": dt}
+                for key, value in row.items():
+                    if key not in {"season", "abbreviation", "teamName", "shortName",
+                                   "displayName", "fullName", "player_id", "team_id",
+                                   "game_id", "id", "dateTime", "games"}:
+                        if key not in stats[dt]:
+                            stats[dt][key] = 0
+                        stats[dt][key] += value
+                stats[dt]["games"] += 1
+        ld = d.strftime("%Y-%m-%d")
+        raw_stats[ld] = {"games": 1, "dateString": ld}
+        for key, value in row.items():
+            if key not in {"season", "abbreviation", "teamName", "shortName",
+                           "displayName", "fullName", "player_id", "team_id",
+                           "game_id", "id", "dateTime", "games"}:
+                if key not in raw_stats[ld]:
+                    raw_stats[ld][key] = 0
+                raw_stats[ld][key] += value
+    #[stats.pop(x) for x in stats.keys() if x > ld]  # removes dates > last game
+    for dt in stats:
+        row = stats[dt]
+        for key, value in row.items():
+            if type(value) != str and key not in {"season", "abbreviation", "teamName", "shortName",
+                                                  "displayName", "fullName", "player_id", "team_id",
+                                                  "game_id", "id", "dateTime", "games"}:
+                stats[dt][key] = stats[dt][key] / stats[dt]["games"]
+        toiSeconds = row["toi"]
+        row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+        row["toiSeconds"] = toiSeconds
+        row["fo"] = '%.1f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
+        row["sf"] = '%.1f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
+        row["msf"] = '%.1f' % corsi.corsi_percent(row["missedShotsFor"],
+            row["missedShotsAgainst"])
+        row["bsf"] = '%.1f' % corsi.corsi_percent(row["blockedShotsFor"],
+            row["blockedShotsAgainst"])
+        row["gf"] = '%.1f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
+        row["cf"] = '%.1f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
+        row["ff"] = '%.1f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
+        row["hit"] = '%.1f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
+        row["pn"] = '%.1f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
+        row["scf"] = '%.1f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
+        row["hscf"] = '%.1f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
+        row['gf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["goalsFor"]) * 60)
+        row['a60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"]) * 60)
+        row['assists'] = row["assists1"] + row["assists2"]
+        row['a160'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["assists1"]) * 60)
+        row['a260'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["assists2"]) * 60)
+        row['p60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["points"]) * 60)
+        row['scf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"]) * 60)
+        row['cf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["corsiFor"]) * 60)
+        row['ca60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["corsiAgainst"]) * 60)
+        row['ff60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["fenwickFor"]) * 60)
+        row['fa60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["fenwickAgainst"]) * 60)
+        row['hscf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"]) * 60)
+        row['csh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['corsiFor'])
+        row['csa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['corsiAgainst']))
+        row['fsh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['fenwickFor'])
+        row['fsa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['fenwickAgainst']))
+        if row["neutralZoneStarts"] is not None:
+            row["zso"] = '%.1f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["defensiveZoneStarts"])
+        else:
+            row["zso"] = 0
+    for dt in raw_stats:
+        row = raw_stats[dt]
+        toiSeconds = row["toi"]
+        row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+        row["toiSeconds"] = toiSeconds
+        row["fo"] = '%.1f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
+        row["sf"] = '%.1f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
+        row["msf"] = '%.1f' % corsi.corsi_percent(row["missedShotsFor"],
+            row["missedShotsAgainst"])
+        row["bsf"] = '%.1f' % corsi.corsi_percent(row["blockedShotsFor"],
+            row["blockedShotsAgainst"])
+        row["gf"] = '%.1f' % corsi.corsi_percent(row["goalsFor"], row["goalsAgainst"])
+        row["cf"] = '%.1f' % corsi.corsi_percent(row["corsiFor"], row["corsiAgainst"])
+        row["ff"] = '%.1f' % corsi.corsi_percent(row["fenwickFor"], row["fenwickAgainst"])
+        row["hit"] = '%.1f' % corsi.corsi_percent(row["hitFor"], row["hitAgainst"])
+        row["pn"] = '%.1f' % corsi.corsi_percent(row["penaltyFor"], row["penaltyAgainst"])
+        row["scf"] = '%.1f' % corsi.corsi_percent(row["scoringChancesFor"], row["scoringChancesAgainst"])
+        row["hscf"] = '%.1f' % corsi.corsi_percent(row["highDangerScoringChancesFor"], row["highDangerScoringChancesAgainst"])
+        row['gf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["goalsFor"]) * 60)
+        row['a60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["assists1"] + row["assists2"]) * 60)
+        row['a160'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["assists1"]) * 60)
+        row['p60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["points"]) * 60)
+        row['scf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["scoringChancesFor"]) * 60)
+        row['cf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["corsiFor"]) * 60)
+        row['ca60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["corsiAgainst"]) * 60)
+        row['ff60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["fenwickFor"]) * 60)
+        row['fa60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["fenwickAgainst"]) * 60)
+        row['hscf60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["highDangerScoringChancesFor"]) * 60)
+        row['csh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['corsiFor'])
+        row['csa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['corsiAgainst']))
+        row['fsh'] = '%.1f' % corsi.corsi_percent(row['goalsFor'], row['fenwickFor'])
+        row['fsa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['fenwickAgainst']))
+        if row["neutralZoneStarts"] is not None:
+            row["zso"] = '%.1f' % corsi.corsi_percent(row["offensiveZoneStarts"], row["defensiveZoneStarts"])
+        else:
+            row["zso"] = 0
+    return JsonResponse({"days": sorted(stats.values(), key=lambda d: d["dateString"]),
+                         "raw_data": sorted(raw_stats.values(), key=lambda d: d["dateString"])})
+
+
 def player_page(request, player_id):
     player = get_object_or_404(Player, id=player_id)
     player.age = int((arrow.now() - arrow.get(player.birthDate)).days / 365.25)
@@ -448,6 +609,7 @@ def player_page(request, player_id):
     gameids = [x for x in gameids]
     pgs = PlayerGameFilterStats.objects.raw(playerqueries.playerquery, [gameids, scoresituation, teamstrength, period, player.id])
     stats = {}
+    currTeam = None
     for row in pgs:
         season = row.season
         playerid = player.id
@@ -481,6 +643,7 @@ def player_page(request, player_id):
                 elif key == "shortName":
                     if stats[playerid][season][key] != row.__dict__[key]:
                         stats[playerid][season][key] += u", {}".format(row.__dict__[key])
+        currTeam = {"name": row.teamName, "shortName": row.shortName, "abbreviation": row.abbreviation}
     for playerid in stats:
         for season in stats[playerid]:
             row = stats[playerid][season]
@@ -521,10 +684,12 @@ def player_page(request, player_id):
     context = {}
     context["player"] = player
     context["stats"] = stats
+    context["team"] = currTeam
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
         context["player"] = context["player"].__dict__
         context["player"].pop("_state", None)
         return JsonResponse(context)
     context["form"] = form
     context["statsJson"] = json.dumps(stats, cls=DjangoJSONEncoder)
+    context["player_id"] = player_id
     return render(request, 'players/player_page.html', context)

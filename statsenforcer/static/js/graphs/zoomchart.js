@@ -4,7 +4,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
     $(divId).html("");
     var margin = { top: 50, right: 20, bottom: 30, left: 30 },
         outerWidth = $(containerId).width(),
-        outerHeight = 500,
+        outerHeight = $(containerId).width() * 0.65,
         width = outerWidth - margin.left - margin.right,
         height = outerHeight - margin.top - margin.bottom;
 
@@ -93,7 +93,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
     svg.append("g")
         .classed("y axis", true)
         .attr("fill", "none")
-        .attr("stroke", "rgba(0, 0, 0, 0.1)")
+        .attr("stroke", "#000")
         .attr("shape-rendering", "crispEdges")
         .call(yAxis)
       .append("text")
