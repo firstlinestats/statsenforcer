@@ -4,6 +4,19 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 {% block title %}Skaters | WAR-On-Ice{% endblock %}
+{% block meta %}
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="en" />
+<meta property="og:title" content="Players Stats on WAR-On-Ice" />
+<meta itemprop="name" content="Players Advanced Stats on WAR-On-Ice" />
+<meta property="og:type" content="website" />
+<meta name="keywords" content="hockey, advanced stats, graphs, advanced statistics, fancy stats, fancystats, hockey stats, hockey statistics, waronice, war-on-ice, playoffs, standings, players" />
+<meta name="description" content="Get advanced stats and graphs for players on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta property="og:description" content="Get advanced stats and graphs for players on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta property="description" content="Get advanced stats and graphs for players on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta name="locale" content="en" />
+<meta name="lang" content="en_US" />
+{% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
 <link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">

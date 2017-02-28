@@ -2,9 +2,19 @@
 {% load website_extras %}
 {% load pbp_extras %}
 {% load staticfiles %}
-{% block title %}{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }} | FLS{% endblock %}
+{% block title %}{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }} | WOI{% endblock %}
 {% block meta %}
-<meta name="description" content="Game Page for {{ game.awayTeam_name }} vs {{ game.homeTeam_name }} on {{ game.dateTime }} on waronice.com. WAR On Ice provides advanced analytics and charts for the hockey games and players." />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="en" />
+<meta property="og:title" content="{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }}" />
+<meta itemprop="name" content="{{ game.awayTeam_abbreviation }} vs {{ game.homeTeam_abbreviation }} {{ game.dateTime }}" />
+<meta property="og:type" content="website" />
+<meta name="keywords" content="game, hockey, graphs, advanced stats, advanced statistics, fancy stats, fancystats, hockey stats, hockey statistics, waronice, war-on-ice, {{ game.homeTeam_name }}, {{ game.awayTeam_name }}, {{ game.awayTeam_abbreviation }}, {{ game.homeTeam_abbreviation }}, playoffs, standings, players, teams" />
+<meta name="description" content="Game Page for {{ game.awayTeam_name }} vs {{ game.homeTeam_name }} on {{ game.dateTime }} on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta property="og:description" content="Game Page for {{ game.awayTeam_name }} vs {{ game.homeTeam_name }} on {{ game.dateTime }} on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta property="description" content="Game Page for {{ game.awayTeam_name }} vs {{ game.homeTeam_name }} on {{ game.dateTime }} on waronice.com. WAR On Ice provides advanced analytics and charts for hockey games and players." />
+<meta name="locale" content="en" />
+<meta name="lang" content="en_US" />
 {% endblock %}
 {% block page_css %}
 <link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
