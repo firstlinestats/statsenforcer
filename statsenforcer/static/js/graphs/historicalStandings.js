@@ -90,6 +90,18 @@ var CreateHistorical = function createHistorical(divid, data, twidth, theight) {
       .style("text-anchor", "end")
       .text("Points");
 
+  svg.selectAll('.domain')
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+  svg.selectAll('.tick').select('line')
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+
+
   for (d in data) {
     svg.append("path")
         .datum(data[d])

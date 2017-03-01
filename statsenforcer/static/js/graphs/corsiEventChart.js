@@ -196,6 +196,16 @@ function create_corsi_events(alldata, divid, teamname, situations) {
 
     svg.selectAll(".tick text").style("font-size", "8px").style("font-weight", "bold");
 
+    svg.selectAll('.domain')
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+    svg.selectAll('.tick').select('line')
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
     // draw dots
     svg.selectAll(".dot")
         .data(data)

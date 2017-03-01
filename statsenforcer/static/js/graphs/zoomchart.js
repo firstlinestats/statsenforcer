@@ -78,7 +78,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .classed("x axis", true)
         .attr("transform", "translate(0," + height + ")")
         .attr("fill", "none")
-        .attr("stroke", "rgba(0, 0, 0, 0.1)")
+        .attr("stroke", "#000")
         .attr("shape-rendering", "crispEdges")
         .call(xAxis)
         .append("text")
@@ -88,6 +88,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
           .attr("y", margin.bottom - 10)
           .style("text-anchor", "end")
           .style("fill", "black")
+          .style("font-weight", "normal")
           .text(xText);
 
     svg.append("g")
@@ -104,6 +105,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .style("fill", "black")
+        .style("font-weight", "normal")
         .text(yText);
 
     var objects = svg.append("svg")
