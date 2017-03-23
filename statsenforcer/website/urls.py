@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^glossary/', views.glossary, name="glossary"),
     url(r'^standings/', views.standings, name="standings"),
     url(r'^rink/', views.rink, name="rink"),
+	url(r'^search/$', views.searchinput, name="search_results"),
 ]

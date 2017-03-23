@@ -11,8 +11,21 @@
             <a class="navbar-brand" href="/"><img class="woi-logo" src="{% static "img/logo-white.png" %}" alt="WAR-On-Ice">WAR On Ice</a>
         </div>
 
+
         <div class="collapse navbar-collapse" id="example-navbar-primary">
             <ul class="nav navbar-nav navbar-right">
+
+                <li>
+                <form action="/search" method="get" target="_blank">
+                    <div id="searchnavvy" class="form-group navbar-form navbar-left" role="search">
+                        <div class="form-group input-group">
+                         <input id="searchinput" type="text" class="form-control search-rounded" placeholder="Search" name="resultpage">
+                         <span class="input-group-addon"><button id=buttonsearch type="submit" class="btn btn-default btn-sm"><span class="fa fa-search" aria-hidden="true"></span></button></span>
+                         </div>
+                    </div>
+                </form>
+                </li>
+
                 <li>
                     <a href="/standings">
                         Standings
@@ -23,22 +36,32 @@
                         Games
                     </a>
                 </li>
+
+
                 <li>
                     <a href="/teams">
                         Teams
                     </a>
                 </li>
+
+
                 <li>
                     <a href="/players/skaters">
                         Skaters
                     </a>
                 </li>
+
+
                 <li>
                     <a href="/players/goalies">
                         Goalies
                     </a>
                 </li>
+
+
             </ul>
         </div>
     </div>
 </nav>
+
+

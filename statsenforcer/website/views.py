@@ -7,6 +7,7 @@ from playbyplay.templatetags.pbp_extras import get_period
 from playbyplay.models import Game, PlayByPlay
 from team.models import Team, SeasonStats
 from website.models import GlossaryTerm
+from player.models import Player
 
 import datetime
 import json
@@ -243,3 +244,18 @@ def games(request, gamedate):
         content["games"].append(gd)
     return JsonResponse(content)
 
+
+#Search view and filter
+def searchinput(request):
+    search_results = request.GET['resultpage']
+    context = {}
+
+    players={}
+    players=Player.objects.all().filter(fullName__icontains=search_results)
+   
+
+    # context["divisions"] = json.dumps(teamStandings, ensure_ascii=True)
+    # context["teams"] = teams
+    #if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":
+    #    return JsonResponse(context)
+    return render(request, 'website/search.html', {'searching': search_results, 'players':players})

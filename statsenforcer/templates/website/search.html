@@ -1,0 +1,33 @@
+{% extends "wrappers/wrapper.html" %}
+{% load staticfiles %}
+{% block title %}About Us{% endblock %}
+{% block page_css %}
+
+{% endblock %}
+{% block content %}
+<div class="container">
+ 
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="content">
+
+        Search results for: "{{ searching }}"
+
+<table class="table full-width table-condensed table-hover table-striped table-bordered">
+  {% for player in players %}
+    {% cycle '<tr>' '' '' '' %}
+      <td><a href="../players/skaters/{{player.id}}/">{{player.fullName}}</a></td>
+    {% cycle '' '' '' '</tr>' %}
+  {% endfor %}
+</table>
+                </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}
+{% block page_js %}
+{% endblock %}

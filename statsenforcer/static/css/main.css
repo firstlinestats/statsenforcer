@@ -189,6 +189,34 @@ body {
   width: 100% !important;
 }
 /*
+ Search bar stuff
+*/
+
+#search-bar-input button {
+  border: 0;
+  background-color: #ffffff;
+  color:#ffffff;
+}
+
+
+#searchinput{  
+    color: #000;
+    background-color:white;
+    border-radius: 2px;
+    margin-bottom:-15px;
+}
+
+#buttonsearch{
+  margin-top:-7px;
+  float:left;
+  margin-left:-15px;
+  background-color:#000;
+  border:none;
+  box-shadow:none;
+}
+
+
+/*
   DataTables stuff
 */
 /*th, td { text-align: center; }*/
