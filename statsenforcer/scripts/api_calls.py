@@ -79,10 +79,12 @@ def get_player(id=None, ids=None):
     return get_url(url)
 
 
-def get_schedule(id, season=None):
+def get_schedule(id, season=None, game_type=None):
     url = api_urls.SCHEDULE_INFO + "?teamId=" + str(id)
     if season is not None:
         url += "&season=" + season
+    if game_type is not None:
+        url += "&gameType={}".format(game_type)
     return get_url(url)
 
 

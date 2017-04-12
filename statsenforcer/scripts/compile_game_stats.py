@@ -374,4 +374,7 @@ if __name__ == "__main__":
         except:
             bad_games.add(game)
     if bad_games:
-        sendemail.send_error_email("BAD GAMES: {}".format(", ".join(bad_games)))
+        try:
+            sendemail.send_error_email("BAD GAMES: {}".format(", ".join(bad_games)))
+        except:
+            sendemail.send_error_email("BAD GAMES: {}".format(bad_games))
