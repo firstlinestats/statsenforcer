@@ -76,8 +76,8 @@
     $(document).ready(function() {
         $('#games').DataTable({
             "iDisplayLength": 30,
-            "bSort": false,
             "bPaginate": false,
+            "order": [[0, "desc"]]
         });
 
     });

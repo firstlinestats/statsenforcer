@@ -636,35 +636,38 @@ def get_games(tid, season, egames=set()):
     pbpmodels.Game.objects.bulk_create(games)
     return egames
 
-def get_playoff_games(tid, season, egames=set()):
-    result = json.loads(api_calls.get_schedule(tid, season, "P"))
-    games = []
+
+def get_playoff_games(season):
+    result = json.loads(api_calls.get_schedule(season, "P"))
+    print result
     if "dates" in result:
         for jgames in result["dates"]:
             for jgame in jgames["games"]:
-                if jgame["gamePk"] not in egames:
-                    egames.add(jgame["gamePk"])
-                    game = pbpmodels.Game()
-                    game.gamePk = jgame["gamePk"]
-                    game.link = jgame["link"]
-                    game.gameType = jgame["gameType"]
-                    game.season = jgame["season"]
-                    game.dateTime = jgame["gameDate"]
-                    game.awayTeam_id = jgame["teams"]["away"]["team"]["id"]
-                    game.homeTeam_id = jgame["teams"]["home"]["team"]["id"]
-                    try:
-                        game.venue = tmodels.Venue.objects.get(name=jgame["venue"]["name"])
-                    except:
-                        venue = tmodels.Venue()
-                        venue.name = jgame["venue"]["name"]
-                        venue.save()
-                        game.venue = venue
-                    game.homeScore = jgame["teams"]["home"]["score"]
-                    game.awayScore = jgame["teams"]["away"]["score"]
-                    game.gameState = jgame["status"]["statusCode"]
-                    games.append(game)
-    pbpmodels.Game.objects.bulk_create(games)
-    return egames
+                game, created = pbpmodels.Game.objects.get_or_create(gamePk=jgame["gamePk"])
+                game = pbpmodels.Game()
+                game.gamePk = jgame["gamePk"]
+                game.link = jgame["link"]
+                game.gameType = jgame["gameType"]
+                game.season = jgame["season"]
+                game.dateTime = jgame["gameDate"]
+                print jgame["gameDate"]
+                game.awayTeam_id = jgame["teams"]["away"]["team"]["id"]
+                game.homeTeam_id = jgame["teams"]["home"]["team"]["id"]
+                try:
+                    game.venue = tmodels.Venue.objects.get(name=jgame["venue"]["name"])
+                except:
+                    venue = tmodels.Venue()
+                    venue.name = jgame["venue"]["name"]
+                    venue.save()
+                    game.venue = venue
+                game.homeScore = jgame["teams"]["home"]["score"]
+                game.awayScore = jgame["teams"]["away"]["score"]
+                game.gameState = jgame["status"]["statusCode"]
+                game.save()
+                #games.append(game)
+    # if games:
+    #     pbpmodels.Game.objects.bulk_create(games)
+
 
 def ingest_players():
     # For each team, get the roster
@@ -759,4 +762,6 @@ def ingest_teams():
 
 
 if __name__ == "__main__":
-    ingest_games()
+    #ingest_games()
+    #games = set(pbpmodels.Game.objects.values_list("gamePk", flat=True).filter(season=20162017))
+    get_playoff_games("20162017")  #, games)

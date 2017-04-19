@@ -806,7 +806,7 @@ def check_rosters():
 
 
 def reset_games():
-    game_list = pbpmodels.Game.objects.filter(endDateTime=None, dateTime__lte=datetime.datetime.today()).values_list('gamePk', flat=True)
+    game_list = pbpmodels.Game.objects.filter(endDateTime=None, dateTime__lte=datetime.datetime.today(), season=20162017, gamePk__gte=2016020000).values_list('gamePk', flat=True)
     players = get_players()
     for game in game_list:
         print "Fixing {}...".format(game)
@@ -814,10 +814,10 @@ def reset_games():
 
 
 if __name__ == "__main__":
-    # reset_games()
-    try:
-        main()
-    except:
-        sendemail.send_error_email("Too many issues, cancelling...")
+    reset_games()
+    # try:
+    #     main()
+    # except:
+    #     sendemail.send_error_email("Too many issues, cancelling...")
     #check_rosters()
     #fix_missing()
