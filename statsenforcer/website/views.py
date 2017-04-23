@@ -176,9 +176,61 @@ def standings(request):
 
 def index(request):
     currentSeason = Game.objects.latest("endDateTime").season
-    games = Game.objects.raw(indexqueries.gamesquery, [currentSeason, arrow.now().datetime + datetime.timedelta(1)])
+    tgames = Game.objects.raw(indexqueries.gamesquery, [currentSeason, arrow.now().datetime + datetime.timedelta(1)])
+    series = {}
+    playoffs = False
+    games = []
+    for game in tgames:
+        game.playoffStatus = ""
+        if game.gameType == "P":
+            playoffs = True
+            homeTeam_id = game.homeTeam_id
+            awayTeam_id = game.awayTeam_id
+            if homeTeam_id < awayTeam_id:
+                series_id = "{}_{}".format(homeTeam_id, awayTeam_id)
+            else:
+                series_id = "{}_{}".format(awayTeam_id, homeTeam_id)
+            if series_id not in series:
+                series[series_id] = {homeTeam_id: 0, awayTeam_id: 0}
+                series_games = Game.objects.filter(homeTeam_id__in=[homeTeam_id, awayTeam_id],
+                                                   awayTeam_id__in=[homeTeam_id, awayTeam_id],
+                                                   season=game.season,
+                                                   gameType="P")
+                for sg in series_games:
+                    if sg.gameState in {"5", "6", "7"}:
+                        home_score = sg.homeScore
+                        away_score = sg.awayScore
+                        if home_score > away_score:
+                            series[series_id][sg.homeTeam_id] += 1
+                        else:
+                            series[series_id][sg.awayTeam_id] += 1
+            if series[series_id][game.homeTeam_id] > series[series_id][game.awayTeam_id]:
+                if series[series_id][game.homeTeam_id] < 4:
+                    game.playoffStatus = "{} leads the series {}-{}".format(game.homeTeam.abbreviation,
+                                                                            series[series_id][game.homeTeam_id],
+                                                                            series[series_id][game.awayTeam_id])
+                else:
+                    game.playoffStatus = "{} wins the series, {}-{}".format(game.homeTeam.abbreviation,
+                                                                            series[series_id][game.homeTeam_id],
+                                                                            series[series_id][game.awayTeam_id])
+            elif series[series_id][game.awayTeam_id] > series[series_id][game.homeTeam_id]:
+                if series[series_id][game.awayTeam_id] < 4:
+                    game.playoffStatus = "{} leads the series {}-{}".format(game.awayTeam.abbreviation,
+                                                                            series[series_id][game.awayTeam_id],
+                                                                            series[series_id][game.homeTeam_id])
+                else:
+                    game.playoffStatus = "{} wins the series, {}-{}".format(game.homeTeam.abbreviation,
+                                                                            series[series_id][game.awayTeam_id],
+                                                                            series[series_id][game.homeTeam_id])
+            else:
+                game.playoffStatus = "Series is tied, {}-{}".format(series[series_id][game.awayTeam_id],
+                                                                    series[series_id][game.homeTeam_id])
+        games.append(game)
+
+
     context = {
         'games': games,
+        'playoffs': playoffs
     }
 
     if request.method == "GET" and "format" in request.GET and request.GET["format"] == "json":

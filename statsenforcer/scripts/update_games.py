@@ -814,10 +814,11 @@ def reset_games():
 
 
 if __name__ == "__main__":
-    reset_games()
-    # try:
-    #     main()
-    # except:
-    #     sendemail.send_error_email("Too many issues, cancelling...")
+    # reset_games()
+    # reset_game(2016030175)
+    try:
+        main()
+    except:
+        sendemail.send_error_email("Too many issues, cancelling...")
     #check_rosters()
     #fix_missing()

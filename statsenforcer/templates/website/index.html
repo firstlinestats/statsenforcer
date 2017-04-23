@@ -40,6 +40,9 @@
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Start Time</th>
                                     <th class="text-center">End Time</th>
+                                    {% if playoffs %}
+                                    <th class="text-center">Series</th>
+                                    {% endif %}
                                     <th class="text-center"></th>
                                 </thead>
 
@@ -55,6 +58,9 @@
                                     <td class="text-center">{{ game.gameState|gameStatus }}{{ game.gameOT }}</td>
                                     <td class="text-center">{{ game.dateTime|time }}</td>
                                     <td class="text-center">{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
+                                    {% if playoffs %}
+                                    <td class="text-center">{{ game.playoffStatus|safe }}</td>
+                                    {% endif %}
                                     <td class='text-right'><a href="/games/{{ game.gamePk }}">Game Details</a></td>
                                   </tr>
                                 {% endfor %}

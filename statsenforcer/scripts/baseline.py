@@ -639,34 +639,29 @@ def get_games(tid, season, egames=set()):
 
 def get_playoff_games(season):
     result = json.loads(api_calls.get_schedule(season, "P"))
-    print result
     if "dates" in result:
         for jgames in result["dates"]:
             for jgame in jgames["games"]:
-                game, created = pbpmodels.Game.objects.get_or_create(gamePk=jgame["gamePk"])
-                game = pbpmodels.Game()
-                game.gamePk = jgame["gamePk"]
-                game.link = jgame["link"]
-                game.gameType = jgame["gameType"]
-                game.season = jgame["season"]
-                game.dateTime = jgame["gameDate"]
-                print jgame["gameDate"]
-                game.awayTeam_id = jgame["teams"]["away"]["team"]["id"]
-                game.homeTeam_id = jgame["teams"]["home"]["team"]["id"]
-                try:
-                    game.venue = tmodels.Venue.objects.get(name=jgame["venue"]["name"])
-                except:
-                    venue = tmodels.Venue()
-                    venue.name = jgame["venue"]["name"]
-                    venue.save()
-                    game.venue = venue
-                game.homeScore = jgame["teams"]["home"]["score"]
-                game.awayScore = jgame["teams"]["away"]["score"]
-                game.gameState = jgame["status"]["statusCode"]
-                game.save()
-                #games.append(game)
-    # if games:
-    #     pbpmodels.Game.objects.bulk_create(games)
+                if jgame["status"]["statusCode"] != 8:
+                    try:
+                        venue = tmodels.Venue.objects.get(name=jgame["venue"]["name"])
+                    except:
+                        venue = tmodels.Venue()
+                        venue.name = jgame["venue"]["name"]
+                        venue.save()
+                    awayTeam = tmodels.Team.objects.get(id=jgame["teams"]["away"]["team"]["id"])
+                    homeTeam = tmodels.Team.objects.get(id=jgame["teams"]["home"]["team"]["id"])
+                    game, created = pbpmodels.Game.objects.get_or_create(gamePk=jgame["gamePk"], season=season,
+                        awayTeam=awayTeam, homeTeam=homeTeam, venue=venue)
+                    game.link = jgame["link"]
+                    game.gameType = jgame["gameType"]
+                    game.season = jgame["season"]
+                    game.dateTime = jgame["gameDate"]
+                    game.homeScore = jgame["teams"]["home"]["score"]
+                    game.awayScore = jgame["teams"]["away"]["score"]
+                    game.gameState = jgame["status"]["statusCode"]
+                    print game.dateTime
+                    game.save()
 
 
 def ingest_players():
@@ -764,4 +759,5 @@ def ingest_teams():
 if __name__ == "__main__":
     #ingest_games()
     #games = set(pbpmodels.Game.objects.values_list("gamePk", flat=True).filter(season=20162017))
+    #badgames = pbpmodels.Game.objects.filter(season=20162017, gameType="P", gameState=8).delete()
     get_playoff_games("20162017")  #, games)
