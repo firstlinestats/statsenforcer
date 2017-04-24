@@ -219,7 +219,7 @@ def index(request):
                                                                             series[series_id][game.awayTeam_id],
                                                                             series[series_id][game.homeTeam_id])
                 else:
-                    game.playoffStatus = "{} wins the series, {}-{}".format(game.homeTeam.abbreviation,
+                    game.playoffStatus = "{} wins the series, {}-{}".format(game.awayTeam.abbreviation,
                                                                             series[series_id][game.awayTeam_id],
                                                                             series[series_id][game.homeTeam_id])
             else:
