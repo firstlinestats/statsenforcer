@@ -79,8 +79,10 @@ def get_player(id=None, ids=None):
     return get_url(url)
 
 
-def get_schedule(season=None, game_type=None):
-    url = api_urls.SCHEDULE_INFO
+def get_schedule(season=None, game_type=None, start_date=None, end_date=None):
+    if not start_date or not end_date:
+        raise Exception("NEED START AND END DATES")
+    url = api_urls.SCHEDULE_INFO.format(start_date=start_date, end_date=end_date)
     # if season is not None:
     #     url += "&season=" + season
     # if game_type is not None:

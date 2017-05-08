@@ -637,12 +637,13 @@ def get_games(tid, season, egames=set()):
     return egames
 
 
-def get_playoff_games(season):
-    result = json.loads(api_calls.get_schedule(season, "P"))
+def get_playoff_games(season, start_date=None, end_date=None):
+    result = json.loads(api_calls.get_schedule(season, "P", start_date, end_date))
     if "dates" in result:
         for jgames in result["dates"]:
             for jgame in jgames["games"]:
-                if jgame["status"]["statusCode"] != 8:
+                print jgame
+                if jgame["status"]["statusCode"] != 8 and jgame["status"]["statusCode"] != "8":
                     try:
                         venue = tmodels.Venue.objects.get(name=jgame["venue"]["name"])
                     except:
@@ -760,4 +761,6 @@ if __name__ == "__main__":
     #ingest_games()
     #games = set(pbpmodels.Game.objects.values_list("gamePk", flat=True).filter(season=20162017))
     #badgames = pbpmodels.Game.objects.filter(season=20162017, gameType="P", gameState=8).delete()
-    get_playoff_games("20162017")  #, games)
+    start_date = "05%2F03%2F2017"
+    end_date = "05%2F10%2F2017"
+    get_playoff_games("20162017", start_date=start_date, end_date=end_date)  #, games)
