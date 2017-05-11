@@ -3,7 +3,28 @@ from django import template
 from fancystats import constants
 from fancystats import player
 
+import datetime
+import pytz
+
 register = template.Library()
+
+local_tz = pytz.timezone('US/Eastern')
+
+
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt) # .normalize might be unnecessary
+
+
+@register.filter
+def fix_date(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%b %d, %I:%M %p %Z")
+
+
+@register.filter
+def fix_time(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%I:%M %p %Z")
+
 
 def find_value(default, key, cd, CHOICES):
     if key in cd:

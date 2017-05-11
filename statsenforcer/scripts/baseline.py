@@ -761,6 +761,6 @@ if __name__ == "__main__":
     #ingest_games()
     #games = set(pbpmodels.Game.objects.values_list("gamePk", flat=True).filter(season=20162017))
     #badgames = pbpmodels.Game.objects.filter(season=20162017, gameType="P", gameState=8).delete()
-    start_date = "05%2F03%2F2017"
-    end_date = "05%2F10%2F2017"
+    start_date = "05%2F09%2F2017"
+    end_date = "05%2F12%2F2017"
     get_playoff_games("20162017", start_date=start_date, end_date=end_date)  #, games)

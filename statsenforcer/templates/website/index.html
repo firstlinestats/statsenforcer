@@ -56,8 +56,8 @@
                                     <td class="text-left"><a href='/teams/{{ game.homeTeamName.split|join:"-" }}'><img height="17" width="17" src="{% static "/img/team/"|add:game.homeAbbreviation|add:".png" %}" />&nbsp;&nbsp;{{ game.homeTeamName }}</a></td>
                                     <td class="text-center">{% if game.homeShots != None %}{{ game.awayShots|add:game.homeBlocked|add:game.awayMissed }} / {{ game.homeShots|add:game.awayBlocked|add:game.homeMissed }}{% endif %}</td>
                                     <td class="text-center">{{ game.gameState|gameStatus }}{{ game.gameOT }}</td>
-                                    <td class="text-center">{{ game.dateTime|time }}</td>
-                                    <td class="text-center">{% if game.endDateTime != None %}{{ game.endDateTime|time }}{% endif %}</td>
+                                    <td class="text-center">{{ game.startDate }}</td>
+                                    <td class="text-center">{{ game.endDate}}</td>
                                     {% if playoffs %}
                                     <td class="text-center">{{ game.playoffStatus|safe }}</td>
                                     {% endif %}
@@ -83,7 +83,7 @@
         $('#games').DataTable({
             "iDisplayLength": 30,
             "bPaginate": false,
-            "order": [[0, "desc"]]
+            "bSort": false,
         });
 
     });

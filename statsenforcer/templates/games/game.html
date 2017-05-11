@@ -102,7 +102,7 @@
                 {% endif %}
                 <div class="row">
                     <div class="col-md-12">
-                        <h4>{{ game.dateTime }}{% if game.endDateTime %} - {{ game.endDateTime }}{% endif %}</h4>
+                        <h4>{{ game.dateTime|fix_date }}{% if game.endDateTime %} - {{ game.endDateTime|fix_time }}{% endif %}</h4>
                         <p><span id="liveUpdate"></span></p>
                     </div>
                 </div>

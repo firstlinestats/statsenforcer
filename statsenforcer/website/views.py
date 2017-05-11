@@ -41,6 +41,7 @@ def rink(request):
     image_data = open("static/svg/rink.png", "rb").read()
     return HttpResponse(image_data, content_type="image/png")
 
+
 def team_logo(request, team_abbreviation):
     try:
         if "/" not in team_abbreviation:
@@ -50,10 +51,6 @@ def team_logo(request, team_abbreviation):
             raise Exception
     except:
         raise Http404("Team logo does not exist")
-
-def utc_to_local(utc_dt):
-    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    return local_tz.normalize(local_dt) # .normalize might be unnecessary
 
 
 def configure_standing(teamPlace, antiPlace, teamStandings, game):
@@ -174,14 +171,32 @@ def standings(request):
     return render(request, 'website/standings.html', context)
 
 
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt) # .normalize might be unnecessary
+
+
+def fix_date(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%b %d, %I:%M %p %Z")
+
+
+def fix_time(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%I:%M %p %Z")
+
+
 def index(request):
     currentSeason = Game.objects.latest("endDateTime").season
-    tgames = Game.objects.raw(indexqueries.gamesquery, [currentSeason, arrow.now().datetime + datetime.timedelta(1)])
+    tgames = Game.objects.raw(indexqueries.gamesquery, [currentSeason, arrow.now().datetime + datetime.timedelta(3)])
     series = {}
     playoffs = False
     games = []
     for game in tgames:
         game.playoffStatus = ""
+        game.startDate = fix_time(game.dateTime)
+        if game.endDateTime:
+            game.endDate = fix_time(game.endDateTime)
+        else:
+            game.endDate = ""
         if game.gameType == "P":
             playoffs = True
             homeTeam_id = game.homeTeam_id
@@ -261,7 +276,11 @@ def games(request, gamedate):
         gamedate = arrow.now().datetime
     else:
         return JsonResponse({'status': 'false', 'message': 'There was an issue with the provided date format, currently only \'today\' is accepted'}, status=400)
-    games = Game.objects.values("gamePk", "homeTeam__abbreviation", "awayTeam__abbreviation", "homeScore", "awayScore", "dateTime", "endDateTime", "gameState").filter(dateTime__gte=gamedate - datetime.timedelta(hours=24), dateTime__lte=gamedate + datetime.timedelta(hours=12)).order_by("endDateTime")
+    games = Game.objects.values("gamePk", "homeTeam__abbreviation",
+                                "awayTeam__abbreviation", "homeScore", "awayScore",
+                                "dateTime", "endDateTime", "gameState")\
+        .filter(dateTime__gte=gamedate - datetime.timedelta(hours=24),
+            dateTime__lte=gamedate + datetime.timedelta(hours=72)).order_by("endDateTime")
     content["date"] = datetime.datetime.strftime(gamedate, dateformat)
     content["yesterday"] = datetime.datetime.strftime(gamedate - datetime.timedelta(hours=24), dateurlformat)
     content["tomorrow"] = datetime.datetime.strftime(gamedate + datetime.timedelta(hours=24), dateurlformat)
@@ -298,9 +317,9 @@ def games(request, gamedate):
                 gd["dateTime"] = "End of {}".format(periodVal)
         elif game["gameState"] in ["5", "6", "7"]:
             gd["finished"] = True
-            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
+            gd["dateTime"] = fix_date(game["dateTime"])
         else:
-            gd["dateTime"] = datetime.datetime.strftime(utc_to_local(game["dateTime"]), "%b %d, %I:%M %p %Z")
+            gd["dateTime"] = fix_date(game["dateTime"])
 
         content["games"].append(gd)
     return JsonResponse(content)
