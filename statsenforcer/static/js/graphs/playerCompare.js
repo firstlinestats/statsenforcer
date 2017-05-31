@@ -272,7 +272,7 @@ function playerCompare(divId, containerId, xvalue, yvalue, data, page) {
         .attr("y", height - margin.bottom)
         .attr("text-anchor", "left")
         .style("font-size", "12px")
-        .text("waronice.com")
+        .text("firstlinestats.com")
 
     svg.selectAll(".axis path")
       .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})

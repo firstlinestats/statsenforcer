@@ -186,7 +186,7 @@ function zoomchart(divId, containerId, data, xCat, yCat, rCat, xText, yText, rTe
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
         .style("font-weight", "bold")
-        .text("waronice.com")
+        .text("firstlinestats.com")
 
     d3.selectAll('g.tick text')
       .style('fill', "black");

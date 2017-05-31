@@ -274,7 +274,7 @@ function teamCompare(divId, containerId, xvalue, yvalue, data) {
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
         .style("font-weight", "bold")
-        .text("waronice.com")
+        .text("firstlinestats.com")
 
     svg.selectAll(".axis path")
       .style({"fill": 'none', 'stroke-width' : '1px', 'stroke' : 'Black'})

@@ -146,7 +146,7 @@ function create_corsi_events(alldata, divid, teamname, situations) {
         .style("border-radius", "10px")
         .style("text-transform", "uppercase")
         .style("font-weight", "bold")
-        .text("waronice.com")
+        .text("firstlinestats.com")
     svg.append("text")
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 4))

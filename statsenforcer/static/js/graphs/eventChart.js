@@ -103,7 +103,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
     svg.append("rect")
         .attr("x", 115)
         .attr("y", 4)
-        .attr("width", 80)
+        .attr("width", 105)
         .attr("height", 20)
         .style("fill", "white")
         .style("stroke", "none")
@@ -117,7 +117,7 @@ function create_shot_attempts(data, divid, valtype, formstate) {
         .style("text-transform", "uppercase")
         .style("font-size", "10px")
         .style("font-weight", "bold")
-        .text("waronice.com")
+        .text("firstlinestats.com")
 
     svg.append("g")
       .append("text")
