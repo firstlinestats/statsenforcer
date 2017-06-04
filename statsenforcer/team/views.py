@@ -170,6 +170,7 @@ def team_page(request, team_name):
         tgs = TeamGameStats.objects.raw(teamqueries.teamquery, [scoresituation, teamstrength, period, team.id])
         stats = {}
         start = datetime.now()
+
         for row in tgs:
 
             season = row.season
@@ -197,6 +198,7 @@ def team_page(request, team_name):
         for teamid in stats:
             for season in stats[teamid]:
                 row = stats[teamid][season]
+                row["abbreviation"] = team.abbreviation
                 row["toiSeconds"] = row["toi"] / row["games"]
                 row["toi"] = toi.format_minutes(row["toi"] / row["games"])
                 row["sc"] = '%.1f' % corsi.corsi_percent(row["scoringChancesFor"],

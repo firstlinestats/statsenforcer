@@ -470,7 +470,8 @@ rect {
         var xText = $('#xaxis').find(":selected").text(),
             yText = $('#yaxis').find(":selected").text(),
             rText = $('#raxis').find(":selected").text();
-        zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
+
+        zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText, "Team", "id");
         savePNG("#comparisonButton", "#comparisonGraph");
         $('#refreshGraph').click(function(e) {
             e.preventDefault();
@@ -480,7 +481,7 @@ rect {
             var xText = $('#xaxis').find(":selected").text(),
                 yText = $('#yaxis').find(":selected").text(),
                 rText = $('#raxis').find(":selected").text();
-            zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText);
+            zoomchart('#comparisonGraph', "#teamTabContent", teamData, xCat, yCat, rCat, xText, yText, rText, "Team", "id");
         });
     });
 </script>
