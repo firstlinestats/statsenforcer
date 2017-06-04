@@ -1,12 +1,14 @@
 from __future__ import division
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.core.serializers.json import DjangoJSONEncoder
 
 from playbyplay.templatetags.pbp_extras import get_period
 from playbyplay.models import Game, PlayByPlay
 from team.models import Team, SeasonStats
+from player.models import Player
 from website.models import GlossaryTerm
 
 import datetime
@@ -19,6 +21,18 @@ from fancystats.constants import gameStates
 import indexqueries
 
 local_tz = pytz.timezone('US/Eastern')
+
+
+def search(request):
+    if 'search_term' not in request.GET:
+        return HttpResponseRedirect('/')
+    search_term = request.GET['search_term']
+    players = Player.objects.filter(fullName__icontains=search_term)
+    teams = Team.objects.filter(Q(name__icontains=search_term) |
+                                Q(shortName__icontains=search_term) |
+                                Q(abbreviation__icontains=search_term))
+    return render(request, 'website/search_results.html', {'players': players,
+                                                           'teams': teams})
 
 
 def custom404(request):

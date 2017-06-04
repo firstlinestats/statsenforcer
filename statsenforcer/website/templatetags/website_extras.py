@@ -8,6 +8,7 @@ from playbyplay import models
 from fancystats.constants import gameStates, gameTypes
 
 from player.constants import playerPositions
+from team.constants import divisions
 
 register = template.Library()
 
@@ -65,6 +66,14 @@ def handedness(value):
 def fixHeight(value):
     if len(value) == 5:
         return value[0:3] + "0" + value[3:]
+    return value
+
+
+@register.filter()
+def division(value):
+    for division in divisions:
+        if division[0] == value:
+            return division[1]
     return value
 
 

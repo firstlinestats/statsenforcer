@@ -1,0 +1,135 @@
+{% extends "wrappers/wrapper.html" %}
+{% load website_extras %}
+{% load staticfiles %}
+{% block page_css %}
+<link href="{% static "css/datatables.min.css" %}" rel="stylesheet">
+<link href="{% static "css/datatables-fontawesome.css" %}" rel="stylesheet">
+<!--[if !IE]><!-->
+
+<!--<![endif]-->
+{% endblock %}
+{% block meta %}
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="en" />
+<meta property="og:title" content="Home First Line Stats" />
+<meta itemprop="name" content="Home First Line Stats" />
+<meta property="og:type" content="website" />
+<meta name="keywords" content="hockey, advanced stats, graphs, advanced statistics, fancy stats, fancystats, hockey stats, hockey statistics, firstlinestats, First Line Stats, playoffs, standings, players" />
+<meta name="description" content="Get advanced stats and graphs on firstlinestats.com. First Line Stats provides advanced analytics and charts for hockey games and players." />
+<meta property="og:description" content="Get advanced stats and graphs on firstlinestats.com. First Line Stats provides advanced analytics and charts for hockey games and players." />
+<meta property="description" content="Get advanced stats and graphs on firstlinestats.com. First Line Stats provides advanced analytics and charts for hockey games and players." />
+<meta name="locale" content="en" />
+<meta name="lang" content="en_US" />
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="content">
+                        <h1>Search Results</h1>
+                        <div class="card card-nav-tabs">
+                            <div class="header header-primary">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <ul class="nav nav-tabs" data-tabs="tabs">
+                                            {% if players %}
+                                            <li class="active">
+                                                <a href="#playerresults" data-toggle="tab" aria-expanded="true">
+                                                    Players ({{ players|length }})
+                                                <div class="ripple-container"></div></a>
+                                            </li>
+                                            {% endif %}
+                                            {% if teams %}
+                                            <li class="{% if teams and not players %}active{% endif %}">
+                                                <a href="#teamresults" data-toggle="tab" aria-expanded="false">
+                                                    Teams ({{ teams|length }})
+                                                <div class="ripple-container"></div></a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content">
+                                {% if players %}
+                                <div class="tab-pane active" id="playerresults">
+                                    <div class="card">
+                                        <table id="players" class="table table-bordered table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Position</th>
+                                                    <th>Current Team</th>
+                                                    <th>View Stats</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for player in players %}
+                                                <tr>
+                                                    <td>{{ player.fullName }}</td>
+                                                    <td>{{ player.primaryPositionCode|position }}</td>
+                                                    <td>{{ player.currentTeam.name }}</td>
+                                                    <td><a href="/players/skaters/{{ player.id }}/">View Stats</a></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if teams %}
+                                <div class="tab-pane{% if teams and not players %} active{% endif %}" id="teamresults">
+                                    <div class="card">
+                                        <table id="teams" class="table table-bordered table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Division</th>
+                                                    <th>Venue</th>
+                                                    <th>View Stats</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for team in teams %}
+                                                <tr>
+                                                    <td>{{ team.name }}</td>
+                                                    <td>{{ team.division|division }}</td>
+                                                    <td>{{ team.venue.name }}</td>
+                                                    <td><a href="/teams/{{ team.shortName }}/">View Stats</a></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block page_js %}
+<script src="{% static "js/datatables.min.js" %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#players').DataTable({
+            "iDisplayLength": 10,
+            "bPaginate": true,
+            "bSort": true,
+            "order": [[2, "desc"]]
+        });
+        $('#teams').DataTable({
+            "iDisplayLength": 10,
+            "bPaginate": true,
+            "bSort": true,
+            "order": [[0, "desc"]]
+        });
+
+    });
+</script>
+{% endblock %}
