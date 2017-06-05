@@ -75,6 +75,8 @@ def goalies(request):
         low_shots += row['savesLow'] + row['goalsLow']
         medium_shots += row['savesMedium'] + row['goalsMedium']
         high_shots += row['savesHigh'] + row['goalsHigh']
+        if "team" not in row:
+            row["team"] = teamnames[row["team_id"]]
         if row['player_id'] not in stats:
             stats[row['player_id']] = row
             stats[row['player_id']]['games'] = 1
@@ -84,7 +86,7 @@ def goalies(request):
             stats[player_id]['games'] += 1
             stats[player_id]['game_ids'].append(row['game_id'])
             for key in row:
-                if key not in ['player_id', 'game_id', 'team_id', 'season', 'fullName']:
+                if key not in ['player_id', 'game_id', 'team_id', 'season', 'fullName', 'team']:
                     val = row[key]
                     stats[player_id][key] += val
 
@@ -114,6 +116,7 @@ def goalies(request):
         return JsonResponse(context)
 
     context['form'] = form
+    context["statsJson"] = json.dumps(stats.values(), cls=DjangoJSONEncoder)
 
     return render(request, 'players/goalies.html', context)
 

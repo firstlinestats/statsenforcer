@@ -209,7 +209,20 @@
                                             <div class="form-group">
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
-
+                                                    <option value="games" selected>Games Played</option>
+                                                    <option value="goals">Goals Allowed</option>
+                                                    <option value="saves">Saves</option>
+                                                    <option value="save_percent">Save Percentage</option>
+                                                    <option value="adj_save_percent">Adjusted Save Percentage</option>
+                                                    <option value="goalsLow">Goals (Low Danger)</option>
+                                                    <option value="savesLow">Saves (Low Danger)</option>
+                                                    <option value="low_save_percent">Save Percentage (Low Danger)</option>
+                                                    <option value="goalsMedium">Goals (Medium Danger)</option>
+                                                    <option value="savesMedium">Saves (Medium Danger)</option>
+                                                    <option value="medium_save_percent">Save Percentage (Medium Danger)</option>
+                                                    <option value="goalsHigh">Goals (High Danger)</option>
+                                                    <option value="savesHigh">Saves (High Danger)</option>
+                                                    <option value="high_save_percent">Save Percentage (High Danger)</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -217,7 +230,20 @@
                                             <div class="form-group">
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
-
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals">Goals Allowed</option>
+                                                    <option value="saves">Saves</option>
+                                                    <option value="save_percent">Save Percentage</option>
+                                                    <option value="adj_save_percent" selected>Adjusted Save Percentage</option>
+                                                    <option value="goalsLow">Goals (Low Danger)</option>
+                                                    <option value="savesLow">Saves (Low Danger)</option>
+                                                    <option value="low_save_percent">Save Percentage (Low Danger)</option>
+                                                    <option value="goalsMedium">Goals (Medium Danger)</option>
+                                                    <option value="savesMedium">Saves (Medium Danger)</option>
+                                                    <option value="medium_save_percent">Save Percentage (Medium Danger)</option>
+                                                    <option value="goalsHigh">Goals (High Danger)</option>
+                                                    <option value="savesHigh">Saves (High Danger)</option>
+                                                    <option value="high_save_percent">Save Percentage (High Danger)</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -225,7 +251,20 @@
                                             <div class="form-group">
                                                 Radius
                                                 <select class="form-control input-md" id="raxis">
-
+                                                    <option value="games">Games Played</option>
+                                                    <option value="goals">Goals Allowed</option>
+                                                    <option value="saves">Saves</option>
+                                                    <option value="save_percent">Save Percentage</option>
+                                                    <option value="adj_save_percent" selected>Adjusted Save Percentage</option>
+                                                    <option value="goalsLow">Goals (Low Danger)</option>
+                                                    <option value="savesLow">Saves (Low Danger)</option>
+                                                    <option value="low_save_percent">Save Percentage (Low Danger)</option>
+                                                    <option value="goalsMedium">Goals (Medium Danger)</option>
+                                                    <option value="savesMedium">Saves (Medium Danger)</option>
+                                                    <option value="medium_save_percent">Save Percentage (Medium Danger)</option>
+                                                    <option value="goalsHigh">Goals (High Danger)</option>
+                                                    <option value="savesHigh">Saves (High Danger)</option>
+                                                    <option value="high_save_percent">Save Percentage (High Danger)</option>
                                                 </select>
                                             <span class="material-input"></span></div>
                                         </div>
@@ -266,6 +305,9 @@
 <script src="{% static "js/graphs/savePNG.js" %}"></script>
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script>
+    var data = JSON.parse("{{ statsJson|escapejs }}");
+    console.log(data);
+
     $(document).ready(function() {
 
         $('#teamstats').DataTable({
@@ -293,6 +335,26 @@
                 className: 'btn-sm btn-primary',
             }]
         });
+
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText, "Player", "player_id");
+        savePNG("#playerComparisonButton", "#playerComparison");
+    });
+
+    $('#refreshGraph').click(function(e) {
+        e.preventDefault()
+        var xCat = $('#xaxis').find(":selected").val(),
+            yCat = $('#yaxis').find(":selected").val(),
+            rCat = $('#raxis').find(":selected").val();
+        var xText = $('#xaxis').find(":selected").text(),
+            yText = $('#yaxis').find(":selected").text(),
+            rText = $('#raxis').find(":selected").text();
+        zoomchart('#playerComparison', "#teamTabContent", data, xCat, yCat, rCat, xText, yText, rText, "Player", "player_id");
     });
 </script>
 {% endblock %}

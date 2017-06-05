@@ -84,8 +84,13 @@
       </div>
     </div>
 
-    <footer class="footer">
+    <footer class="footer" style="height:130px;">
       <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p class="text-center" style="text-transform:none;">Note: This site is currently in beta and nothing is permanent. We do not guarantee the accuracy of any data found on this site!</p>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6 text-center">
                 <a class="footer-link" href="/about/">About Us</a>
@@ -94,7 +99,7 @@
                 <a class="footer-link" href="/glossary/">Glossary</a>
             </div>
         </div>
-        {% if request.path != "/about/" %}
+        {% if request.path != "/about/" or request.path != "/search/" %}
         <div class="row">
             <div class="col-md-12 text-center">
                 <a class="btn btn-info" onclick="formatJson()">JSON</a>
@@ -107,7 +112,7 @@
     <script src="{% static "js/material.min.js" %}"></script>
     <script src="{% static "js/material-kit.js" %}"></script>
     {% block page_js %}{% endblock %}
-    {% if request.path != "/about/" %}
+    {% if request.path != "/about/" or request.path != "/search/" %}
     <script type="text/javascript">
         function formatJson() {
             var kvp = document.location.search.substr(1).split('&');
