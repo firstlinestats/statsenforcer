@@ -75,3 +75,18 @@ class GameFilterForm(forms.Form):
         choices=[x for x in constants.gameTypes if x[0] not in ["PR", "A"]],
         widget=forms.Select(attrs={'class': 'form-control input-md'}),
         initial=[x[0] for x in constants.gameTypes if x[0] != "PR" and x[0] != "A"])
+
+
+class PlayerFilterForm(GameFilterForm):
+    min_toi = forms.IntegerField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control input-md'}),
+    )
+    max_toi = forms.IntegerField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control input-md'}),
+    )
+    games_played = forms.IntegerField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control input-md'}),
+    )

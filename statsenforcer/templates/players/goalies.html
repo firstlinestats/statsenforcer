@@ -99,7 +99,19 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_min_toi">Minimum Average Time on Ice (minutes):</label>
+                                            {% render_field form.min_toi %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_max_toi">Maximum Average Time on Ice (minutes):</label>
+                                            {% render_field form.max_toi %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit<div class="ripple-container"></div></button>
                                         </div>
@@ -151,6 +163,7 @@
                                                 <th class="text-center">Player</th>
                                                 <th class="text-center">Season</th>
                                                 <th class="text-center">Games</th>
+                                                <th class="text-center" title="Average Time On Ice">TOI/Gm</th>
                                                 <th class="text-center">Goals Allowed</th>
                                                 <th class="text-center">Saves</th>
                                                 <th class="text-center" title="Save Percentage">Sv%</th>
@@ -172,6 +185,7 @@
                                                     <td class="text-center"><a href="/players/goalies/{{ player.player_id }}">{{ player.fullName }}</a></td>
                                                     <td class="text-center">{{ player.season }}</td>
                                                     <td class="text-center">{{ player.games }}</td>
+                                                    <td class="text-center" title="">{{ player.toi }}</td>
                                                     <td class="text-center">{{ player.goals }}</td>
                                                     <td class="text-center">{{ player.saves }}</td>
                                                     <td class="text-center">{{ player.save_percent }}</td>
@@ -210,6 +224,7 @@
                                                 X-Axis
                                                 <select class="form-control input-md" id="xaxis">
                                                     <option value="games" selected>Games Played</option>
+                                                    <option value="toiSeconds">Average Time On Ice</option>
                                                     <option value="goals">Goals Allowed</option>
                                                     <option value="saves">Saves</option>
                                                     <option value="save_percent">Save Percentage</option>
@@ -231,6 +246,7 @@
                                                 Y-Axis
                                                 <select class="form-control input-md" id="yaxis">
                                                     <option value="games">Games Played</option>
+                                                    <option value="toiSeconds">Average Time On Ice</option>
                                                     <option value="goals">Goals Allowed</option>
                                                     <option value="saves">Saves</option>
                                                     <option value="save_percent">Save Percentage</option>
@@ -252,6 +268,7 @@
                                                 Radius
                                                 <select class="form-control input-md" id="raxis">
                                                     <option value="games">Games Played</option>
+                                                    <option value="toiSeconds">Average Time On Ice</option>
                                                     <option value="goals">Goals Allowed</option>
                                                     <option value="saves">Saves</option>
                                                     <option value="save_percent">Save Percentage</option>

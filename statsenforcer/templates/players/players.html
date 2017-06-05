@@ -152,7 +152,19 @@ rect {
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_min_toi">Minimum Average Time on Ice (minutes):</label>
+                                            {% render_field form.min_toi %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_max_toi">Maximum Average Time on Ice (minutes):</label>
+                                            {% render_field form.max_toi %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit<div class="ripple-container"></div></button>
                                         </div>

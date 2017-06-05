@@ -10,7 +10,7 @@ from playbyplay.models import Game
 from datetime import date, datetime, timedelta
 import json
 import arrow
-from playbyplay.forms import GameFilterForm, GameForm
+from playbyplay.forms import GameFilterForm, GameForm, PlayerFilterForm
 
 import playerqueries
 
@@ -24,13 +24,15 @@ def goalies(request):
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
     seasons = [currentSeason, ]
-    form = GameFilterForm()
+    form = PlayerFilterForm()
     startDate = None
     endDate = None
     venues = []
     teams = []
+    min_toi = None
+    max_toi = None
     if request.method == 'GET':
-        form = GameFilterForm(request.GET)
+        form = PlayerFilterForm(request.GET)
         if form.is_valid():
             cd = form.cleaned_data
             teamstrength = cd["teamstrengths"]
@@ -41,6 +43,8 @@ def goalies(request):
             venues = cd["venues"]
             teams = cd["teams"]
             seasons = [cd["season"], ]
+            min_toi = cd["min_toi"]
+            max_toi = cd["max_toi"]
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -90,8 +94,19 @@ def goalies(request):
                     val = row[key]
                     stats[player_id][key] += val
 
+    remove = set()
     for pid in stats:
         goalie = stats[pid]
+        if min_toi:
+            if goalie["toi"] < min_toi * 60 * goalie['games']:
+                remove.add(pid)
+                continue
+        if max_toi:
+            if goalie['toi'] > max_toi * 60 * goalie['games']:
+                remove.add(pid)
+                continue
+        goalie["toiSeconds"] = goalie["toi"]
+        goalie["toi"] = toi.format_minutes(goalie["toi"] / goalie["games"])
         goalie['saves'] = goalie['savesLow'] + goalie['savesMedium'] + goalie['savesHigh'] + goalie['savesUnknown']
         goalie['goals'] = goalie['goalsLow'] + goalie['goalsMedium'] + goalie['goalsHigh'] + goalie['goalsUnknown']
         goalie['save_percent'] = '%.1f' % corsi.corsi_percent(goalie['saves'], goalie['goals'])
@@ -108,6 +123,8 @@ def goalies(request):
                                                       low_shots,
                                                       medium_shots,
                                                       high_shots)
+    for r in remove:
+        del stats[r]
 
     context = {}
     context['stats'] = stats.values()
@@ -127,13 +144,15 @@ def players(request):
     period = "all"
     currentSeason = Game.objects.latest("endDateTime").season
     seasons = [currentSeason, ]
-    form = GameFilterForm()
+    form = PlayerFilterForm()
     startDate = None
     endDate = None
     venues = []
     teams = []
+    min_toi = None
+    max_toi = None
     if request.method == 'GET':
-        form = GameFilterForm(request.GET)
+        form = PlayerFilterForm(request.GET)
         if form.is_valid():
             cd = form.cleaned_data
             teamstrength = cd["teamstrengths"]
@@ -144,6 +163,8 @@ def players(request):
             venues = cd["venues"]
             teams = cd["teams"]
             seasons = [cd["season"], ]
+            min_toi = cd["min_toi"]
+            max_toi = cd["max_toi"]
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -170,12 +191,14 @@ def players(request):
     stats = []
 
     if (not startDate and not endDate and (not teams or len(teams) == numTeams) and not venues):
+        print 'hey'
         players = PlayersPrecalc.objects.raw(playerqueries.precalc_players, [seasons, scoresituation, teamstrength, period])
         players = [p for p in players]
         for p in players:
             row = p.__dict__
             row.pop("_state")
             toiSeconds = row["toi"]
+            row["toiSeconds"] = toiSeconds
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["player_id"] = row["player"]
             row['ca60'] = '%.1f' % (corsi.corsi_for_60(toiSeconds, row["corsiAgainst"]) * 60)
@@ -187,6 +210,7 @@ def players(request):
             stats.append(row)
 
     elif (startDate is not None and endDate is not None):
+        print 'hey1'
         players = PlayerGameFilterStats.objects.raw(playerqueries.playersquery_historical_daterange, [startDate, endDate, scoresituation, teamstrength, period])
         players = [p for p in players]
         for playerid in players:
@@ -195,6 +219,7 @@ def players(request):
             toiSeconds = row["toi"]
             row["team"] = teamnames[row["team_id"]]
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
+            row["toiSeconds"] = toiSeconds
             row["fo"] = '%.1f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
             row["sf"] = '%.1f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
             row["msf"] = '%.1f' % corsi.corsi_percent(row["missedShotsFor"],
@@ -228,6 +253,7 @@ def players(request):
                 row["zso"] = "0.0"
             stats.append(row)
     else:
+        print 'hey2'
         playergames = PlayerGameFilterStats.objects.raw(playerqueries.playersquery, [seasons, gameids, scoresituation, teamstrength, period, [x.id for x in teams]])
         players = {}
         for player in playergames:
@@ -246,6 +272,7 @@ def players(request):
             row = players[playerid]
             toiSeconds = row["toi"]
             row["team"] = teamnames[row["team_id"]]
+            row["toiSeconds"] = toiSeconds
             row["toi"] = toi.format_minutes(row["toi"] / row["games"])
             row["fo"] = '%.1f' % corsi.corsi_percent(row["fo_w"], row["fo_l"])
             row["sf"] = '%.1f' % corsi.corsi_percent(row["shotsFor"], row["shotsAgainst"])
@@ -279,6 +306,21 @@ def players(request):
             else:
                 row["zso"] = "0.0"
             stats.append(row)
+
+    remove = []
+    if min_toi or max_toi:
+        for pid in xrange(len(stats)):
+            row = stats[pid]
+            if min_toi:
+                if row["toiSeconds"] < min_toi * 60 * row['games']:
+                    remove.append(pid)
+                    continue
+            if max_toi:
+                if row['toiSeconds'] > max_toi * 60 * row['games']:
+                    remove.append(pid)
+                    continue
+    for r in reversed(remove):
+        del stats[r]
 
     context = {}
     context["stats"] = stats
