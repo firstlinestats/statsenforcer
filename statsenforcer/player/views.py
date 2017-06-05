@@ -31,6 +31,7 @@ def goalies(request):
     teams = []
     min_toi = None
     max_toi = None
+    min_games = None
     if request.method == 'GET':
         form = PlayerFilterForm(request.GET)
         if form.is_valid():
@@ -45,6 +46,7 @@ def goalies(request):
             seasons = [cd["season"], ]
             min_toi = cd["min_toi"]
             max_toi = cd["max_toi"]
+            min_games = cd["games_played"]
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -102,7 +104,11 @@ def goalies(request):
                 remove.add(pid)
                 continue
         if max_toi:
-            if goalie['toi'] > max_toi * 60 * goalie['games']:
+            if goalie['toi'] >= max_toi * 60 * goalie['games']:
+                remove.add(pid)
+                continue
+        if min_games:
+            if goalie['games'] < min_games:
                 remove.add(pid)
                 continue
         goalie["toiSeconds"] = goalie["toi"]
@@ -151,6 +157,7 @@ def players(request):
     teams = []
     min_toi = None
     max_toi = None
+    min_games = None
     if request.method == 'GET':
         form = PlayerFilterForm(request.GET)
         if form.is_valid():
@@ -165,6 +172,7 @@ def players(request):
             seasons = [cd["season"], ]
             min_toi = cd["min_toi"]
             max_toi = cd["max_toi"]
+            min_games = cd['games_played']
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -308,7 +316,7 @@ def players(request):
             stats.append(row)
 
     remove = []
-    if min_toi or max_toi:
+    if min_toi or max_toi or min_games:
         for pid in xrange(len(stats)):
             row = stats[pid]
             if min_toi:
@@ -319,6 +327,9 @@ def players(request):
                 if row['toiSeconds'] > max_toi * 60 * row['games']:
                     remove.append(pid)
                     continue
+            if min_games:
+                if row['games'] < min_games:
+                    remove.append(pid)
     for r in reversed(remove):
         del stats[r]
 

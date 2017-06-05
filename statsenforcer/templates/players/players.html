@@ -164,7 +164,13 @@ rect {
                                             {% render_field form.max_toi %}
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="id_games_played">Minimum Number of Games Played:</label>
+                                            {% render_field form.games_played %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit<div class="ripple-container"></div></button>
                                         </div>
