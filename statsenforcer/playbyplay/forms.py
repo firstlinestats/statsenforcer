@@ -73,7 +73,7 @@ class GameFilterForm(forms.Form):
     gameTypes = forms.MultipleChoiceField(
         required=False,
         choices=[x for x in constants.gameTypes if x[0] not in ["PR", "A"]],
-        widget=forms.Select(attrs={'class': 'form-control input-md'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control input-md'}),
         initial=[x[0] for x in constants.gameTypes if x[0] != "PR" and x[0] != "A"])
 
 

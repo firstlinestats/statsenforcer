@@ -32,6 +32,7 @@ def goalies(request):
     min_toi = None
     max_toi = None
     min_games = None
+    gameTypes = None
     if request.method == 'GET':
         form = PlayerFilterForm(request.GET)
         if form.is_valid():
@@ -47,6 +48,7 @@ def goalies(request):
             min_toi = cd["min_toi"]
             max_toi = cd["max_toi"]
             min_games = cd["games_played"]
+            gameTypes = request.GET.get('gameTypes', None)
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -58,6 +60,8 @@ def goalies(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    if gameTypes is not None:
+        gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
 
     teamnames = {}
@@ -158,6 +162,7 @@ def players(request):
     min_toi = None
     max_toi = None
     min_games = None
+    gameTypes = None
     if request.method == 'GET':
         form = PlayerFilterForm(request.GET)
         if form.is_valid():
@@ -173,6 +178,7 @@ def players(request):
             min_toi = cd["min_toi"]
             max_toi = cd["max_toi"]
             min_games = cd['games_played']
+            gameTypes = cd['gameTypes']
             if len(seasons) == 0:
                 seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7])
@@ -186,6 +192,8 @@ def players(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    if gameTypes is not None:
+        gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
 
     teamnames = {}
@@ -198,8 +206,7 @@ def players(request):
 
     stats = []
 
-    if (not startDate and not endDate and (not teams or len(teams) == numTeams) and not venues):
-        print 'hey'
+    if (not startDate and not endDate and (not teams or len(teams) == numTeams) and not venues and not (gameTypes is not None and len(gameTypes) != 2)):
         players = PlayersPrecalc.objects.raw(playerqueries.precalc_players, [seasons, scoresituation, teamstrength, period])
         players = [p for p in players]
         for p in players:
@@ -217,8 +224,7 @@ def players(request):
             row['fsa'] = '%.1f' % (100 - corsi.corsi_percent(row['goalsAgainst'], row['fenwickAgainst']))
             stats.append(row)
 
-    elif (startDate is not None and endDate is not None):
-        print 'hey1'
+    elif (startDate is not None and endDate is not None and (gameTypes is not None and len(gameTypes) != 2)):
         players = PlayerGameFilterStats.objects.raw(playerqueries.playersquery_historical_daterange, [startDate, endDate, scoresituation, teamstrength, period])
         players = [p for p in players]
         for playerid in players:
@@ -261,7 +267,6 @@ def players(request):
                 row["zso"] = "0.0"
             stats.append(row)
     else:
-        print 'hey2'
         playergames = PlayerGameFilterStats.objects.raw(playerqueries.playersquery, [seasons, gameids, scoresituation, teamstrength, period, [x.id for x in teams]])
         players = {}
         for player in playergames:
