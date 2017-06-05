@@ -140,14 +140,7 @@ rect {
                                                 <div class="col-md-3 col-sm-12">
                                                     <div class="form-group">
                                                         <label for="id_game_type">Game Types:</label>
-                                                        {% for g, glabel in form.gameTypes.field.choices %}
-                                                        <div class="checkbox">
-                                                            <label>
-                                                                <input type="checkbox" name="gameTypes" id="id_gameTypes_{{ forloop.counter }}" value="{{ g }}" {% if g in form.gameTypes.value %}checked{% endif %}>
-                                                                {{ glabel }}
-                                                            </label>
-                                                        </div>
-                                                        {% endfor %}
+                                                        {{ form.gameTypes }}
                                                     </div>
                                                 </div>
                                             </div>

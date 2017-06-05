@@ -29,6 +29,7 @@ def teams(request):
     endDate = None
     venues = []
     teams = []
+    gameTypes = None
     if request.method == 'GET':
         form = GameFilterForm(request.GET)
         if form.is_valid():
@@ -40,6 +41,7 @@ def teams(request):
             endDate = cd["endDate"]
             venues = cd["venues"]
             teams = cd["teams"]
+            gameTypes = request.GET.get('gameTypes', None)
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7], gameType__in=["P", "R"])
     if startDate is not None:
         gameids = gameids.filter(dateTime__date__gte=startDate)
@@ -49,6 +51,8 @@ def teams(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
+    if gameTypes is not None:
+        gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
     # print [team.id for team in teams]
     tgs = TeamGameStats.objects.raw(teamqueries.teamsquery, [gameids, scoresituation, teamstrength, period, seasons])
