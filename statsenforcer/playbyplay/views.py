@@ -15,6 +15,23 @@ from team import models as tmodels
 from playbyplay.models import Game
 
 import arrow
+import pytz
+import datetime
+
+local_tz = pytz.timezone('US/Eastern')
+
+
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt) # .normalize might be unnecessary
+
+
+def fix_date(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%b %d, %I:%M %p %Z")
+
+
+def fix_time(dateTime):
+    return datetime.datetime.strftime(utc_to_local(dateTime), "%I:%M %p %Z")
 
 
 # Create your views here.
@@ -36,7 +53,9 @@ def game(request, game_pk):
             teamStrengths = cd["teamstrengths"]
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
-    context["game"]["dateTime"] = context["game"]["dateTime"].astimezone(pytz.timezone('US/Eastern'))
+    context["game"]["dateTime"] = fix_time(context["game"]["dateTime"])
+    if context['game']['endDateTime']:
+        context['game']['endDateTime'] = fix_time(context['game']['endDateTime'])
     if game_pk > 2016000000:
         try:
             context["period"] = models.GamePeriod.objects.filter(game_id=game_pk).latest("startTime").__dict__
