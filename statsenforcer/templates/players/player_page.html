@@ -501,7 +501,7 @@
                 playerData.push(data[key][season])
             };
         };
-        zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
+        zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText, 'Player', 'player_id');
         savePNG("#playerComparisonButton", "#playerComparison");
 
         $('#refreshGraph').click(function(e) {
@@ -513,7 +513,7 @@
                 yText = $('#yaxis').find(":selected").text(),
                 rText = $('#raxis').find(":selected").text();
 
-            zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText);
+            zoomchart('#playerComparison', "#teamTabContent", playerData, xCat, yCat, rCat, xText, yText, rText, 'Player', 'player_id');
 
         });
         var urlParams;
@@ -528,7 +528,6 @@
             while (match = search.exec(query))
                urlParams[decode(match[1])] = decode(match[2]);
         })();
-        console.log(urlParams);
 
         var stats = null;
         var raw_stats = null;

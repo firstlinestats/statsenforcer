@@ -204,7 +204,8 @@ div.dataTables_paginate li.first a:before, div.dataTables_paginate li.previous a
 }
 /**/
 
+
 /* Teams Page*/
-#id_teams, #id_venues {
+#id_teams, #id_venues, #id_seasons {
   height: 127px;
 }
