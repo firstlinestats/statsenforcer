@@ -53,7 +53,7 @@ def game(request, game_pk):
             teamStrengths = cd["teamstrengths"]
             scoreSituation = cd["scoresituation"]
             period = cd["period"]
-    context["game"]["dateTime"] = fix_time(context["game"]["dateTime"])
+    context["game"]["dateTime"] = fix_date(context["game"]["dateTime"])
     if context['game']['endDateTime']:
         context['game']['endDateTime'] = fix_time(context['game']['endDateTime'])
     if game_pk > 2016000000:
