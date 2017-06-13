@@ -51,7 +51,7 @@ def teams(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
-    if gameTypes is not None:
+    if gameTypes:
         gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
     # print [team.id for team in teams]

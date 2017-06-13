@@ -60,7 +60,7 @@ def goalies(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
-    if gameTypes is not None:
+    if gameTypes:
         gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
 
@@ -192,7 +192,7 @@ def players(request):
         gameids = gameids.filter(venue__in=venues)
     if len(teams) > 0:
         gameids = gameids.filter(Q(homeTeam__in=cd['teams']) | Q(awayTeam__in=cd['teams']))
-    if gameTypes is not None:
+    if gameTypes:
         gameids = gameids.filter(gameType__in=gameTypes)
     gameids = [x for x in gameids]
 
@@ -269,6 +269,7 @@ def players(request):
     else:
         playergames = PlayerGameFilterStats.objects.raw(playerqueries.playersquery, [seasons, gameids, scoresituation, teamstrength, period, [x.id for x in teams]])
         players = {}
+        print playergames.query
         for player in playergames:
             player = player.__dict__
             if player["player_id"] not in players:
