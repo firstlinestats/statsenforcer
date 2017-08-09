@@ -42,6 +42,9 @@ def teams(request):
             venues = cd["venues"]
             teams = cd["teams"]
             gameTypes = request.GET.get('gameTypes', None)
+            seasons = [cd["season"], ]
+            if len(seasons) == 0:
+                seasons = [currentSeason, ]
     gameids = Game.objects.values_list("gamePk", flat=True).filter(gameState__in=[5, 6, 7], gameType__in=["P", "R"])
     if startDate is not None:
         gameids = gameids.filter(dateTime__date__gte=startDate)
