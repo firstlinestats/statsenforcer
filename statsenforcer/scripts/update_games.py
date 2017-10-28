@@ -434,8 +434,7 @@ def update_game(game, players):
             elif iid in awayIds:
                 team = game.awayTeam
             else:
-                print iid, homeIds, awayIds
-                raise Exception
+                raise Exception('iid {} not in players'.format(iid))
             player = ingest_player(pinfo[sid], team.id)
             players[player.id] = player
     # liveData
