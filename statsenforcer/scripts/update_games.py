@@ -728,7 +728,7 @@ def main():
                     todaycheck = datecheck
                     skip_initial = True
             if seconds > 0 and not skip_initial:
-                time.sleep(seconds)
+                time.sleep(600)
             else:
                 time.sleep(60)
         else:
