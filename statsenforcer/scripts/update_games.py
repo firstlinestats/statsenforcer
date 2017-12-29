@@ -337,15 +337,6 @@ def update_game(game, players):
     allplayers = []
     homeMissed = 0
     awayMissed = 0
-    # Delete old data
-    if pbpmodels.GamePeriod.objects.filter(game=game).count() > 0:
-        pbpmodels.GamePeriod.objects.filter(game=game).delete()
-    if pbpmodels.PlayerInPlay.objects.filter(game=game).count() > 0:
-        pbpmodels.PlayerInPlay.objects.filter(game=game).delete()
-    if pbpmodels.PlayByPlay.objects.filter(gamePk=game).count() > 0:
-        pbpmodels.PlayByPlay.objects.filter(gamePk=game).delete()
-    if pbpmodels.PlayerGameStats.objects.filter(game=game).count() > 0:
-        pbpmodels.PlayerGameStats.objects.filter(game=game).delete()
     # Get live game data
     j = json.loads(api_calls.get_game(game.gamePk))
     gd = j["gameData"]
@@ -367,6 +358,8 @@ def update_game(game, players):
     game.homeShots = lineScore["teams"]["home"]["shotsOnGoal"]
     game.awayShots = lineScore["teams"]["away"]["shotsOnGoal"]
     # Get boxscore information
+    if 'teamSkaterStats' not in boxScore['teams']['home']['teamStats']:
+        return False
     home = boxScore["teams"]["home"]["teamStats"]["teamSkaterStats"]
     away = boxScore["teams"]["away"]["teamStats"]["teamSkaterStats"]
     game.homePIM = home["pim"]
@@ -386,6 +379,15 @@ def update_game(game, players):
     game.homeHits = home["hits"]
     game.awayHits = away["hits"]
     cperiod = 1
+    # Delete old data
+    if pbpmodels.GamePeriod.objects.filter(game=game).count() > 0:
+        pbpmodels.GamePeriod.objects.filter(game=game).delete()
+    if pbpmodels.PlayerInPlay.objects.filter(game=game).count() > 0:
+        pbpmodels.PlayerInPlay.objects.filter(game=game).delete()
+    if pbpmodels.PlayByPlay.objects.filter(gamePk=game).count() > 0:
+        pbpmodels.PlayByPlay.objects.filter(gamePk=game).delete()
+    if pbpmodels.PlayerGameStats.objects.filter(game=game).count() > 0:
+        pbpmodels.PlayerGameStats.objects.filter(game=game).delete()
     for period in lineScore["periods"]:
         p = pbpmodels.GamePeriod()
         p.game = game
